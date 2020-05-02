@@ -24,7 +24,7 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
       </div>
       <style jsx>{`
         .container {
-          background-color: red;
+          background-color: purple;
         }
       `}</style>
     </>
