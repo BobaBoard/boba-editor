@@ -6,7 +6,7 @@
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
     "sourceMap": true,
     "allowJs": false,
-    "jsx": "react",
+    "jsx": "preserve",
     "moduleResolution": "node",
     "rootDirs": ["src", "stories"],
     "baseUrl": "src",

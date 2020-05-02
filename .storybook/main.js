@@ -10,7 +10,10 @@ module.exports = {
       test: /\.(ts|tsx)$/,
       use: [
         {
-          loader: require.resolve("ts-loader"),
+          loader: require.resolve("babel-loader"),
+          options: {
+            presets: [["react-app", { flow: false, typescript: true }]],
+          },
         },
         {
           loader: require.resolve("react-docgen-typescript-loader"),
