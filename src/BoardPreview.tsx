@@ -17,7 +17,18 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
   onClick,
   subBoards,
 }) => {
-  return <div onClick={onClick}>{slug}</div>;
+  return (
+    <>
+      <div className="container" onClick={onClick}>
+        /{slug}/
+      </div>
+      <style jsx>{`
+        .container {
+          background-color: red;
+        }
+      `}</style>
+    </>
+  );
 };
 
 export default BoardPreview;

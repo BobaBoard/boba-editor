@@ -18,7 +18,9 @@
     "url": "https://github.com/essential-randomness/bobaboard-ui/issues"
   },
   "homepage": "https://github.com/essential-randomness/bobaboard-ui#readme",
-  "dependencies": {},
+  "dependencies": {
+    "styled-jsx": "^3.2.5"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@storybook/addon-actions": "^5.3.18",
@@ -28,6 +30,7 @@
     "@storybook/addons": "^5.3.18",
     "@storybook/react": "^5.3.18",
     "@types/jest": "^25.2.1",
+    "@types/styled-jsx": "^2.2.8",
     "babel-loader": "^8.1.0",
     "file-loader": "^6.0.0",
     "jest": "^25.5.4",
