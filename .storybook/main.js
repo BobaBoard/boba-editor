@@ -12,9 +12,16 @@ module.exports = {
         {
           loader: require.resolve("ts-loader"),
         },
-        // Optional
         {
           loader: require.resolve("react-docgen-typescript-loader"),
+        },
+      ],
+    });
+    config.module.rules.push({
+      test: /\.(png|jpe?g|gif)$/i,
+      use: [
+        {
+          loader: "file-loader",
         },
       ],
     });
