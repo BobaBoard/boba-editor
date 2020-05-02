@@ -17,6 +17,7 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
   onClick,
   subBoards,
 }) => {
+  console.log(avatar);
   return (
     <>
       <div className="container" onClick={onClick}>

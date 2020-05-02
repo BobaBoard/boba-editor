@@ -21,7 +21,8 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["react", "react-dom", "styled-jsx"]
   },
   "include": ["stories/**/*"],
   "exclude": ["node_modules", "build", "scripts"]
