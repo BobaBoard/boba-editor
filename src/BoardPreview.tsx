@@ -16,8 +16,15 @@ const SubBoard: React.FC<{ name: string; avatar: string; color: string }> = (
 ) => {
   return (
     <>
-      <div className="sub-board">#{props.name}</div>
+      <div className="sub-board">
+        <span className="hashtag">#</span>
+        {props.name}
+      </div>
       <style jsx>{`
+        .hashtag {
+          opacity: 0.6;
+          margin-right: 2px;
+        }
         .sub-board {
           display: inline-block;
           padding: 5px 10px;
