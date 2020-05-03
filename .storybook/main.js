@@ -20,14 +20,6 @@ module.exports = {
         },
       ],
     });
-    config.module.rules.push({
-      test: /\.(png|jpe?g|gif)$/i,
-      use: [
-        {
-          loader: "file-loader",
-        },
-      ],
-    });
     config.resolve.extensions.push(".ts", ".tsx");
     return config;
   },

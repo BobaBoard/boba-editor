@@ -2,6 +2,8 @@ import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import BoardPreview from "../src/BoardPreview";
 
+import goreBackground from "./images/gore.png";
+
 export default {
   title: "Board Preview",
   component: BoardPreview,
@@ -10,7 +12,7 @@ export default {
 export const BoardPreviewSimple = () => (
   <BoardPreview
     slug="gore"
-    avatar={require("./images/gore.png")}
+    avatar={goreBackground}
     onClick={() => console.log("go!")}
   />
 );
