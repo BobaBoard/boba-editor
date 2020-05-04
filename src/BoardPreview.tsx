@@ -36,7 +36,6 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
   onClick,
   children,
 }) => {
-  console.log(avatar);
   return (
     <>
       <div className="container" onClick={onClick}>
