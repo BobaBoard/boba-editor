@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/essential-randomness/bobaboard-ui#readme",
   "dependencies": {
+    "backstopjs": "^5.0.1",
     "styled-jsx": "^3.2.5"
   },
   "devDependencies": {
