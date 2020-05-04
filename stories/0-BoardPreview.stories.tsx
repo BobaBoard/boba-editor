@@ -14,6 +14,7 @@ export const BoardPreviewSimple = () => (
   <BoardPreview
     slug="gore"
     avatar={`/${goreBackground}`}
+    description="Love me some bruised bois (and more)."
     onClick={() => console.log("go!")}
   ></BoardPreview>
 );
@@ -26,6 +27,7 @@ export const BoardPreviewWithTags = () => (
   <BoardPreview
     slug="gore"
     avatar={`/${goreBackground}`}
+    description="Love me some bruised bois (and more)."
     onClick={() => console.log("go!")}
   >
     <Tag name="blood" color="#f96680" />
