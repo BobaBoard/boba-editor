@@ -4,40 +4,7 @@ export interface BoardPreviewProps {
   slug: string;
   avatar: string;
   onClick: () => void;
-  subBoards?: Array<{
-    slug: string;
-    avatar: string;
-    onClick: () => void;
-  }>;
 }
-
-const SubBoard: React.FC<{ name: string; avatar: string; color: string }> = (
-  props
-) => {
-  return (
-    <>
-      <div className="sub-board">
-        <span className="hashtag">#</span>
-        {props.name}
-      </div>
-      <style jsx>{`
-        .hashtag {
-          opacity: 0.6;
-          margin-right: 2px;
-        }
-        .sub-board {
-          display: inline-block;
-          padding: 5px 10px;
-          border: 3px black solid;
-          border-radius: 10px;
-          background-color: ${props.color};
-          font-weight: bold;
-          cursor: pointer;
-        }
-      `}</style>
-    </>
-  );
-};
 
 const Slug: React.FC<{ name: string }> = (props) => {
   return (
@@ -67,7 +34,7 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
   slug,
   avatar,
   onClick,
-  subBoards,
+  children,
 }) => {
   console.log(avatar);
   return (
@@ -75,11 +42,7 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
       <div className="container" onClick={onClick}>
         <Slug name={slug} />
       </div>
-      <div className="sub-boards">
-        <SubBoard name="blood" avatar="" color="#f96680" />
-        <SubBoard name="knifeplay" avatar="" color="#93b3b0" />
-        <SubBoard name="aesthetic" avatar="" color="#24d282" />
-      </div>
+      <div className="preview-footer">{children}</div>
       <style jsx>{`
         .container {
             cursor: pointer;
@@ -92,7 +55,7 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
             border-radius: 15px;
             border: 3px black solid;
         }
-        .sub-boards {
+        .preview-footer {
             display: flex;
             justify-content: space-evenly;
             margin-top: 5px;
