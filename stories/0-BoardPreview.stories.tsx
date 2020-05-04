@@ -12,7 +12,7 @@ export default {
 export const BoardPreviewSimple = () => (
   <BoardPreview
     slug="gore"
-    avatar={goreBackground}
+    avatar={`/${goreBackground}`}
     onClick={() => console.log("go!")}
   />
 );

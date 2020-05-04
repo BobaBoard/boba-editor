@@ -84,7 +84,7 @@ const BoardPreview: React.FC<BoardPreviewProps> = ({
         .container {
             cursor: pointer;
             position: relative;
-            background: url("/${avatar}");
+            background: url("${avatar}");
             background-size: cover;
             background-position: 0px -100px;
             max-width: 350px;
