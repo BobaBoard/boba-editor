@@ -1,2 +1,3 @@
-# bobaboard-ui
-BobaBoard's UI components
+# boba-editor
+
+An advanced text editor based on QuillJS, vaguely inspired by Tumblr's.

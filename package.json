@@ -23,10 +23,10 @@
   },
   "homepage": "https://github.com/essential-randomness/bobaboard-ui#readme",
   "dependencies": {
-    "backstopjs": "^5.0.1",
     "styled-jsx": "^3.2.5"
   },
   "devDependencies": {
+    "backstopjs": "^5.0.1",
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/preset-typescript": "^7.9.0",

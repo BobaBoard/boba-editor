@@ -1,3 +1,3 @@
-import BoardPreview from "./BoardPreview";
+import Editor from "./Editor";
 
-export { BoardPreview };
+export { Editor };

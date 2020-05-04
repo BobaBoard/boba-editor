@@ -1,4 +1,4 @@
-report({
+{
   "testSuite": "BackstopJS",
   "tests": [
     {
@@ -37,4 +37,4 @@ report({
     }
   ],
   "id": "bobaboard_ui"
-});
+}

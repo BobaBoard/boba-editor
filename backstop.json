@@ -16,8 +16,8 @@
   "onReadyScript": "puppet/onReady.js",
   "scenarios": [
     {
-      "label": "BoardPreviewWithTags",
-      "url": "http://localhost:6006/iframe.html?selectedKind=board-preview&selectedStory=board-preview-with-tags",
+      "label": "Editor",
+      "url": "http://localhost:6006/iframe.html?selectedKind=editor-preview&selectedStory=editor-simple",
       "referenceUrl": "",
       "readyEvent": "",
       "readySelector": "",

@@ -1,16 +1,16 @@
-report({
+{
   "testSuite": "BackstopJS",
   "tests": [
     {
       "pair": {
         "reference": "../bitmaps_reference/bobaboard_ui_Editor_0_document_0_phone.png",
-        "test": "../bitmaps_test/20200504-141322/bobaboard_ui_Editor_0_document_0_phone.png",
+        "test": "../bitmaps_test/20200504-141255/bobaboard_ui_Editor_0_document_0_phone.png",
         "selector": "document",
         "fileName": "bobaboard_ui_Editor_0_document_0_phone.png",
         "label": "Editor",
         "requireSameDimensions": true,
         "misMatchThreshold": 0.1,
-        "url": "http://localhost:6006/iframe.html?selectedKind=editor-preview&selectedStory=editor-simple",
+        "url": "http://localhost:6006/iframe.html?selectedKind=editor-preview&selectedStory=editor-preview-simple",
         "referenceUrl": "",
         "expect": 0,
         "viewportLabel": "phone",
@@ -21,13 +21,13 @@ report({
     {
       "pair": {
         "reference": "../bitmaps_reference/bobaboard_ui_Editor_0_document_1_tablet.png",
-        "test": "../bitmaps_test/20200504-141322/bobaboard_ui_Editor_0_document_1_tablet.png",
+        "test": "../bitmaps_test/20200504-141255/bobaboard_ui_Editor_0_document_1_tablet.png",
         "selector": "document",
         "fileName": "bobaboard_ui_Editor_0_document_1_tablet.png",
         "label": "Editor",
         "requireSameDimensions": true,
         "misMatchThreshold": 0.1,
-        "url": "http://localhost:6006/iframe.html?selectedKind=editor-preview&selectedStory=editor-simple",
+        "url": "http://localhost:6006/iframe.html?selectedKind=editor-preview&selectedStory=editor-preview-simple",
         "referenceUrl": "",
         "expect": 0,
         "viewportLabel": "tablet",
@@ -37,4 +37,4 @@ report({
     }
   ],
   "id": "bobaboard_ui"
-});
+}
