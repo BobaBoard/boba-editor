@@ -8,7 +8,9 @@
     "build": "./node_modules/.bin/webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "visual-testing": "./node_modules/.bin/backstop test",
+    "approve-visuals": "./node_modules/.bin/backstop approve"
   },
   "repository": {
     "type": "git",
