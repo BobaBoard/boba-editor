@@ -2,6 +2,10 @@
 
 An advanced text editor based on [QuillJS](https://quilljs.com/), vaguely inspired by Tumblr's. Created for [BobaBoard](https://www.bobaboard.com).
 
+## Demo
+
+(Demo on Netlify!)[https://bobaeditor.netlify.app/]
+
 ## Try on Storybook
 
 `npm run storybook`
