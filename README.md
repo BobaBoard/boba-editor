@@ -4,7 +4,7 @@ An advanced text editor based on [QuillJS](https://quilljs.com/), vaguely inspir
 
 ## Demo
 
-(Demo on Netlify!)[https://bobaeditor.netlify.app/]
+[Demo on Netlify!](https://bobaeditor.netlify.app/)
 
 ## Try on Storybook
 
