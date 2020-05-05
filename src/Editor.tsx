@@ -150,7 +150,7 @@ class Editor extends Component<Props> {
   }
 
   maybeShowEmptyLineTooltip(bounds: { top: number; right: number } | null) {
-    if (this.tooltip?.current == null || this.skipTooltipUpdates) {
+    if (this.skipTooltipUpdates) {
       return;
     }
     if (bounds == null) {

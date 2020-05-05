@@ -6,6 +6,7 @@ module.exports = {
     "@storybook/addon-viewport/register",
   ],
   webpackFinal: async (config) => {
+    config.devtool = "inline-source-map";
     config.module.rules.push({
       test: /\.(ts|tsx)$/,
       use: [
