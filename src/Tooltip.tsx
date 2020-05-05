@@ -2,8 +2,6 @@ import React, { Component, forwardRef } from "react";
 const TenorKeyboard = require("./TenorKeyboard").default;
 import classNames from "classnames";
 
-console.log(TenorKeyboard);
-
 // @ts-ignore
 import GifImage from "./img/gif.svg";
 
