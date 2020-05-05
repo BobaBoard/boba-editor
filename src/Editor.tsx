@@ -50,6 +50,10 @@ class Editor extends Component<Props> {
     charactersTyped: 1,
     showTooltip: false,
     loaded: false,
+    tooltipPostion: {
+      top: 0,
+      right: 0,
+    },
   };
 
   editor: Quill = null as any;
@@ -154,10 +158,10 @@ class Editor extends Component<Props> {
       return;
     }
     logging("Showing tooltip");
-    this.setState({ showTooltip: true });
-    // TODO: pass position to tooltip instead.
-    this.tooltip.current.style.top = bounds.top + "px";
-    this.tooltip.current.style.right = bounds.right + "px";
+    this.setState({
+      showTooltip: true,
+      tooltipPostion: { top: bounds.top, right: bounds.right },
+    });
   }
 
   shouldComponentUpdate(newProps: Props, newState: any) {
@@ -275,7 +279,8 @@ class Editor extends Component<Props> {
           </div>
           <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
           <Tooltip
-            ref={this.tooltip}
+            top={this.state.tooltipPostion.top}
+            right={this.state.tooltipPostion.right}
             onInsertEmbed={({ type, embed }) => {
               this.editor.focus();
               this.skipTooltipUpdates = true;

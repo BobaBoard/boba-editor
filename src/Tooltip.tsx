@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  forwardRef,
-  useEffect,
-  MutableRefObject as MRO,
-} from "react";
+import React, { Component, forwardRef } from "react";
 const TenorKeyboard = require("./TenorKeyboard").default;
 import classNames from "classnames";
 
@@ -19,103 +13,113 @@ if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
 
-const Tooltip = forwardRef<
-  HTMLDivElement,
-  {
-    show: boolean;
-    onInsertEmbed: ({}: { type: string; embed: any }) => void;
-    preventUpdate: (shouldPrevent: boolean) => void;
-  }
->((props, ref) => {
-  const [tenorOpen, setTenorOpen] = useState(false);
-  const imageButton = useRef<HTMLButtonElement>() as MRO<HTMLButtonElement>;
-  const tweetInput = useRef<HTMLButtonElement>() as MRO<HTMLButtonElement>;
-  const gifButton = useRef<HTMLButtonElement>() as MRO<HTMLButtonElement>;
-  const imageInput = useRef<HTMLInputElement>() as MRO<HTMLInputElement>;
+class Tooltip extends Component<{
+  show: boolean;
+  top: number | undefined;
+  right: number | undefined;
+  onInsertEmbed: ({}: { type: string; embed: any }) => void;
+  preventUpdate: (shouldPrevent: boolean) => void;
+}> {
+  state = {
+    tenorOpen: false,
+  };
 
-  useEffect(() => {
-    if (!imageButton.current || !tweetInput.current) {
+  imageButton = React.createRef<HTMLButtonElement>();
+  tweetInput = React.createRef<HTMLButtonElement>();
+  gifButton = React.createRef<HTMLButtonElement>();
+  imageInput = React.createRef<HTMLInputElement>();
+
+  componentDidMount() {
+    if (!this.imageButton.current || !this.tweetInput.current) {
       return;
     }
-    imageButton.current.innerHTML = QuillModule.import("ui/icons")["image"];
-    tweetInput.current.innerHTML = QuillModule.import("ui/icons")["tweet"];
-  }, []);
-  return (
-    <>
-      <div className="ql-bubble">
-        <div
-          className={classNames("tooltip ql-tooltip ql-toolbar", {
-            hidden: !props.show,
-          })}
-          ref={ref}
-        >
-          <button
-            className="ql-image"
-            ref={imageButton as any}
-            onClick={() => {
-              imageInput.current.click();
-            }}
-          />
-          <ImageLoader
-            ref={imageInput}
-            onImageLoaded={(image) => {
-              props.onInsertEmbed({ type: "block-image", embed: image });
-            }}
-          />
-          <button
-            className="ql-image-gif ql-image"
-            ref={gifButton}
-            onClick={(e) => {
-              props.preventUpdate(true);
-              e.stopPropagation();
-              setTenorOpen(true);
+    this.imageButton.current.innerHTML = QuillModule.import("ui/icons")[
+      "image"
+    ];
+    this.tweetInput.current.innerHTML = QuillModule.import("ui/icons")["tweet"];
+  }
+
+  render() {
+    return (
+      <>
+        <div className="ql-bubble">
+          <div
+            className={classNames("tooltip ql-tooltip ql-toolbar", {
+              hidden: !this.props.show,
+            })}
+            style={{
+              top: `${this.props.top}px`,
+              right: `${this.props.right}px`,
             }}
           >
-            <GifImage key="gif_image" />
-          </button>
-          <button
-            className="ql-tweet"
-            ref={tweetInput}
-            onClick={() => {
-              // TODO: make a prettier input
-              let url = prompt("Gimme a tweet url");
-              if (url) {
-                props.onInsertEmbed({ type: "tweet", embed: url });
-              }
-            }}
-          />
-          <TenorKeyboard
-            isOpen={tenorOpen}
-            target={gifButton}
-            onClose={(result: any) => {
-              props.preventUpdate(false);
-              if (result) {
-                props.onInsertEmbed({
-                  type: "block-image",
-                  embed: result.media[0].gif.url,
-                });
-              }
-              setTenorOpen(false);
-            }}
-          />
+            <button
+              className="ql-image"
+              ref={this.imageButton as any}
+              onClick={() => {
+                this.imageInput.current?.click();
+              }}
+            />
+            <ImageLoader
+              ref={this.imageInput}
+              onImageLoaded={(image) => {
+                this.props.onInsertEmbed({ type: "block-image", embed: image });
+              }}
+            />
+            <button
+              className="ql-image-gif ql-image"
+              ref={this.gifButton}
+              onClick={(e) => {
+                this.props.preventUpdate(true);
+                e.stopPropagation();
+                this.setState({ tenorOpen: true });
+              }}
+            >
+              <GifImage key="gif_image" />
+            </button>
+            <button
+              className="ql-tweet"
+              ref={this.tweetInput}
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a tweet url");
+                if (url) {
+                  this.props.onInsertEmbed({ type: "tweet", embed: url });
+                }
+              }}
+            />
+            <TenorKeyboard
+              isOpen={this.state.tenorOpen}
+              target={this.gifButton}
+              onClose={(result: any) => {
+                this.props.preventUpdate(false);
+                if (result) {
+                  this.props.onInsertEmbed({
+                    type: "block-image",
+                    embed: result.media[0].gif.url,
+                  });
+                }
+                this.setState({ tenorOpen: false });
+              }}
+            />
+          </div>
         </div>
-      </div>
-      <style jsx>{`
-        .tooltip {
-          position: absolute;
-          z-index: 5;
-          height: 25px;
-          padding: 0 5px;
-          display: block;
-          transform: translateY(-5px);
-        }
-        .tooltip.hidden {
-          display: none;
-        }
-      `}</style>
-    </>
-  );
-});
+        <style jsx>{`
+          .tooltip {
+            position: absolute;
+            z-index: 5;
+            height: 25px;
+            padding: 0 5px;
+            display: block;
+            transform: translateY(-5px);
+          }
+          .tooltip.hidden {
+            display: none;
+          }
+        `}</style>
+      </>
+    );
+  }
+}
 
 const ImageLoader = forwardRef<
   HTMLInputElement,
