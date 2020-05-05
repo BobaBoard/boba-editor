@@ -27,8 +27,7 @@ const loggingVerbose = require("debug")("bobapost:editor:verbose");
 // And so we wait...)
 // Also follow: https://github.com/zeit/next.js/issues/11196
 //import type Quill from "quill";
-import Quill from "./quill";
-import Delta from "quill-delta";
+import Quill from "quill";
 
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
@@ -53,7 +52,7 @@ class Editor extends Component<Props> {
     loaded: false,
   };
 
-  editor: Quill = null;
+  editor: Quill = null as any;
   editorContainer = createRef<HTMLDivElement>();
   tooltip = createRef<HTMLDivElement>();
   toolbarContainer = createRef<HTMLDivElement>();
@@ -66,7 +65,7 @@ class Editor extends Component<Props> {
     type: "text-change" | "selection-change" | "editor-change";
     handler: any;
   }> = [];
-  removeLineBreaksHandler = null;
+  removeLineBreaksHandler = null as any;
 
   // Adds handler that checks how many characters have been typed
   // and updates parents when editor is empty.
@@ -110,7 +109,7 @@ class Editor extends Component<Props> {
   addEmptyLineTooltipHandler() {
     const newLineHandler = this.editor.on(
       "editor-change",
-      (eventName, ...args) => {
+      (eventName: string, ...args: any) => {
         if (eventName === "selection-change") {
           if (!this.props.editable) {
             return;
@@ -139,14 +138,14 @@ class Editor extends Component<Props> {
   }
 
   addRemoveLinebreaksOnPasteHandler() {
-    this.removeLineBreaksHandler = this.editorContainer.current.addEventListener(
+    this.removeLineBreaksHandler = this.editorContainer.current?.addEventListener(
       "paste",
-      removeLineBreaksFromPaste,
+      removeLineBreaksFromPaste as any,
       true
     );
   }
 
-  maybeShowEmptyLineTooltip(bounds) {
+  maybeShowEmptyLineTooltip(bounds: { top: number; right: number } | null) {
     if (this.tooltip?.current == null || this.skipTooltipUpdates) {
       return;
     }
@@ -161,7 +160,7 @@ class Editor extends Component<Props> {
     this.tooltip.current.style.right = bounds.right + "px";
   }
 
-  shouldComponentUpdate(newProps, newState) {
+  shouldComponentUpdate(newProps: Props, newState: any) {
     loggingVerbose("Should I update?");
     let update = false;
     update = update || newProps.editable != this.props.editable;
@@ -172,7 +171,7 @@ class Editor extends Component<Props> {
     return update;
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     this.editor.enable(this.props.editable);
     if (!this.props.editable) {
       this.setState({ showTooltip: false });
@@ -218,7 +217,10 @@ class Editor extends Component<Props> {
       withNoLinebreakHandler(quillConfig.modules.keyboard);
     }
 
-    this.editor = new QuillModule(this.editorContainer.current, quillConfig);
+    this.editor = new QuillModule(
+      this.editorContainer.current as any,
+      quillConfig
+    );
 
     // Add handlers
     this.addCharactersTypedHandler();
@@ -257,7 +259,7 @@ class Editor extends Component<Props> {
     });
 
     if (this.removeLineBreaksHandler) {
-      this.editorContainer.current.removeEventListener(
+      this.editorContainer.current?.removeEventListener(
         "paste",
         this.removeLineBreaksHandler
       );
@@ -401,11 +403,11 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
 interface Props {
   editable: boolean;
   focus: boolean;
-  initialText: Delta;
+  initialText: any;
   // Note: this prop cannot be changed after initialization.
   singleLine?: boolean;
   showTooltip?: boolean;
-  onTextChange: (_: Delta) => void;
+  onTextChange: (_: any) => void;
   onIsEmptyChange?: (empty: boolean) => void;
   onCharactersChange?: (_: number) => void;
   onSubmit: () => void;

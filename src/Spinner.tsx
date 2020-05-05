@@ -2,7 +2,10 @@ import React from "react";
 
 let color = "#ff5252";
 
-const Spinner: React.FC<{ width: number; margin: number }> = (props) => {
+const Spinner: React.FC<{
+  width?: number;
+  margin?: number;
+}> = (props) => {
   let width = props.width || 40;
   let margin = props.margin || width / 10;
   return (

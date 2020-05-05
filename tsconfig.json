@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "build/lib",
+    "outDir": "dist/",
     "module": "commonjs",
     "target": "es5",
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
@@ -22,7 +22,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "types": ["react", "react-dom", "styled-jsx"]
+    "types": ["react", "react-dom", "styled-jsx", "node"]
   },
   "include": ["/**/*"],
   "exclude": ["node_modules", "build", "scripts"]

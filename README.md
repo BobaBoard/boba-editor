@@ -8,12 +8,12 @@ An advanced text editor based on [QuillJS](https://quilljs.com/), vaguely inspir
 
 ## Try on Storybook
 
-`npm run storybook`
+`yarn run storybook`
 
 ## How to Use
 
 ```
-import Editor from "BobaEditor";
+import { Editor } from "BobaEditor";
 
 <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor

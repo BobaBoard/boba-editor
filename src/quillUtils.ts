@@ -12,7 +12,8 @@ export const detectNewLine = (editor: Quill): BoundsStatic | null => {
   if (!editor.getSelection()) {
     return null;
   }
-  const [line, unused] = editor.getLine((editor.getSelection() as any).index);
+  // @ts-ignore
+  const [line, _unused] = editor.getLine((editor.getSelection() as any).index);
 
   if (line.cache && line.cache.length === 1) {
     const bounds = editor.getBounds((editor.getSelection() as any).index);

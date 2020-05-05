@@ -5,13 +5,15 @@ import React, {
   useEffect,
   MutableRefObject as MRO,
 } from "react";
-import TenorKeyboard from "./TenorKeyboard";
+const TenorKeyboard = require("./TenorKeyboard").default;
 import classNames from "classnames";
+
+console.log(TenorKeyboard);
 
 // @ts-ignore
 import GifImage from "./img/gif.svg";
 
-import Quill from "./quill";
+import Quill from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
@@ -21,7 +23,7 @@ const Tooltip = forwardRef<
   HTMLDivElement,
   {
     show: boolean;
-    onInsertEmbed: ({ type: string, embed: any }) => void;
+    onInsertEmbed: ({}: { type: string; embed: any }) => void;
     preventUpdate: (shouldPrevent: boolean) => void;
   }
 >((props, ref) => {
@@ -85,7 +87,7 @@ const Tooltip = forwardRef<
           <TenorKeyboard
             isOpen={tenorOpen}
             target={gifButton}
-            onClose={(result) => {
+            onClose={(result: any) => {
               props.preventUpdate(false);
               if (result) {
                 props.onInsertEmbed({
