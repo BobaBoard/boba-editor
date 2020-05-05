@@ -25,5 +25,5 @@
     "types": ["react", "react-dom", "styled-jsx", "node"]
   },
   "include": ["/**/*"],
-  "exclude": ["node_modules", "build", "scripts"]
+  "exclude": ["node_modules", "build", "scripts", "dist"]
 }

@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   // Currently we need to add '.ts' to the resolve.extensions array.
   resolve: {
@@ -6,14 +8,29 @@ module.exports = {
   target: "node",
 
   output: {
-    library: ["BobaEditor"],
-    //libraryExport: ["index"],
+    path: path.join(__dirname, "dist"),
+    filename: "[name].js",
+    library: "boba-editor",
     libraryTarget: "umd",
   },
+  entry: path.join(__dirname, "src", "index.ts"),
   optimization: {
     minimize: false,
   },
-
+  externals: {
+    react: {
+      root: "React",
+      commonjs2: "react",
+      commonjs: "react",
+      amd: "react",
+    },
+    "react-dom": {
+      root: "ReactDOM",
+      commonjs2: "react-dom",
+      commonjs: "react-dom",
+      amd: "react-dom",
+    },
+  },
   // Source maps support ('inline-source-map' also works)
   devtool: "source-map",
 

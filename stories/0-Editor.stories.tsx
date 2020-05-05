@@ -1,6 +1,6 @@
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
-import { Editor } from "../src";
+import Editor from "../src";
 
 export default {
   title: "Editor Preview",

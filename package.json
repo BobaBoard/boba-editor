@@ -1,17 +1,19 @@
 {
   "name": "boba-editor",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "An advanced text editor based on QuillJS, vaguely inspired by Tumblr's. Created for BobaBoard.",
   "main": "dist/main.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.export.json --emitDeclarationOnly && ./node_modules/.bin/webpack --mode production",
+    "build:dev": "rm -rf dist && tsc -p tsconfig.export.json --emitDeclarationOnly && ./node_modules/.bin/webpack --mode development",
     "build:force-dev": "rm -rf dist && ./node_modules/.bin/webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "visual-testing": "./node_modules/.bin/backstop test",
-    "approve-visuals": "./node_modules/.bin/backstop approve"
+    "visual-testing": "backstop test",
+    "approve-visuals": "backstop approve"
   },
   "repository": {
     "type": "git",
@@ -29,8 +31,6 @@
     "parchment": "^1.1.4",
     "quill": "^1.3.7",
     "quill-magic-url": "^1.0.3",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "react-tenor": "^2.1.1",
     "styled-components": "^5.1.0",
     "styled-jsx": "^3.2.5"
@@ -40,6 +40,8 @@
     "@babel/core": "^7.9.6",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
     "@storybook/addon-actions": "^5.3.18",
     "@storybook/addon-info": "^5.3.18",
@@ -56,7 +58,6 @@
     "@types/styled-jsx": "^2.2.8",
     "babel-loader": "^8.1.0",
     "babel-plugin-inline-react-svg": "^1.1.1",
-    "babel-preset-react-app": "^9.1.2",
     "backstopjs": "^5.0.1",
     "cross-env": "^7.0.2",
     "css-loader": "^3.5.3",
@@ -71,5 +72,9 @@
   "peerDependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
-  }
+  },
+  "keywords": [
+    "editor",
+    "quilljs"
+  ]
 }

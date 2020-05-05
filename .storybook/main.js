@@ -13,7 +13,11 @@ module.exports = {
         {
           loader: require.resolve("babel-loader"),
           options: {
-            presets: [["react-app", { flow: false, typescript: true }]],
+            presets: [
+              "@babel/preset-env",
+              "@babel/preset-react",
+              "@babel/preset-typescript",
+            ],
           },
         },
         {
