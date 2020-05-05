@@ -1,5 +1,5 @@
 {
-  "name": "bobaboard-ui",
+  "name": "boba-editor",
   "version": "1.0.0",
   "description": "BobaBoard's UI components",
   "main": "dist/main.js",
@@ -37,6 +37,7 @@
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@babel/preset-typescript": "^7.9.0",
     "@storybook/addon-actions": "^5.3.18",
@@ -57,6 +58,7 @@
     "babel-preset-react-app": "^9.1.2",
     "backstopjs": "^5.0.1",
     "cross-env": "^7.0.2",
+    "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
     "jest": "^25.5.4",
     "react-docgen-typescript-loader": "^3.7.2",
