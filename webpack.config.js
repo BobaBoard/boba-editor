@@ -6,7 +6,7 @@ module.exports = {
   target: "node",
 
   output: {
-    library: ["BobaBoardUi"],
+    library: ["BobaEditor"],
     //libraryExport: ["index"],
     libraryTarget: "umd",
   },
