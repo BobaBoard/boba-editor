@@ -60,7 +60,7 @@
     "babel-plugin-inline-react-svg": "^1.1.1",
     "backstopjs": "^5.0.1",
     "cross-env": "^7.0.2",
-    "css-loader": "^3.5.3",
+    "mini-css-extract-plugin": "^0.9.0",
     "file-loader": "^6.0.0",
     "jest": "^25.5.4",
     "react-docgen-typescript-loader": "^3.7.2",

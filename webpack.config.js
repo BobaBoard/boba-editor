@@ -1,4 +1,5 @@
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   // Currently we need to add '.ts' to the resolve.extensions array.
@@ -6,6 +7,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   target: "node",
+  plugins: [new MiniCssExtractPlugin()],
 
   output: {
     path: path.join(__dirname, "dist"),
@@ -44,7 +46,7 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
   },
