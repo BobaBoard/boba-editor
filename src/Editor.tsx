@@ -276,7 +276,12 @@ class Editor extends Component<Props> {
   render() {
     return (
       <>
-        <div className={classNames("editor", { loaded: this.state.loaded })}>
+        <div
+          className={classNames("editor", {
+            loaded: this.state.loaded,
+            "view-only": !this.props.editable,
+          })}
+        >
           <div className="spinner">
             <Spinner />
           </div>
@@ -297,12 +302,8 @@ class Editor extends Component<Props> {
               this.skipTooltipUpdates = shouldPrevent;
             }}
           />
-          <div
-            className={classNames("editor-quill", {
-              "view-only": !this.props.editable,
-            })}
-            ref={this.editorContainer}
-          ></div>
+          {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
+          <div className="editor-quill" ref={this.editorContainer}></div>
         </div>
 
         <style jsx>{`
@@ -326,7 +327,7 @@ class Editor extends Component<Props> {
           .spinner {
             text-align: center;
           }
-          .editor-quill.view-only :global(.ql-editor) > :global(*) {
+          .editor.view-only .editor-quill :global(.ql-editor) > :global(*) {
             cursor: auto !important;
           }
           .editor :global(.ql-editor) {
