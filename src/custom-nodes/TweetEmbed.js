@@ -46,7 +46,6 @@ class TweetEmbed extends BlockEmbed {
         node.classList.add("error");
         node.innerHTML = "This tweet.... it dead.";
       }
-      console.log("setting timeout for tweet load");
       setTimeout(
         () => TweetEmbed.loadTweet(id, node, attemptsRemaining - 1),
         50

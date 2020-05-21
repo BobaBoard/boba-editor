@@ -53,7 +53,6 @@ const TenorKeyboard = (props) => {
               };
               return;
             } else {
-              console.log("try again");
               if (tries > 0) {
                 setTimeout(maybeFocus, 50);
               }

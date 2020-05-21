@@ -165,10 +165,13 @@ class Editor extends Component<Props> {
   }
 
   shouldComponentUpdate(newProps: Props, newState: any) {
+    loggingVerbose("New State:");
+    loggingVerbose(newState);
     loggingVerbose("Should I update?");
     let update = false;
     update = update || newProps.editable != this.props.editable;
     update = update || newState.showTooltip != this.state.showTooltip;
+    update = update || newState.tooltipPostion != this.state.tooltipPostion;
     update = update || newState.loaded != this.state.loaded;
     update = update || newProps.focus != this.props.focus;
     loggingVerbose(update ? "...yes." : "...no.");
@@ -234,7 +237,7 @@ class Editor extends Component<Props> {
 
     // Set initial state
     this.editor.enable(this.props.editable);
-    console.log(this.props.initialText);
+    loggingVerbose(this.props.initialText);
     if (this.props.initialText) {
       this.editor.setContents(this.props.initialText);
     }
