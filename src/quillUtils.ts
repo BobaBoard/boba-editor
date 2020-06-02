@@ -1,4 +1,4 @@
-import Quill, { BoundsStatic } from "quill";
+import Quill, { BoundsStatic, DeltaOperation } from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
@@ -66,4 +66,35 @@ export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
   pasteEvent.preventDefault();
 
   return true;
+};
+
+const imageNodeNames = ["image", "block-image"];
+export const getAllImages = (delta: DeltaOperation[]) => {
+  const images: string[] = [];
+  delta.forEach((deltaOp) => {
+    imageNodeNames.forEach((imageNode) => {
+      if (deltaOp.insert && deltaOp.insert[imageNode]) {
+        images.push(deltaOp.insert[imageNode]);
+      }
+    });
+  });
+  return images;
+};
+
+export const replaceImages = (
+  delta: DeltaOperation[],
+  replacements: { [key: string]: string }
+) => {
+  delta.forEach((deltaOp) => {
+    imageNodeNames.forEach((imageNode) => {
+      if (
+        deltaOp.insert &&
+        deltaOp.insert[imageNode] &&
+        replacements[deltaOp.insert[imageNode]]
+      ) {
+        deltaOp.insert[imageNode] = replacements[deltaOp.insert[imageNode]];
+      }
+    });
+  });
+  console.log(delta);
 };

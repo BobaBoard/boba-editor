@@ -228,6 +228,7 @@ class Editor extends Component<Props> {
       this.editorContainer.current as any,
       quillConfig
     );
+    this.props.onEditorCreated?.(this.editor);
 
     // Add handlers
     this.addCharactersTypedHandler();
@@ -420,6 +421,7 @@ interface Props {
   onIsEmptyChange?: (empty: boolean) => void;
   onCharactersChange?: (_: number) => void;
   onSubmit: () => void;
+  onEditorCreated?: (editor: Quill) => void;
 }
 
 export default Editor;
