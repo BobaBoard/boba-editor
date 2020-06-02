@@ -56,14 +56,13 @@ export const EditorState = () => {
           }}
         />
       </div>
-      <a
-        href="#"
-        onClick={() => {
+      <input
+        type="button"
+        onClick={(e) => {
           setEnabled(!enabled);
         }}
-      >
-        Change state
-      </a>
+        value={`toggle enabled (${enabled ? "enabled" : "disabled"})`}
+      />
     </div>
   );
 };
