@@ -4,6 +4,8 @@ import classNames from "classnames";
 
 // @ts-ignore
 import GifImage from "./img/gif.svg";
+// @ts-ignore
+import YouTubeIcon from "./img/yt_icon.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -24,11 +26,16 @@ class Tooltip extends Component<{
 
   imageButton = React.createRef<HTMLButtonElement>();
   tweetInput = React.createRef<HTMLButtonElement>();
+  youtubeInput = React.createRef<HTMLButtonElement>();
   gifButton = React.createRef<HTMLButtonElement>();
   imageInput = React.createRef<HTMLInputElement>();
 
   componentDidMount() {
-    if (!this.imageButton.current || !this.tweetInput.current) {
+    if (
+      !this.imageButton.current ||
+      !this.tweetInput.current ||
+      !this.youtubeInput.current
+    ) {
       return;
     }
     this.imageButton.current.innerHTML = QuillModule.import("ui/icons")[
@@ -85,6 +92,22 @@ class Tooltip extends Component<{
                 }
               }}
             />
+            <button
+              className="ql-youtube"
+              ref={this.youtubeInput}
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a YouTube url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "youtube-video",
+                    embed: url,
+                  });
+                }
+              }}
+            >
+              <YouTubeIcon key="youtube_icon" />
+            </button>
             <TenorKeyboard
               isOpen={this.state.tenorOpen}
               target={this.gifButton}

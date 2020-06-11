@@ -14,8 +14,7 @@ import "react-tenor/dist/styles.css";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
-
-// logging.enabled = true;
+logging.enabled = true;
 // loggingVerbose.enabled = true;
 
 // Only import Quill if there is a "window".
@@ -39,6 +38,9 @@ if (typeof window !== "undefined") {
   // Add New Quill Types
   const TweetEmbed = require("./custom-nodes/TweetEmbed");
   QuillModule.register("formats/tweet", TweetEmbed.default);
+
+  const YouTubeEmbed = require("./custom-nodes/YouTubeEmbed");
+  QuillModule.register("formats/youtube", YouTubeEmbed.default);
 
   const BlockImage = require("./custom-nodes/BlockImage");
   QuillModule.register(BlockImage.default);
@@ -135,6 +137,11 @@ class Editor extends Component<Props> {
       this.maybeShowEmptyLineTooltip(bounds);
     });
     QuillModule.import("formats/tweet").setOnLoadCallback(() => {
+      this.skipTooltipUpdates = false;
+      const bounds = detectNewLine(this.editor);
+      this.maybeShowEmptyLineTooltip(bounds);
+    });
+    QuillModule.import("formats/youtube").setOnLoadCallback(() => {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
       this.maybeShowEmptyLineTooltip(bounds);
@@ -254,6 +261,7 @@ class Editor extends Component<Props> {
       this.props.onCharactersChange(this.editor.getLength());
     this.setState({ loaded: true });
     if (logging.enabled) {
+      logging("Adding editor to global namespace.");
       // Save this editor for easy debug access.
       window["editor"] = this.editor;
     }
@@ -367,6 +375,11 @@ class Editor extends Component<Props> {
           :global(.ql-block-image) {
             text-align: center;
             margin: 10px 0;
+          }
+          :global(.ql-youtube-video) {
+            text-align: center;
+            margin: 10px 0;
+            background-color: gray;
           }
         `}</style>
       </>
