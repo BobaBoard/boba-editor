@@ -25,8 +25,11 @@ class YouTubeEmbed extends BlockEmbed {
       return;
     }
     let videoUrl;
+    // TODO: add timestamp and add youtu.be-style links
     if (url.href.startsWith("https://www.youtube.com/embed/")) {
       videoUrl = value;
+    } else if (url.href.startsWith("https://youtu.be/")) {
+      videoUrl = `https://www.youtube.com/embed/${url.pathname.substring(1)}`;
     } else {
       videoUrl = `https://www.youtube.com/embed/${url.searchParams.get("v")}`;
     }
