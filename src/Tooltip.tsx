@@ -6,6 +6,8 @@ import classNames from "classnames";
 import GifImage from "./img/gif.svg";
 // @ts-ignore
 import YouTubeIcon from "./img/yt_icon.svg";
+// @ts-ignore
+import TumblrIcon from "./img/tumblr_icon.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -26,6 +28,7 @@ class Tooltip extends Component<{
 
   imageButton = React.createRef<HTMLButtonElement>();
   tweetInput = React.createRef<HTMLButtonElement>();
+  tumblrInput = React.createRef<HTMLButtonElement>();
   youtubeInput = React.createRef<HTMLButtonElement>();
   gifButton = React.createRef<HTMLButtonElement>();
   imageInput = React.createRef<HTMLInputElement>();
@@ -93,6 +96,22 @@ class Tooltip extends Component<{
               }}
             />
             <button
+              className="ql-tumblr"
+              ref={this.tumblrInput}
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a tumblr url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "tumblr-embed",
+                    embed: url,
+                  });
+                }
+              }}
+            >
+              <TumblrIcon key="tumblr_icon" />
+            </button>
+            <button
               className="ql-youtube"
               ref={this.youtubeInput}
               onClick={() => {
@@ -135,6 +154,10 @@ class Tooltip extends Component<{
           }
           .tooltip.hidden {
             display: none;
+          }
+          :global(.ql-tumblr) {
+            padding: 4px 7px;
+            margin-top: 1px;
           }
         `}</style>
       </>

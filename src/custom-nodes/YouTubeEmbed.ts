@@ -64,7 +64,6 @@ class YouTubeEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
-    console.log(domNode.getElementsByTagName("iframe")[0]);
     return domNode.getElementsByTagName("iframe")[0].src;
   }
 

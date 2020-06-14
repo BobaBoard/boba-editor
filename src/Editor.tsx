@@ -39,6 +39,9 @@ if (typeof window !== "undefined") {
   const TweetEmbed = require("./custom-nodes/TweetEmbed");
   QuillModule.register("formats/tweet", TweetEmbed.default);
 
+  const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
+  QuillModule.register("formats/tumblr-embed", TumblrEmbed.default);
+
   const YouTubeEmbed = require("./custom-nodes/YouTubeEmbed");
   QuillModule.register("formats/youtube", YouTubeEmbed.default);
 
