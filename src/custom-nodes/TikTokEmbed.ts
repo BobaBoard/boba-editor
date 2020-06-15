@@ -7,15 +7,18 @@ const Icon = Quill.import("ui/icons");
 
 const ID_EXTRACT_REGEX = /data-video-id="([0-9]+)"/;
 const getTikTokEmbedId = (html: string) => {
-  const id = html.match(ID_EXTRACT_REGEX)[1];
-  return id;
+  const id = html.match(ID_EXTRACT_REGEX)?.[1];
+  return id || "";
 };
 
-const attachObserver = (domNode, tikTokNode) => {
+const attachObserver = (
+  domNode: HTMLDivElement,
+  tikTokNode: HTMLDivElement
+) => {
   let newObserver = new MutationObserver((mutations, observer) => {
     if (mutations[0]?.removedNodes[0]?.nodeName == "SECTION") {
       const loadingMessage = domNode.querySelector(".loading-message");
-      loadingMessage.parentNode.removeChild(loadingMessage);
+      loadingMessage?.parentNode?.removeChild(loadingMessage);
       domNode.classList.add("loaded");
       domNode.classList.remove("loading");
       observer.disconnect();

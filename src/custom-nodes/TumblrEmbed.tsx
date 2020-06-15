@@ -4,14 +4,15 @@ const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
-const attachObserver = (domNode, tumblrNode) => {
+const attachObserver = (domNode: HTMLDivElement) => {
   let newObserver = new MutationObserver((mutations, observer) => {
     if (mutations[0]?.addedNodes[0]?.nodeName == "IFRAME") {
       const loadingMessage = domNode.querySelector(".loading-message");
-      loadingMessage.parentNode.removeChild(loadingMessage);
+      loadingMessage?.parentNode?.removeChild(loadingMessage);
       domNode.classList.add("loaded");
       domNode.classList.remove("loading");
       observer.disconnect();
+      TumblrEmbed.onLoadCallback?.();
     }
   });
   newObserver.observe(domNode, {
@@ -36,7 +37,14 @@ class TumblrEmbed extends BlockEmbed {
     throw new Error("unimplemented");
   };
 
-  static loadPost(node, data) {
+  static loadPost(
+    node: HTMLDivElement,
+    data: {
+      href: string;
+      did: string;
+      url: string;
+    }
+  ) {
     let tumblrNode = document.createElement("div");
     tumblrNode.classList.add("tumblr-post");
     // Add this to the post for rendering, but
@@ -48,7 +56,7 @@ class TumblrEmbed extends BlockEmbed {
     node.dataset.did = data.did;
     node.dataset.url = data.url;
     node.appendChild(tumblrNode);
-    attachObserver(node, tumblrNode);
+    attachObserver(node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");
     fileref.setAttribute("async", "");
@@ -92,7 +100,6 @@ class TumblrEmbed extends BlockEmbed {
   }
 
   static setOnLoadCallback(callback: () => void) {
-    // TODO: implement this
     TumblrEmbed.onLoadCallback = callback;
   }
 

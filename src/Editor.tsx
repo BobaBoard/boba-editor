@@ -152,6 +152,16 @@ class Editor extends Component<Props> {
       const bounds = detectNewLine(this.editor);
       this.maybeShowEmptyLineTooltip(bounds);
     });
+    QuillModule.import("formats/tiktok-embed").setOnLoadCallback(() => {
+      this.skipTooltipUpdates = false;
+      const bounds = detectNewLine(this.editor);
+      this.maybeShowEmptyLineTooltip(bounds);
+    });
+    QuillModule.import("formats/tumblr-embed").setOnLoadCallback(() => {
+      this.skipTooltipUpdates = false;
+      const bounds = detectNewLine(this.editor);
+      this.maybeShowEmptyLineTooltip(bounds);
+    });
   }
 
   addRemoveLinebreaksOnPasteHandler() {
