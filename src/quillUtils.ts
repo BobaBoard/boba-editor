@@ -96,5 +96,4 @@ export const replaceImages = (
       }
     });
   });
-  console.log(delta);
 };

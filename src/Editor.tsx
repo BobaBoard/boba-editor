@@ -14,7 +14,7 @@ import "react-tenor/dist/styles.css";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
-logging.enabled = true;
+// logging.enabled = true;
 // loggingVerbose.enabled = true;
 
 // Only import Quill if there is a "window".
@@ -44,6 +44,9 @@ if (typeof window !== "undefined") {
 
   const YouTubeEmbed = require("./custom-nodes/YouTubeEmbed");
   QuillModule.register("formats/youtube", YouTubeEmbed.default);
+
+  const TikTokEmbed = require("./custom-nodes/TikTokEmbed");
+  QuillModule.register("formats/tiktok-embed", TikTokEmbed.default);
 
   const BlockImage = require("./custom-nodes/BlockImage");
   QuillModule.register(BlockImage.default);
@@ -383,6 +386,28 @@ class Editor extends Component<Props> {
             text-align: center;
             margin: 10px 0;
             background-color: gray;
+          }
+          :global(.ql-tiktok-embed.loading) {
+            background-color: aquamarine;
+            padding: 30px;
+            text-align: center;
+            color: white;
+          }
+          :global(.ql-tiktok-embed.loading) :global(blockquote) {
+            display: none;
+          }
+          :global(.tiktok-video) {
+            white-space: normal;
+          }
+          :global(.tiktok-video) :global(blockquote) {
+            border-left: 0 !important;
+            padding: 0 !important;
+          }
+          :global(.ql-tumblr-embed.loading) {
+            background-color: #34526f;
+            padding: 30px;
+            text-align: center;
+            color: white;
           }
         `}</style>
       </>

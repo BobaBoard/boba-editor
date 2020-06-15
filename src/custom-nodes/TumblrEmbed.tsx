@@ -4,6 +4,22 @@ const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
+const attachObserver = (domNode, tumblrNode) => {
+  let newObserver = new MutationObserver((mutations, observer) => {
+    if (mutations[0]?.addedNodes[0]?.nodeName == "IFRAME") {
+      const loadingMessage = domNode.querySelector(".loading-message");
+      loadingMessage.parentNode.removeChild(loadingMessage);
+      domNode.classList.add("loaded");
+      domNode.classList.remove("loading");
+      observer.disconnect();
+    }
+  });
+  newObserver.observe(domNode, {
+    subtree: true,
+    childList: true,
+  });
+};
+
 /**
  * TumblrEmbed represents a tumblr post embedded into the editor.
  */
@@ -31,12 +47,8 @@ class TumblrEmbed extends BlockEmbed {
     node.dataset.href = data.href;
     node.dataset.did = data.did;
     node.dataset.url = data.url;
-    let a = document.createElement("a");
-    a.href = data.url;
-    a.innerText = data.url;
-    tumblrNode.appendChild(a);
-    node.innerHTML = "";
     node.appendChild(tumblrNode);
+    attachObserver(node, tumblrNode);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");
     fileref.setAttribute("async", "");
@@ -44,17 +56,11 @@ class TumblrEmbed extends BlockEmbed {
     document.body.appendChild(fileref);
   }
 
-  static renderFromUrl(url: string) {
-    let node = super.create();
+  static renderFromUrl(node: HTMLDivElement, url: string) {
     if (!url) {
       // TODO: make a decent error here
       return;
     }
-
-    node.contentEditable = false;
-    node.dataset.rendered = false;
-    node.classList.add("tumblr", "loading");
-    node.innerHTML = "Fetching female-presenting nipples...";
 
     TumblrEmbed.getTumblrEmbedFromUrl(url)
       .then((data) => {
@@ -68,10 +74,19 @@ class TumblrEmbed extends BlockEmbed {
   }
 
   static create(value: string) {
-    if (typeof value == "string") {
-      return TumblrEmbed.renderFromUrl(this.sanitize(value));
-    }
     let node = super.create();
+
+    node.contentEditable = false;
+    node.dataset.rendered = false;
+    node.classList.add("tumblr", "loading");
+    const loadingMessage = document.createElement("p");
+    loadingMessage.innerHTML = "Loading female-presenting nipples...";
+    loadingMessage.classList.add("loading-message");
+    node.appendChild(loadingMessage);
+
+    if (typeof value == "string") {
+      return TumblrEmbed.renderFromUrl(node, this.sanitize(value));
+    }
     TumblrEmbed.loadPost(node, value);
     return node;
   }

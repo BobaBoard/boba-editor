@@ -69,3 +69,29 @@ export const TumblrStory = () => (
 TumblrStory.story = {
   name: "tumblr",
 };
+
+export const TikTokStory = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"It\'s TikTok time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tiktok-embed":{"id":"6718335390845095173","url":"https://www.tiktok.com/@scout2015/video/6718335390845095173"}}},{"insert":"\\n"}]'
+      )}
+      onTextChange={() => {
+        console.log("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        console.log("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        console.log("submit!");
+      }}
+    />
+  </div>
+);
+
+TikTokStory.story = {
+  name: "tiktok",
+};

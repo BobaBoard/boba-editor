@@ -8,6 +8,8 @@ import GifImage from "./img/gif.svg";
 import YouTubeIcon from "./img/yt_icon.svg";
 // @ts-ignore
 import TumblrIcon from "./img/tumblr_icon.svg";
+// @ts-ignore
+import TiktokIcon from "./img/tiktok.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -29,6 +31,7 @@ class Tooltip extends Component<{
   imageButton = React.createRef<HTMLButtonElement>();
   tweetInput = React.createRef<HTMLButtonElement>();
   tumblrInput = React.createRef<HTMLButtonElement>();
+  tiktokInput = React.createRef<HTMLButtonElement>();
   youtubeInput = React.createRef<HTMLButtonElement>();
   gifButton = React.createRef<HTMLButtonElement>();
   imageInput = React.createRef<HTMLInputElement>();
@@ -110,6 +113,22 @@ class Tooltip extends Component<{
               }}
             >
               <TumblrIcon key="tumblr_icon" />
+            </button>
+            <button
+              className="ql-tiktok"
+              ref={this.tiktokInput}
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a TikTok url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "tiktok-embed",
+                    embed: url,
+                  });
+                }
+              }}
+            >
+              <TiktokIcon key="tiktok_icon" />
             </button>
             <button
               className="ql-youtube"
