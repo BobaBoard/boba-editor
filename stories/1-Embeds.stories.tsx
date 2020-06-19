@@ -22,6 +22,32 @@ setTumblrEmbedFetcher((url: string) => {
   });
 });
 
+export const TwitterEmbed = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":"https://twitter.com/BobaBoard/status/1263913643650908160"}},{"insert":"\\n"}]}'
+      )}
+      onTextChange={() => {
+        console.log("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        console.log("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        console.log("submit!");
+      }}
+    />
+  </div>
+);
+
+TwitterEmbed.story = {
+  name: "twitter",
+};
+
 export const EmbedStories = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor
