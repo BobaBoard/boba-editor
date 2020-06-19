@@ -7,12 +7,22 @@ const Icon = Quill.import("ui/icons");
 const attachObserver = (domNode: HTMLDivElement) => {
   let newObserver = new MutationObserver((mutations, observer) => {
     if (mutations[0]?.addedNodes[0]?.nodeName == "IFRAME") {
-      const loadingMessage = domNode.querySelector(".loading-message");
-      loadingMessage?.parentNode?.removeChild(loadingMessage);
-      domNode.classList.add("loaded");
-      domNode.classList.remove("loading");
+      const tumblrFrame = mutations[0]?.addedNodes[0] as HTMLIFrameElement;
+      const currentHeight = tumblrFrame.getBoundingClientRect().height;
+      console.log(currentHeight);
       observer.disconnect();
-      TumblrEmbed.onLoadCallback?.();
+      const checkNewHeight = () => {
+        if (tumblrFrame.getBoundingClientRect().height != currentHeight) {
+          const loadingMessage = domNode.querySelector(".loading-message");
+          loadingMessage?.parentNode?.removeChild(loadingMessage);
+          domNode.classList.add("loaded");
+          domNode.classList.remove("loading");
+          TumblrEmbed.onLoadCallback?.();
+          return;
+        }
+        setTimeout(checkNewHeight, 100);
+      };
+      setTimeout(checkNewHeight, 100);
     }
   });
   newObserver.observe(domNode, {
@@ -45,7 +55,7 @@ class TumblrEmbed extends BlockEmbed {
       url: string;
     }
   ) {
-    let tumblrNode = document.createElement("div");
+    const tumblrNode = document.createElement("div");
     tumblrNode.classList.add("tumblr-post");
     // Add this to the post for rendering, but
     // also to the node for value retrieval
@@ -55,7 +65,10 @@ class TumblrEmbed extends BlockEmbed {
     node.dataset.href = data.href;
     node.dataset.did = data.did;
     node.dataset.url = data.url;
-    node.appendChild(tumblrNode);
+    const tumblrNodeContainer = document.createElement("div");
+    tumblrNodeContainer.appendChild(tumblrNode);
+    tumblrNodeContainer.style.visibility = "hidden";
+    node.appendChild(tumblrNodeContainer);
     attachObserver(node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");

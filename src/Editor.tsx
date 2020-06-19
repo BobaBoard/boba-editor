@@ -14,7 +14,7 @@ import "react-tenor/dist/styles.css";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
-// logging.enabled = true;
+logging.enabled = true;
 // loggingVerbose.enabled = true;
 
 // Only import Quill if there is a "window".
@@ -418,6 +418,11 @@ class Editor extends Component<Props> {
             padding: 30px;
             text-align: center;
             color: white;
+            height: 80px;
+            overflow: hidden;
+          }
+          :global(.ql-tumblr-embed .loading-message) {
+            margin-bottom: 50px;
           }
         `}</style>
       </>
