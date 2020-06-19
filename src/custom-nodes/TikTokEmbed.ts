@@ -11,6 +11,8 @@ const getTikTokEmbedId = (html: string) => {
   return id || "";
 };
 
+const MAX_TRIES = 100;
+
 const attachObserver = (
   domNode: HTMLDivElement,
   tikTokNode: HTMLDivElement
@@ -19,10 +21,26 @@ const attachObserver = (
     if (mutations[0]?.removedNodes[0]?.nodeName == "SECTION") {
       const loadingMessage = domNode.querySelector(".loading-message");
       loadingMessage?.parentNode?.removeChild(loadingMessage);
-      domNode.classList.add("loaded");
-      domNode.classList.remove("loading");
+      const iframe = domNode.querySelector("iframe") as HTMLIFrameElement;
+      // Add an extra timeout so the size will have set
+      let tries = 0;
+      const checkNewHeight = () => {
+        if (iframe.getBoundingClientRect().height > 1) {
+          domNode.classList.add("loaded");
+          domNode.classList.remove("loading");
+          const embedSizes = iframe.getBoundingClientRect();
+          domNode.dataset.embedWidth = `${embedSizes.width}`;
+          domNode.dataset.embedHeight = `${embedSizes.height}`;
+          TikTokEmbed.onLoadCallback();
+          return;
+        }
+        tries++;
+        if (tries < MAX_TRIES) {
+          setTimeout(checkNewHeight, 100);
+        }
+      };
+      setTimeout(checkNewHeight, 100);
       observer.disconnect();
-      TikTokEmbed.onLoadCallback();
     }
   });
   newObserver.observe(tikTokNode, {
@@ -119,6 +137,8 @@ class TikTokEmbed extends BlockEmbed {
     return {
       id: domNode.dataset.id,
       url: domNode.dataset.url,
+      embedWidth: domNode.dataset.embedWidth,
+      embedHeight: domNode.dataset.embedHeight,
     };
   }
 

@@ -402,9 +402,11 @@ class Editor extends Component<Props> {
             padding: 30px;
             text-align: center;
             color: white;
+            height: 80px;
+            overflow: hidden;
           }
-          :global(.ql-tiktok-embed.loading) :global(blockquote) {
-            display: none;
+          :global(.ql-tiktok-embed.loading) :global(.loading-message) {
+            margin-bottom: 50px;
           }
           :global(.tiktok-video) {
             white-space: normal;
