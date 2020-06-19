@@ -14,7 +14,7 @@ import "react-tenor/dist/styles.css";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
-logging.enabled = true;
+// logging.enabled = true;
 // loggingVerbose.enabled = true;
 
 // Only import Quill if there is a "window".
@@ -136,32 +136,31 @@ class Editor extends Component<Props> {
       type: "editor-change" as const,
       handler: newLineHandler,
     });
+  }
 
-    QuillModule.import("formats/block-image").setOnLoadCallback(() => {
+  addEmbedsLoadedCallback() {
+    const embedsLoadedCallback = () => {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
       this.maybeShowEmptyLineTooltip(bounds);
-    });
-    QuillModule.import("formats/tweet").setOnLoadCallback(() => {
-      this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
-      this.maybeShowEmptyLineTooltip(bounds);
-    });
-    QuillModule.import("formats/youtube").setOnLoadCallback(() => {
-      this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
-      this.maybeShowEmptyLineTooltip(bounds);
-    });
-    QuillModule.import("formats/tiktok-embed").setOnLoadCallback(() => {
-      this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
-      this.maybeShowEmptyLineTooltip(bounds);
-    });
-    QuillModule.import("formats/tumblr-embed").setOnLoadCallback(() => {
-      this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
-      this.maybeShowEmptyLineTooltip(bounds);
-    });
+      if (this.props.editable) {
+        this.props.onTextChange(this.editor.getContents());
+      }
+    };
+
+    QuillModule.import("formats/block-image").setOnLoadCallback(
+      embedsLoadedCallback
+    );
+    QuillModule.import("formats/tweet").setOnLoadCallback(embedsLoadedCallback);
+    QuillModule.import("formats/youtube").setOnLoadCallback(
+      embedsLoadedCallback
+    );
+    QuillModule.import("formats/tiktok-embed").setOnLoadCallback(
+      embedsLoadedCallback
+    );
+    QuillModule.import("formats/tumblr-embed").setOnLoadCallback(
+      embedsLoadedCallback
+    );
   }
 
   addRemoveLinebreaksOnPasteHandler() {
@@ -275,6 +274,7 @@ class Editor extends Component<Props> {
       this.props.onIsEmptyChange(this.editor.getLength() == 1);
     this.props.onCharactersChange &&
       this.props.onCharactersChange(this.editor.getLength());
+    this.addEmbedsLoadedCallback();
     this.setState({ loaded: true });
     if (logging.enabled) {
       logging("Adding editor to global namespace.");

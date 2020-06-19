@@ -9,7 +9,6 @@ const attachObserver = (domNode: HTMLDivElement) => {
     if (mutations[0]?.addedNodes[0]?.nodeName == "IFRAME") {
       const tumblrFrame = mutations[0]?.addedNodes[0] as HTMLIFrameElement;
       const currentHeight = tumblrFrame.getBoundingClientRect().height;
-      console.log(currentHeight);
       observer.disconnect();
       const checkNewHeight = () => {
         if (tumblrFrame.getBoundingClientRect().height != currentHeight) {
@@ -17,7 +16,13 @@ const attachObserver = (domNode: HTMLDivElement) => {
           loadingMessage?.parentNode?.removeChild(loadingMessage);
           domNode.classList.add("loaded");
           domNode.classList.remove("loading");
-          TumblrEmbed.onLoadCallback?.();
+          // Add an extra timeout so the size will have set
+          setTimeout(() => {
+            const embedSizes = tumblrFrame.getBoundingClientRect();
+            domNode.dataset.embedWidth = `${embedSizes.width}`;
+            domNode.dataset.embedHeight = `${embedSizes.height}`;
+            TumblrEmbed.onLoadCallback?.();
+          }, 200);
           return;
         }
         setTimeout(checkNewHeight, 100);
@@ -121,6 +126,8 @@ class TumblrEmbed extends BlockEmbed {
       href: domNode.dataset.href,
       did: domNode.dataset.did,
       url: domNode.dataset.url,
+      embedWidth: domNode.dataset.embedWidth,
+      embedHeight: domNode.dataset.embedHeight,
     };
   }
 
