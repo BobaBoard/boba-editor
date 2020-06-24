@@ -4,6 +4,7 @@ const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
+import { addEmbedOverlay } from "./utils";
 /**
  * YouTubeEmbed represents a youtube video embedded into the editor.
  */
@@ -33,14 +34,6 @@ class YouTubeEmbed extends BlockEmbed {
     } else {
       videoUrl = `https://www.youtube.com/embed/${url.searchParams.get("v")}`;
     }
-    /*
-     * Be gay, do CSS crimes:
-     * https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed?fbclid=IwAR3CtIZZNP7Kx8ID-l1eoZAlIZ9eUxPRLmQ1yDsU7N0OAAotBAp4w7XHqps
-     */
-    node.style.position = "relative";
-    node.style.width = "100%";
-    node.style.height = "0";
-    node.style.paddingBottom = "56.25%";
     const embedFrame = document.createElement("iframe");
     embedFrame.setAttribute("src", this.sanitize(videoUrl));
     embedFrame.style.position = "absolute";
@@ -52,9 +45,25 @@ class YouTubeEmbed extends BlockEmbed {
     embedFrame.allow =
       "accelerometer; encrypted-media; gyroscope; picture-in-picture";
     embedFrame.allowFullscreen = true;
-    node.contentEditable = false;
-    node.classList.add("youtube-embed");
-    node.appendChild(embedFrame);
+
+    const root = addEmbedOverlay(embedFrame, {
+      onClose: () => {
+        YouTubeEmbed.onRemoveRequest?.(node);
+      },
+    });
+    /*
+     * Be gay, do CSS crimes:
+     * https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed?fbclid=IwAR3CtIZZNP7Kx8ID-l1eoZAlIZ9eUxPRLmQ1yDsU7N0OAAotBAp4w7XHqps
+     */
+    root.style.position = "relative";
+    root.style.width = "100%";
+    root.style.height = "0";
+    root.style.paddingBottom = "56.25%";
+
+    root.contentEditable = "false";
+    root.classList.add("youtube-embed");
+    node.appendChild(root);
+
     return node;
   }
 
@@ -64,7 +73,7 @@ class YouTubeEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
-    return domNode.getElementsByTagName("iframe")[0].src;
+    return domNode.querySelector("iframe")?.src;
   }
 
   static sanitize(url: string) {

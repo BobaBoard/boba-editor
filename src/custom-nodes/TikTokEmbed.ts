@@ -1,6 +1,8 @@
 import Quill from "quill";
 import axios from "axios";
 
+import { addEmbedOverlay } from "./utils";
+
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
@@ -82,7 +84,14 @@ class TikTokEmbed extends BlockEmbed {
         </blockquote>`;
     node.dataset.url = data.url;
     node.dataset.id = data.id;
-    node.appendChild(tikTokNode);
+    node.appendChild(
+      addEmbedOverlay(tikTokNode, {
+        onClose: () => {
+          TikTokEmbed.onRemoveRequest?.(node);
+        },
+      })
+    );
+
     attachObserver(node, tikTokNode);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");

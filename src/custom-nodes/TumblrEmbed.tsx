@@ -1,6 +1,7 @@
 import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
+import { addEmbedOverlay } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
@@ -73,7 +74,13 @@ class TumblrEmbed extends BlockEmbed {
     const tumblrNodeContainer = document.createElement("div");
     tumblrNodeContainer.appendChild(tumblrNode);
     tumblrNodeContainer.style.visibility = "hidden";
-    node.appendChild(tumblrNodeContainer);
+    node.appendChild(
+      addEmbedOverlay(tumblrNodeContainer, {
+        onClose: () => {
+          TumblrEmbed.onRemoveRequest?.(node);
+        },
+      })
+    );
     attachObserver(node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");

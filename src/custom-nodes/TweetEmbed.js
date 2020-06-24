@@ -3,6 +3,8 @@ import Quill from "quill";
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
+import { addEmbedOverlay } from "./utils";
+
 /**
  * TweetEmbed represents a tweet embedded into the editor.
  *
@@ -75,7 +77,13 @@ class TweetEmbed extends BlockEmbed {
     node.classList.add("tweet", "loading");
     node.innerHTML = "Preparing to chirp...";
     TweetEmbed.loadTweet(id, node);
-    return node;
+
+    let embedNode = addEmbedOverlay(node, {
+      onClose: () => {
+        TweetEmbed.onRemoveRequest?.(embedNode);
+      },
+    });
+    return embedNode;
   }
 
   static setOnLoadCallback(callback) {
