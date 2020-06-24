@@ -129,6 +129,7 @@ class Editor extends Component<Props> {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
       this.maybeShowEmptyLineTooltip(bounds);
+      console.log(bounds);
       if (this.props.editable) {
         this.props.onTextChange(this.editor.getContents());
       }

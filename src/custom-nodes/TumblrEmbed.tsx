@@ -111,7 +111,7 @@ class TumblrEmbed extends BlockEmbed {
 
     node.contentEditable = false;
     node.dataset.rendered = false;
-    node.classList.add("tumblr", "loading");
+    node.classList.add("ql-embed", "loading");
     const loadingMessage = document.createElement("p");
     loadingMessage.innerHTML = "Loading female-presenting nipples...";
     loadingMessage.classList.add("loading-message");

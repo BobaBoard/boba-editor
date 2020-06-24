@@ -19,16 +19,14 @@ class TweetEmbed extends BlockEmbed {
   };
 
   static loadTweet(id, node, attemptsRemaining = 5) {
-    // Allow twitter library to modify our contents
+    // @ts-ignore
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
       .then((el) => {
         node.classList.remove("loading");
         node.dataset.rendered = true;
         // Remove loading message
-        if (node.childNodes.length > 1) {
-          node.removeChild(node.childNodes[0]);
-        }
+        node.removeChild(node.querySelector(".loading-message"));
         if (!el) {
           node.classList.add("error");
           node.innerHTML = "This tweet.... it dead.";
@@ -42,10 +40,12 @@ class TweetEmbed extends BlockEmbed {
         }
       });
     // If the twitter library is not loaded yet, defer rendering
+    // @ts-ignore
     if (!window?.twttr?.widgets) {
       if (!attemptsRemaining) {
         node.classList.add("error");
         node.innerHTML = "This tweet.... it dead.";
+        return;
       }
       setTimeout(
         () => TweetEmbed.loadTweet(id, node, attemptsRemaining - 1),
@@ -57,7 +57,9 @@ class TweetEmbed extends BlockEmbed {
   static renderTweets() {
     // This method needs to be called for any non-quill environments
     // otherwise, tweets will not be rendered
-    var tweets = document.querySelectorAll("div.ql-tweet");
+    const tweets = document.querySelectorAll("div.ql-tweet") as NodeListOf<
+      HTMLDivElement
+    >;
     for (var i = 0; i < tweets.length; i++) {
       while (tweets[i].firstChild) {
         tweets[i].removeChild(tweets[i].firstChild);
@@ -68,21 +70,26 @@ class TweetEmbed extends BlockEmbed {
 
   static create(value) {
     let node = super.create();
+    console.log(value);
     let url = this.sanitize(value);
     let id = url.substr(url.lastIndexOf("/") + 1);
     node.dataset.url = url;
     node.contentEditable = false;
     node.dataset.id = id;
     node.dataset.rendered = false;
-    node.classList.add("tweet", "loading");
-    node.innerHTML = "Preparing to chirp...";
-    TweetEmbed.loadTweet(id, node);
+
+    const loadingMessage = document.createElement("p");
+    loadingMessage.innerHTML = "Preparing to chirp...";
+    loadingMessage.classList.add("loading-message");
 
     let embedNode = addEmbedOverlay(node, {
       onClose: () => {
         TweetEmbed.onRemoveRequest?.(embedNode);
       },
     });
+    embedNode.appendChild(loadingMessage);
+    embedNode.classList.add("ql-embed", "tweet", "loading");
+    TweetEmbed.loadTweet(id, embedNode);
     return embedNode;
   }
 
@@ -91,10 +98,11 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static value(domNode) {
-    return domNode.dataset.url;
+    return domNode.querySelector("div.ql-tweet").dataset.url;
   }
 
   static sanitize(url) {
+    console.log(url);
     if (url.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));
     }

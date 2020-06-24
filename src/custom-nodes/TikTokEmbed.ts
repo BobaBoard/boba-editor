@@ -125,7 +125,7 @@ class TikTokEmbed extends BlockEmbed {
 
     node.contentEditable = false;
     node.dataset.rendered = false;
-    node.classList.add("tiktok", "loading");
+    node.classList.add("ql-embed", "tiktok", "loading");
     const loadingMessage = document.createElement("p");
     loadingMessage.innerHTML = "Hello fellow kids, it's TikTok time™";
     loadingMessage.classList.add("loading-message");

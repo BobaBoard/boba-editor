@@ -1,3 +1,8 @@
+import React from "react";
+import ReactDOM from "react-dom";
+// @ts-ignore
+import GifImage from "../img/close.svg";
+
 export const addEmbedOverlay = (
   embedRoot: HTMLElement,
   callbacks: {
@@ -9,6 +14,7 @@ export const addEmbedOverlay = (
   const closeButton = document.createElement("div");
   closeButton.classList.add("close-button");
 
+  ReactDOM.render(React.createElement(GifImage, {}, null), closeButton);
   containerDiv.appendChild(embedRoot);
   containerDiv.appendChild(closeButton);
 

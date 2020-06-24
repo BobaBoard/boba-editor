@@ -14,7 +14,7 @@ export default (props: {}) => {
           color: white;
           margin: 10px 0;
         }
-        :global(.tweet.loading) {
+        :global(.tweet .loading-message) {
           width: 100%;
           height: 50px;
           background-color: gray;
@@ -22,6 +22,7 @@ export default (props: {}) => {
           text-align: center;
           line-height: 50px;
           color: white;
+          position: relative;
         }
         :global(.ql-block-image) {
           text-align: center;
@@ -40,7 +41,8 @@ export default (props: {}) => {
           height: 80px;
           overflow: hidden;
         }
-        :global(.ql-tiktok-embed.loading) :global(.loading-message) {
+        :global(.ql-tiktok-embed.loading .loading-message) {
+          position: relative;
           margin-bottom: 50px;
         }
         :global(.tiktok-video) {
@@ -59,22 +61,41 @@ export default (props: {}) => {
           overflow: hidden;
         }
         :global(.ql-tumblr-embed .loading-message) {
+          position: relative;
           margin-bottom: 50px;
         }
         :global(.embed-container) {
           position: relative;
         }
         :global(.close-button) {
-          width: 50px;
-          height: 50px;
-          background-color: red;
+          width: 35px;
+          height: 35px;
+          background-color: #444;
           position: absolute;
-          top: -25px;
-          right: -25px;
+          border: 3px solid #ccc;
+          top: 0;
+          right: 0;
+          transform: translate(50%, -50%);
           border-radius: 50%;
         }
-        :global(.close-button:hover) {
+        :global(.close-button svg) {
+          fill: #ccc;
+          top: 50%;
+          left: 50%;
+          display: block;
+          position: absolute;
+          transform: translate(-50%, -50%);
+        }
+        :global(.close-button:hover svg, .close-button:hover) {
+          fill: white;
+          border-color: white;
           cursor: pointer;
+        }
+        :global(.ql-embed.loading .close-button) {
+          display: none;
+        }
+        :global(.editor.view-only .close-button) {
+          display: none;
         }
       `}</style>
     </>

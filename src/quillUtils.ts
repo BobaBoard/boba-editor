@@ -110,7 +110,7 @@ export const importEmbedModule = (
   logging(`Importing module ${moduleName}`);
   const EmbedModule = require(`./custom-nodes/${moduleName}`).default;
 
-  QuillModule.register(`formats/${EmbedModule.blotName}`, EmbedModule);
+  QuillModule.register(`formats/${EmbedModule.blotName}`, EmbedModule, true);
 
   QuillModule.import(`formats/${EmbedModule.blotName}`).setOnLoadCallback(
     callbacks.onLoadCallback

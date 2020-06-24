@@ -117,7 +117,7 @@ export const ImageLoading = () => {
             setText(text);
             quillEditor.setContents(text);
             setLoading(false);
-          }, 1000);
+          }, 3000);
         }}
         value={`upload images`}
         disabled={loading}
@@ -127,5 +127,5 @@ export const ImageLoading = () => {
 };
 
 ImageLoading.story = {
-  name: "image loading",
+  name: "image upload",
 };
