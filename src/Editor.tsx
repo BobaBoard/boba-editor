@@ -146,11 +146,14 @@ class Editor extends Component<Props> {
       }
     };
 
+    // TODO: context not existing has probably something to do with
+    // nodes types missing
     require
+      //@ts-ignore
       .context("./custom-nodes/", true, /(Image|Embed)$/)
       .keys()
-      .map((path) => path.substring(2))
-      .forEach((moduleName) => {
+      .map((path: string) => path.substring(2))
+      .forEach((moduleName: string) => {
         importEmbedModule(moduleName, {
           onLoadCallback: embedsLoadedCallback,
           onRemoveRequestCallback: embedCloseCallback,
