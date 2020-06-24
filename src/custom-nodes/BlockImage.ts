@@ -25,7 +25,7 @@ class BlockImage extends BlockEmbed {
     node.appendChild(
       addEmbedOverlay(img, {
         onClose: () => {
-          BlockImage.onCloseCallback?.(node);
+          BlockImage.onRemoveRequest?.(node);
         },
       })
     );
