@@ -10,6 +10,8 @@ import YouTubeIcon from "./img/yt_icon.svg";
 import TumblrIcon from "./img/tumblr_icon.svg";
 // @ts-ignore
 import TiktokIcon from "./img/tiktok.svg";
+// @ts-ignore
+import TwitterIcon from "./img/twitter.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -97,7 +99,9 @@ class Tooltip extends Component<{
                   this.props.onInsertEmbed({ type: "tweet", embed: url });
                 }
               }}
-            />
+            >
+              <TwitterIcon key="twitter" />
+            </button>
             <button
               className="ql-tumblr"
               ref={this.tumblrInput}
