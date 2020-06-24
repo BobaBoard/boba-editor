@@ -426,6 +426,19 @@ class Editor extends Component<Props> {
           :global(.ql-tumblr-embed .loading-message) {
             margin-bottom: 50px;
           }
+          :global(.embed-container) {
+            position: relative;
+          }
+          :global(.close-button) {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            cursor: pointer;
+            position: absolute;
+            top: -25px;
+            right: -25px;
+            border-radius: 50%;
+          }
         `}</style>
       </>
     );

@@ -1,4 +1,5 @@
 import Quill from "quill";
+import { addEmbedOverlay } from "./utils";
 
 const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -21,7 +22,7 @@ class BlockImage extends BlockEmbed {
     img.setAttribute("src", this.sanitize(value));
     node.setAttribute("contenteditable", false);
     node.classList.add("ql-block-image");
-    node.appendChild(img);
+    node.appendChild(addEmbedOverlay(img));
     return node;
   }
 
