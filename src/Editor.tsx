@@ -139,6 +139,9 @@ class Editor extends Component<Props> {
       if (this.props.editable) {
         QuillModule.find(root, true)?.remove();
         this.props.onTextChange(this.editor.getContents());
+        this.skipTooltipUpdates = false;
+        const bounds = detectNewLine(this.editor);
+        this.maybeShowEmptyLineTooltip(bounds);
       }
     };
 
