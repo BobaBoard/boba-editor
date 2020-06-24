@@ -10,6 +10,8 @@ import YouTubeIcon from "./img/yt_icon.svg";
 import TumblrIcon from "./img/tumblr_icon.svg";
 // @ts-ignore
 import TiktokIcon from "./img/tiktok.svg";
+// @ts-ignore
+import TwitterIcon from "./img/twitter.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -28,27 +30,8 @@ class Tooltip extends Component<{
     tenorOpen: false,
   };
 
-  imageButton = React.createRef<HTMLButtonElement>();
-  tweetInput = React.createRef<HTMLButtonElement>();
-  tumblrInput = React.createRef<HTMLButtonElement>();
-  tiktokInput = React.createRef<HTMLButtonElement>();
-  youtubeInput = React.createRef<HTMLButtonElement>();
   gifButton = React.createRef<HTMLButtonElement>();
   imageInput = React.createRef<HTMLInputElement>();
-
-  componentDidMount() {
-    if (
-      !this.imageButton.current ||
-      !this.tweetInput.current ||
-      !this.youtubeInput.current
-    ) {
-      return;
-    }
-    this.imageButton.current.innerHTML = QuillModule.import("ui/icons")[
-      "image"
-    ];
-    this.tweetInput.current.innerHTML = QuillModule.import("ui/icons")["tweet"];
-  }
 
   render() {
     return (
@@ -65,9 +48,11 @@ class Tooltip extends Component<{
           >
             <button
               className="ql-image"
-              ref={this.imageButton as any}
               onClick={() => {
                 this.imageInput.current?.click();
+              }}
+              dangerouslySetInnerHTML={{
+                __html: QuillModule.import("ui/icons")["image"],
               }}
             />
             <ImageLoader
@@ -78,7 +63,6 @@ class Tooltip extends Component<{
             />
             <button
               className="ql-image-gif ql-image"
-              ref={this.gifButton}
               onClick={(e) => {
                 this.props.preventUpdate(true);
                 e.stopPropagation();
@@ -89,7 +73,6 @@ class Tooltip extends Component<{
             </button>
             <button
               className="ql-tweet"
-              ref={this.tweetInput}
               onClick={() => {
                 // TODO: make a prettier input
                 let url = prompt("Gimme a tweet url");
@@ -97,10 +80,11 @@ class Tooltip extends Component<{
                   this.props.onInsertEmbed({ type: "tweet", embed: url });
                 }
               }}
-            />
+            >
+              <TwitterIcon key="twitter" />
+            </button>
             <button
               className="ql-tumblr"
-              ref={this.tumblrInput}
               onClick={() => {
                 // TODO: make a prettier input
                 let url = prompt("Gimme a tumblr url");
@@ -116,7 +100,6 @@ class Tooltip extends Component<{
             </button>
             <button
               className="ql-tiktok"
-              ref={this.tiktokInput}
               onClick={() => {
                 // TODO: make a prettier input
                 let url = prompt("Gimme a TikTok url");
@@ -132,7 +115,6 @@ class Tooltip extends Component<{
             </button>
             <button
               className="ql-youtube"
-              ref={this.youtubeInput}
               onClick={() => {
                 // TODO: make a prettier input
                 let url = prompt("Gimme a YouTube url");

@@ -2,7 +2,8 @@ import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
-const Icon = Quill.import("ui/icons");
+
+import { addEmbedOverlay } from "./utils";
 
 /**
  * YouTubeEmbed represents a youtube video embedded into the editor.
@@ -11,11 +12,6 @@ class YouTubeEmbed extends BlockEmbed {
   static embedOptions = {
     align: "center",
   };
-
-  static icon() {
-    // TODO: maybe inlining this isn't the greatest idea, but it works.
-    return '<svg viewBox="0 0 275 275" xmlns="http://www.w3.org/2000/svg"><path d="M91.1 239c94.4 0 146-78 146-145.8 0-2.3 0-4.5-.2-6.7 10-7.2 18.7-16.2 25.6-26.5-9.4 4.1-19.3 6.8-29.5 8a51.5 51.5 0 0 0 22.6-28.3c-10 6-21 10.2-32.6 12.4A51.3 51.3 0 0 0 135.6 99C94.4 96.9 56 77.4 30 45.3a51.3 51.3 0 0 0 15.9 68.5 51 51 0 0 1-23.3-6.4v.6a51.3 51.3 0 0 0 41.1 50.3c-7.5 2-15.4 2.4-23.1.9a51.3 51.3 0 0 0 48 35.6 103 103 0 0 1-76 21.3c23.5 15 50.7 23 78.6 23" class="ql-fill" fill-rule="nonzero"/></svg>';
-  }
 
   static create(value: string) {
     let node = super.create();
@@ -33,14 +29,6 @@ class YouTubeEmbed extends BlockEmbed {
     } else {
       videoUrl = `https://www.youtube.com/embed/${url.searchParams.get("v")}`;
     }
-    /*
-     * Be gay, do CSS crimes:
-     * https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed?fbclid=IwAR3CtIZZNP7Kx8ID-l1eoZAlIZ9eUxPRLmQ1yDsU7N0OAAotBAp4w7XHqps
-     */
-    node.style.position = "relative";
-    node.style.width = "100%";
-    node.style.height = "0";
-    node.style.paddingBottom = "56.25%";
     const embedFrame = document.createElement("iframe");
     embedFrame.setAttribute("src", this.sanitize(videoUrl));
     embedFrame.style.position = "absolute";
@@ -52,9 +40,29 @@ class YouTubeEmbed extends BlockEmbed {
     embedFrame.allow =
       "accelerometer; encrypted-media; gyroscope; picture-in-picture";
     embedFrame.allowFullscreen = true;
-    node.contentEditable = false;
-    node.classList.add("youtube-embed");
-    node.appendChild(embedFrame);
+
+    const root = addEmbedOverlay(embedFrame, {
+      onClose: () => {
+        YouTubeEmbed.onRemoveRequest?.(node);
+      },
+    });
+    /*
+     * Be gay, do CSS crimes:
+     * https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed?fbclid=IwAR3CtIZZNP7Kx8ID-l1eoZAlIZ9eUxPRLmQ1yDsU7N0OAAotBAp4w7XHqps
+     */
+    root.style.position = "relative";
+    root.style.width = "100%";
+    root.style.height = "0";
+    root.style.paddingBottom = "56.25%";
+
+    root.contentEditable = "false";
+    node.classList.add("ql-embed", "youtube-embed", "loading");
+    node.appendChild(root);
+
+    embedFrame.onload = () => {
+      node.classList.remove("loading");
+    };
+
     return node;
   }
 
@@ -64,7 +72,7 @@ class YouTubeEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
-    return domNode.getElementsByTagName("iframe")[0].src;
+    return domNode.querySelector("iframe")?.src;
   }
 
   static sanitize(url: string) {
@@ -78,7 +86,5 @@ class YouTubeEmbed extends BlockEmbed {
 YouTubeEmbed.blotName = "youtube-video";
 YouTubeEmbed.tagName = "div";
 YouTubeEmbed.className = "ql-youtube-video";
-
-Icon["youtube"] = YouTubeEmbed.icon();
 
 export default YouTubeEmbed;

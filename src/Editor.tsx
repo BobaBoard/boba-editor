@@ -5,9 +5,11 @@ import {
   withKeyboardSubmitHandler,
   withNoLinebreakHandler,
   removeLineBreaksFromPaste,
+  importEmbedModule,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
+import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
 
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
@@ -34,22 +36,6 @@ if (typeof window !== "undefined") {
 
   const MagicUrl = require("quill-magic-url");
   QuillModule.register("modules/magicUrl", MagicUrl.default);
-
-  // Add New Quill Types
-  const TweetEmbed = require("./custom-nodes/TweetEmbed");
-  QuillModule.register("formats/tweet", TweetEmbed.default);
-
-  const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
-  QuillModule.register("formats/tumblr-embed", TumblrEmbed.default);
-
-  const YouTubeEmbed = require("./custom-nodes/YouTubeEmbed");
-  QuillModule.register("formats/youtube", YouTubeEmbed.default);
-
-  const TikTokEmbed = require("./custom-nodes/TikTokEmbed");
-  QuillModule.register("formats/tiktok-embed", TikTokEmbed.default);
-
-  const BlockImage = require("./custom-nodes/BlockImage");
-  QuillModule.register(BlockImage.default);
 }
 
 class Editor extends Component<Props> {
@@ -138,29 +124,38 @@ class Editor extends Component<Props> {
     });
   }
 
-  addEmbedsLoadedCallback() {
+  addCustomEmbeds() {
     const embedsLoadedCallback = () => {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
       this.maybeShowEmptyLineTooltip(bounds);
+      console.log(bounds);
       if (this.props.editable) {
         this.props.onTextChange(this.editor.getContents());
       }
     };
 
-    QuillModule.import("formats/block-image").setOnLoadCallback(
-      embedsLoadedCallback
-    );
-    QuillModule.import("formats/tweet").setOnLoadCallback(embedsLoadedCallback);
-    QuillModule.import("formats/youtube").setOnLoadCallback(
-      embedsLoadedCallback
-    );
-    QuillModule.import("formats/tiktok-embed").setOnLoadCallback(
-      embedsLoadedCallback
-    );
-    QuillModule.import("formats/tumblr-embed").setOnLoadCallback(
-      embedsLoadedCallback
-    );
+    const embedCloseCallback = (root: HTMLImageElement) => {
+      logging(`deleting embed`);
+      if (this.props.editable) {
+        QuillModule.find(root, true)?.remove();
+        this.props.onTextChange(this.editor.getContents());
+        this.skipTooltipUpdates = false;
+        const bounds = detectNewLine(this.editor);
+        this.maybeShowEmptyLineTooltip(bounds);
+      }
+    };
+
+    require
+      .context("./custom-nodes/", true, /(Image|Embed)$/)
+      .keys()
+      .map((path) => path.substring(2))
+      .forEach((moduleName) => {
+        importEmbedModule(moduleName, {
+          onLoadCallback: embedsLoadedCallback,
+          onRemoveRequestCallback: embedCloseCallback,
+        });
+      });
   }
 
   addRemoveLinebreaksOnPasteHandler() {
@@ -212,6 +207,7 @@ class Editor extends Component<Props> {
   }
 
   componentDidMount() {
+    this.addCustomEmbeds();
     logging("Installing Quill Editor");
     const quillConfig = {
       modules: {
@@ -274,7 +270,6 @@ class Editor extends Component<Props> {
       this.props.onIsEmptyChange(this.editor.getLength() == 1);
     this.props.onCharactersChange &&
       this.props.onCharactersChange(this.editor.getLength());
-    this.addEmbedsLoadedCallback();
     this.setState({ loaded: true });
     if (logging.enabled) {
       logging("Adding editor to global namespace.");
@@ -368,65 +363,7 @@ class Editor extends Component<Props> {
           }
         `}</style>
         {/* Add global styles for types*/}
-        <style jsx>{`
-          :global(.tweet.error) {
-            width: 100%;
-            height: 50px;
-            background-color: red;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 50px;
-            color: white;
-            margin: 10px 0;
-          }
-          :global(.tweet.loading) {
-            width: 100%;
-            height: 50px;
-            background-color: gray;
-            margin: 10px 0;
-            text-align: center;
-            line-height: 50px;
-            color: white;
-          }
-          :global(.ql-block-image) {
-            text-align: center;
-            margin: 10px 0;
-          }
-          :global(.ql-youtube-video) {
-            text-align: center;
-            margin: 10px 0;
-            background-color: gray;
-          }
-          :global(.ql-tiktok-embed.loading) {
-            background-color: aquamarine;
-            padding: 30px;
-            text-align: center;
-            color: white;
-            height: 80px;
-            overflow: hidden;
-          }
-          :global(.ql-tiktok-embed.loading) :global(.loading-message) {
-            margin-bottom: 50px;
-          }
-          :global(.tiktok-video) {
-            white-space: normal;
-          }
-          :global(.tiktok-video) :global(blockquote) {
-            border-left: 0 !important;
-            padding: 0 !important;
-          }
-          :global(.ql-tumblr-embed.loading) {
-            background-color: #34526f;
-            padding: 30px;
-            text-align: center;
-            color: white;
-            height: 80px;
-            overflow: hidden;
-          }
-          :global(.ql-tumblr-embed .loading-message) {
-            margin-bottom: 50px;
-          }
-        `}</style>
+        <CustomNodesStyle />
       </>
     );
   }

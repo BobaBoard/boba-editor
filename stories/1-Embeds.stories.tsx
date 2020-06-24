@@ -22,6 +22,32 @@ setTumblrEmbedFetcher((url: string) => {
   });
 });
 
+export const ImageEmbed = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"Image Embed"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://pbs.twimg.com/media/EY-RqiyUwAAfgzd?format=png&name=small"}}]'
+      )}
+      onTextChange={() => {
+        console.log("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        console.log("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        console.log("submit!");
+      }}
+    />
+  </div>
+);
+
+ImageEmbed.story = {
+  name: "image",
+};
+
 export const TwitterEmbed = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor

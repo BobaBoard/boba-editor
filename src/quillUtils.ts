@@ -4,6 +4,8 @@ if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
 
+const logging = require("debug")("bobapost:quillUtils");
+
 // Checks whether the editor selection is currently on an empty
 // line and returns the line boundaries in the affermative case.
 export const detectNewLine = (editor: Quill): BoundsStatic | null => {
@@ -96,4 +98,23 @@ export const replaceImages = (
       }
     });
   });
+};
+
+export const importEmbedModule = (
+  moduleName: string,
+  callbacks: {
+    onLoadCallback: () => void;
+    onRemoveRequestCallback: (root: HTMLElement) => void;
+  }
+) => {
+  logging(`Importing module ${moduleName}`);
+  const EmbedModule = require(`./custom-nodes/${moduleName}`).default;
+
+  QuillModule.register(`formats/${EmbedModule.blotName}`, EmbedModule, true);
+
+  QuillModule.import(`formats/${EmbedModule.blotName}`).setOnLoadCallback(
+    callbacks.onLoadCallback
+  );
+  QuillModule.import(`formats/${EmbedModule.blotName}`).onRemoveRequest =
+    callbacks.onRemoveRequestCallback;
 };

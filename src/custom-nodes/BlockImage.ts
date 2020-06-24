@@ -1,4 +1,5 @@
 import Quill from "quill";
+import { addEmbedOverlay } from "./utils";
 
 const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -10,30 +11,37 @@ const Icon = Quill.import("ui/icons");
  * will take the whole line by default.
  */
 class BlockImage extends BlockEmbed {
-  static create(value) {
+  static create(value: string) {
     const node = super.create();
     const img = document.createElement("IMG");
     if (BlockImage.onLoadCallback) {
       img.onload = () => {
         BlockImage.onLoadCallback();
+        node.classList.remove("loading");
       };
     }
     img.setAttribute("src", this.sanitize(value));
     node.setAttribute("contenteditable", false);
-    node.classList.add("ql-block-image");
-    node.appendChild(img);
+    node.classList.add("ql-block-image", "ql-embed", "loading");
+    node.appendChild(
+      addEmbedOverlay(img, {
+        onClose: () => {
+          BlockImage.onRemoveRequest?.(node);
+        },
+      })
+    );
     return node;
   }
 
-  static sanitize(src) {
+  static sanitize(src: string) {
     return Image.sanitize(src);
   }
 
-  static setOnLoadCallback(callback) {
+  static setOnLoadCallback(callback: () => void) {
     BlockImage.onLoadCallback = callback;
   }
 
-  static value(domNode) {
+  static value(domNode: HTMLDivElement) {
     const img = domNode.querySelector("img");
     if (!img) {
       return null;
@@ -44,6 +52,7 @@ class BlockImage extends BlockEmbed {
 
 BlockImage.blotName = "block-image";
 BlockImage.tagName = "DIV";
+BlockImage.className = "block-image-class";
 
 Icon["block-image"] = Quill.import("ui/icons")["image"];
 
