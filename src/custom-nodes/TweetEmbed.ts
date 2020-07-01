@@ -5,7 +5,7 @@ const Link = Quill.import("formats/link");
 
 import { addEmbedOverlay, addLoadingMessage, addErrorMessage } from "./utils";
 
-const logging = require("debug")("bobapost:embeds:tweet");
+let logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 
 /**
@@ -26,6 +26,11 @@ class TweetEmbed extends BlockEmbed {
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
       .then((el: HTMLDivElement) => {
+        logging = (text: any) => {
+          const log = document.createElement("div");
+          log.innerText = text;
+          node.appendChild(log);
+        };
         logging(`Tweet was loaded!`);
         logging(node);
         logging(el);
