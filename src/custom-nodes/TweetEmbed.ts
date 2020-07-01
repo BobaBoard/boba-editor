@@ -33,7 +33,9 @@ class TweetEmbed extends BlockEmbed {
         };
         logging(`Tweet was loaded!`);
         logging(node);
-        logging(el);
+        logging(el.getBoundingClientRect().height);
+        // @ts-ignore
+        logging(el.parentNode?.classList);
         node.classList.remove("loading");
         node.dataset.rendered = "true";
         // Remove loading message
