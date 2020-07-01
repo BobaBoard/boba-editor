@@ -5,7 +5,7 @@ import Editor, { setTumblrEmbedFetcher } from "../src";
 const logging = require("debug")("bobapost:stories:embeds");
 
 export default {
-  title: "Embeds Stories",
+  title: "Error Stories",
   component: Editor,
 };
 
@@ -55,7 +55,7 @@ export const TwitterEmbed = () => (
     <Editor
       editable={true}
       initialText={JSON.parse(
-        '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":"https://tdddwitter.com/BobaBoard/status/1263913643650908160"}},{"insert":"\\n"}]}'
+        '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":"https://twitter.com/BobaBoard/status/126393650908160"}},{"insert":"\\n"}]}'
       )}
       onTextChange={() => {
         logging("changed!");
@@ -73,7 +73,33 @@ export const TwitterEmbed = () => (
 );
 
 TwitterEmbed.story = {
-  name: "twitter",
+  name: "twitter (wrong id)",
+};
+
+export const TwitterEmbedNoId = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '{"ops":[{"insert":"TODO: Fix This!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":"https://twitter.com/BobaBoard/status/12639365090sdsd8160"}},{"insert":"\\n"}]}'
+      )}
+      onTextChange={() => {
+        logging("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        logging("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        logging("submit!");
+      }}
+    />
+  </div>
+);
+
+TwitterEmbedNoId.story = {
+  name: "twitter (no id)",
 };
 
 export const EmbedStories = () => (

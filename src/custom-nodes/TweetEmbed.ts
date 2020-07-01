@@ -26,19 +26,21 @@ class TweetEmbed extends BlockEmbed {
     align: "center",
   };
 
+  static doneLoading(node: HTMLDivElement) {
+    logging(`Removing loading message!`);
+    node.classList.remove("loading");
+    // Remove loading message
+    node.removeChild(node.querySelector(".loading-message") as HTMLDivElement);
+  }
+
   static loadTweet(id: string, node: HTMLDivElement, attemptsRemaining = 5) {
     // @ts-ignore
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
       .then((el: HTMLDivElement) => {
         logging(`Tweet was loaded!`);
-        node.classList.remove("loading");
         node.dataset.rendered = "true";
-        // Remove loading message
-        node.removeChild(
-          node.querySelector(".loading-message") as HTMLDivElement
-        );
-        logging(`Removing loading message!`);
+        TweetEmbed.doneLoading(node);
         if (!el) {
           addErrorMessage(node, {
             message: "This tweet.... it dead.",
@@ -69,18 +71,21 @@ class TweetEmbed extends BlockEmbed {
       .catch((e: any) => {
         logging(`There was a serious error with tweet creation!`);
         logging(e);
+        TweetEmbed.doneLoading(node);
+        addErrorMessage(node, {
+          message: `This tweet.... it bad.<br />(${e.message})`,
+          url: TweetEmbed.value(node) || "",
+        });
       });
     // If the twitter library is not loaded yet, defer rendering
+    // TODO: https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/set-up-twitter-for-websites
     // @ts-ignore
     if (!window?.twttr?.widgets) {
       logging(`Twitter main library is not loaded.`);
       logging(`${attemptsRemaining} reload attempts remaining`);
       if (!attemptsRemaining) {
         logging(`We're out of attempts! Time to panic!`);
-        // Remove loading message
-        node.removeChild(
-          node.querySelector(".loading-message") as HTMLDivElement
-        );
+        TweetEmbed.doneLoading(node);
         addErrorMessage(node, {
           message: "The Twitter Embeds library... it dead.",
           url: TweetEmbed.value(node) || "",
