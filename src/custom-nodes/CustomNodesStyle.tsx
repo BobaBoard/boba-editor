@@ -25,7 +25,8 @@ export default (props: {}) => {
           position: relative;
         }
         :global(.ql-embed) {
-          display: flex;
+          display: block;
+          height: 600px;
         }
         :global(.ql-embed a) {
           color: white;

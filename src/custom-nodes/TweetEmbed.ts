@@ -33,14 +33,6 @@ class TweetEmbed extends BlockEmbed {
         };
         logging(`Tweet was loaded!`);
         logging(node);
-        let attempts = 10;
-        const tryLog = () => {
-          logging(`h${attempts}: ${getComputedStyle(el).display}`);
-          if (attempts--) {
-            setTimeout(tryLog, 100);
-          }
-        };
-        setTimeout(tryLog, 100);
         logging(el.getBoundingClientRect().height);
         // @ts-ignore
         logging(el.parentNode?.classList);
