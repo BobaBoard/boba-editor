@@ -33,6 +33,8 @@ class TweetEmbed extends BlockEmbed {
         };
         logging(`Tweet was loaded!`);
         logging(node);
+        console.log(el.style);
+        logging("h:" + el.clientHeight);
         logging(el.getBoundingClientRect().height);
         // @ts-ignore
         logging(el.parentNode?.classList);
