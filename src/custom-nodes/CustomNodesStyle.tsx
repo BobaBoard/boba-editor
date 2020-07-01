@@ -4,7 +4,7 @@ export default (props: {}) => {
   return (
     <>
       <style jsx>{`
-        :global(.ql-embed .error-message) {
+        :global(.tweet.error) {
           width: 100%;
           height: 50px;
           background-color: red;
@@ -23,18 +23,6 @@ export default (props: {}) => {
           line-height: 50px;
           color: white;
           position: relative;
-        }
-        :global(.ql-embed) {
-          display: block;
-          height: 600px;
-        }
-        :global(.ql-embed a) {
-          color: white;
-          cursor: pointer;
-        }
-        :global(.ql-embed a:hover) {
-          color: white;
-          cursor: pointer;
         }
         :global(.ql-block-image) {
           text-align: center;
@@ -76,13 +64,8 @@ export default (props: {}) => {
           position: relative;
           margin-bottom: 50px;
         }
-        :global(.embed-overlay) {
-          position: absolute;
-          top: 0;
-          right: 0;
-          left: 0;
-          bottom: 0;
-          pointer-events: none;
+        :global(.embed-container) {
+          position: relative;
         }
         :global(.close-button) {
           width: 35px;
@@ -94,7 +77,6 @@ export default (props: {}) => {
           right: 0;
           transform: translate(50%, -50%);
           border-radius: 50%;
-          pointer-events: all;
         }
         :global(.close-button svg) {
           fill: #ccc;
@@ -108,6 +90,9 @@ export default (props: {}) => {
           fill: white;
           border-color: white;
           cursor: pointer;
+        }
+        :global(.ql-embed.loading .close-button) {
+          display: none;
         }
         :global(.editor.view-only .close-button) {
           display: none;

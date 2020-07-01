@@ -3,10 +3,7 @@ import Quill from "quill";
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import { addEmbedOverlay, addLoadingMessage, addErrorMessage } from "./utils";
-
-let logging = require("debug")("bobapost:embeds:tweet");
-const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
+import { addEmbedOverlay } from "./utils";
 
 /**
  * TweetEmbed represents a tweet embedded into the editor.
@@ -26,29 +23,15 @@ class TweetEmbed extends BlockEmbed {
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
       .then((el: HTMLDivElement) => {
-        logging = (text: any) => {
-          const log = document.createElement("div");
-          log.innerText = text;
-          node.appendChild(log);
-        };
-        logging(`Tweet was loaded!`);
-        logging(node);
-        logging(el.getBoundingClientRect().height);
-        // @ts-ignore
-        logging(el.parentNode?.classList);
         node.classList.remove("loading");
         node.dataset.rendered = "true";
         // Remove loading message
         node.removeChild(
           node.querySelector(".loading-message") as HTMLDivElement
         );
-        logging(`Removing loading message!`);
         if (!el) {
-          addErrorMessage(node, {
-            message: "This tweet.... it dead.",
-            url: TweetEmbed.value(node) || "",
-          });
-          logging(`Ooops, there's no tweet there!`);
+          node.classList.add("error");
+          node.innerHTML = "This tweet.... it dead.";
         }
         if (TweetEmbed.onLoadCallback) {
           // Add some time to remove the loading class or the
@@ -57,26 +40,13 @@ class TweetEmbed extends BlockEmbed {
           // TODO: figure out why rather than hack it.
           setTimeout(() => TweetEmbed.onLoadCallback(el), 100);
         }
-      })
-      .catch((e: any) => {
-        logging(`There was a serious error with tweet creation!`);
-        logging(e);
       });
     // If the twitter library is not loaded yet, defer rendering
     // @ts-ignore
     if (!window?.twttr?.widgets) {
-      logging(`Twitter main library is not loaded.`);
-      logging(`${attemptsRemaining} reload attempts remaining`);
       if (!attemptsRemaining) {
-        logging(`We're out of attempts! Time to panic!`);
-        // Remove loading message
-        node.removeChild(
-          node.querySelector(".loading-message") as HTMLDivElement
-        );
-        addErrorMessage(node, {
-          message: "The Twitter Embeds library... it dead.",
-          url: TweetEmbed.value(node) || "",
-        });
+        node.classList.add("error");
+        node.innerHTML = "This tweet.... it dead.";
         return;
       }
       setTimeout(
@@ -101,32 +71,28 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static create(value: any) {
-    const node = super.create();
-    logging(`Creating new tweet embed with value ${value}`);
-    const url = this.sanitize(value);
-    const id = url.substr(url.lastIndexOf("/") + 1);
+    let node = super.create();
+    console.log(value);
+    let url = this.sanitize(value);
+    let id = url.substr(url.lastIndexOf("/") + 1);
     node.dataset.url = url;
     node.contentEditable = false;
     node.dataset.id = id;
     node.dataset.rendered = false;
 
-    logging(`Tweet url: ${url}`);
-    logging(`Tweet id: ${id}`);
+    const loadingMessage = document.createElement("p");
+    loadingMessage.innerHTML = "Preparing to chirp...";
+    loadingMessage.classList.add("loading-message");
 
-    addLoadingMessage(node, {
-      message: "Preparing to chirp...",
-      url,
-    });
-
-    addEmbedOverlay(node, {
+    let embedNode = addEmbedOverlay(node, {
       onClose: () => {
-        TweetEmbed.onRemoveRequest?.(node);
+        TweetEmbed.onRemoveRequest?.(embedNode);
       },
     });
-
-    node.classList.add("ql-embed", "tweet", "loading");
-    TweetEmbed.loadTweet(id, node);
-    return node;
+    embedNode.appendChild(loadingMessage);
+    embedNode.classList.add("ql-embed", "tweet", "loading");
+    TweetEmbed.loadTweet(id, embedNode);
+    return embedNode;
   }
 
   static setOnLoadCallback(callback: (root: HTMLDivElement) => void) {
@@ -134,12 +100,12 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
-    loggingVerbose(`Getting value of embed from data:`);
-    loggingVerbose(domNode.dataset);
-    return domNode.dataset.url;
+    return (domNode.querySelector("div.ql-tweet") as HTMLDivElement).dataset
+      .url;
   }
 
   static sanitize(url: string) {
+    console.log(url);
     if (url.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));
     }
