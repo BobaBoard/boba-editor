@@ -36,9 +36,9 @@ class TweetEmbed extends BlockEmbed {
         logging(el.querySelector("iframe")?.style.cssText);
         let attempts = 10;
         const tryLog = () => {
-          logging(`h${attempts}: ${el.querySelector("iframe")?.style.height}`);
+          logging(el.querySelector("iframe")?.style.cssText);
           if (attempts--) {
-            setTimeout(tryLog, 100);
+            setTimeout(tryLog, 300);
           }
         };
         setTimeout(tryLog, 100);
