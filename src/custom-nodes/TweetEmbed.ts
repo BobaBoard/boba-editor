@@ -26,25 +26,7 @@ class TweetEmbed extends BlockEmbed {
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
       .then((el: HTMLDivElement) => {
-        logging = (text: any) => {
-          const log = document.createElement("div");
-          log.innerText = text;
-          node.appendChild(log);
-        };
         logging(`Tweet was loaded!`);
-        logging(node);
-        logging(el.querySelector("iframe")?.style.cssText);
-        let attempts = 10;
-        const tryLog = () => {
-          logging(el.querySelector("iframe")?.style.cssText);
-          if (attempts--) {
-            setTimeout(tryLog, 300);
-          }
-        };
-        setTimeout(tryLog, 100);
-        logging(el.getBoundingClientRect().height);
-        // @ts-ignore
-        logging(el.parentNode?.classList);
         node.classList.remove("loading");
         node.dataset.rendered = "true";
         // Remove loading message
@@ -58,6 +40,13 @@ class TweetEmbed extends BlockEmbed {
             url: TweetEmbed.value(node) || "",
           });
           logging(`Ooops, there's no tweet there!`);
+        }
+        if (el.getBoundingClientRect().height == 0) {
+          addErrorMessage(node, {
+            message: "You've been bitten by... the iOS bug x_x",
+            url: TweetEmbed.value(node) || "",
+          });
+          logging(`That damn iOS bug!`);
         }
         if (TweetEmbed.onLoadCallback) {
           // Add some time to remove the loading class or the
