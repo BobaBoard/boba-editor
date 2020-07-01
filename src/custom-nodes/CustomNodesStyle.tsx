@@ -14,19 +14,38 @@ export default (props: {}) => {
           color: white;
           margin: 10px 0;
         }
+        :global(.ql-embed.ios-bug .error-message) {
+          width: 100%;
+          height: 150px;
+          background-color: black;
+          border-radius: 15px;
+          text-align: center;
+          line-height: 25px;
+          color: white;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+          padding: 20px;
+          margin: 10px 0;
+        }
+        :global(.ql-embed.ios-bug > svg) {
+          position: absolute;
+          width: 50px;
+          left: 10px;
+          top: 10px;
+        }
         :global(.tweet .loading-message) {
           width: 100%;
           height: 50px;
-          background-color: gray;
+          background-color: #1da1f2;
           margin: 10px 0;
           text-align: center;
+          border-radius: 15px;
           line-height: 50px;
           color: white;
           position: relative;
         }
         :global(.ql-embed) {
-          display: block;
-          height: 600px;
+          position: relative;
         }
         :global(.ql-embed a) {
           color: white;

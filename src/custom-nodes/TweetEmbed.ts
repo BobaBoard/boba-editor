@@ -1,4 +1,6 @@
 import Quill from "quill";
+import React from "react";
+import ReactDOM from "react-dom";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
@@ -7,6 +9,9 @@ import { addEmbedOverlay, addLoadingMessage, addErrorMessage } from "./utils";
 
 let logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
+
+// @ts-ignore
+import TwitterIcon from "../img/twitter.svg";
 
 /**
  * TweetEmbed represents a tweet embedded into the editor.
@@ -42,8 +47,13 @@ class TweetEmbed extends BlockEmbed {
           logging(`Ooops, there's no tweet there!`);
         }
         if (el.getBoundingClientRect().height == 0) {
+          node.classList.add("ios-bug");
+          ReactDOM.render(React.createElement(TwitterIcon, {}, null), node);
           addErrorMessage(node, {
-            message: "You've been bitten by... the iOS bug x_x",
+            message: `You've been hit by... <br />
+             You've been strucky by... <br />
+             A smooth iOS bug.<br />
+             (click to access tweet)`,
             url: TweetEmbed.value(node) || "",
           });
           logging(`That damn iOS bug!`);

@@ -39,7 +39,7 @@ export const addLoadingMessage = (
 ) => {
   const loadingMessage = document.createElement("div");
   const linkToOriginal = document.createElement("a");
-  linkToOriginal.innerText = message;
+  linkToOriginal.innerHTML = message;
   linkToOriginal.href = url;
   loadingMessage.appendChild(linkToOriginal);
   loadingMessage.classList.add("loading-message");
@@ -61,7 +61,7 @@ export const addErrorMessage = (
 ) => {
   const loadingMessage = document.createElement("div");
   const linkToOriginal = document.createElement("a");
-  linkToOriginal.innerText = message;
+  linkToOriginal.innerHTML = message;
   linkToOriginal.href = url;
   loadingMessage.appendChild(linkToOriginal);
   loadingMessage.classList.add("error-message");
