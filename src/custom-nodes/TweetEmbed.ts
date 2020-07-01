@@ -5,6 +5,8 @@ const Link = Quill.import("formats/link");
 
 import { addEmbedOverlay } from "./utils";
 
+const logging = require("debug")("bobapost:embeds:tweet");
+
 /**
  * TweetEmbed represents a tweet embedded into the editor.
  *
@@ -72,7 +74,7 @@ class TweetEmbed extends BlockEmbed {
 
   static create(value: any) {
     let node = super.create();
-    console.log(value);
+    logging(`Creating new tweet embed with value ${value}`);
     let url = this.sanitize(value);
     let id = url.substr(url.lastIndexOf("/") + 1);
     node.dataset.url = url;
@@ -105,7 +107,6 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static sanitize(url: string) {
-    console.log(url);
     if (url.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));
     }
