@@ -34,7 +34,7 @@ class TweetEmbed extends BlockEmbed {
         el.style.height = "596px";
         logging(`Tweet was loaded!`);
         logging(node);
-        logging(el.getBoundingClientRect().height);
+        logging(el.querySelector("iframe")?.style.height);
         // @ts-ignore
         logging(el.parentNode?.classList);
         node.classList.remove("loading");
