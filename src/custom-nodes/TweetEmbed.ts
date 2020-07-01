@@ -18,17 +18,15 @@ class TweetEmbed extends BlockEmbed {
     align: "center",
   };
 
-  static loadTweet(id: string, node: HTMLDivElement, attemptsRemaining = 5) {
+  static loadTweet(id, node, attemptsRemaining = 5) {
     // @ts-ignore
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
-      .then((el: HTMLDivElement) => {
+      .then((el) => {
         node.classList.remove("loading");
-        node.dataset.rendered = "true";
+        node.dataset.rendered = true;
         // Remove loading message
-        node.removeChild(
-          node.querySelector(".loading-message") as HTMLDivElement
-        );
+        node.removeChild(node.querySelector(".loading-message"));
         if (!el) {
           node.classList.add("error");
           node.innerHTML = "This tweet.... it dead.";
@@ -64,13 +62,13 @@ class TweetEmbed extends BlockEmbed {
     >;
     for (var i = 0; i < tweets.length; i++) {
       while (tweets[i].firstChild) {
-        tweets[i].removeChild(tweets[i].firstChild as HTMLDivElement);
+        tweets[i].removeChild(tweets[i].firstChild);
       }
-      TweetEmbed.loadTweet(tweets[i].dataset.id || "", tweets[i]);
+      TweetEmbed.loadTweet(tweets[i].dataset.id, tweets[i]);
     }
   }
 
-  static create(value: any) {
+  static create(value) {
     let node = super.create();
     console.log(value);
     let url = this.sanitize(value);
@@ -95,16 +93,15 @@ class TweetEmbed extends BlockEmbed {
     return embedNode;
   }
 
-  static setOnLoadCallback(callback: (root: HTMLDivElement) => void) {
+  static setOnLoadCallback(callback) {
     TweetEmbed.onLoadCallback = callback;
   }
 
-  static value(domNode: HTMLDivElement) {
-    return (domNode.querySelector("div.ql-tweet") as HTMLDivElement).dataset
-      .url;
+  static value(domNode) {
+    return domNode.querySelector("div.ql-tweet").dataset.url;
   }
 
-  static sanitize(url: string) {
+  static sanitize(url) {
     console.log(url);
     if (url.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));

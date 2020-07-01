@@ -63,7 +63,6 @@ class Tooltip extends Component<{
             />
             <button
               className="ql-image-gif ql-image"
-              ref={this.gifButton}
               onClick={(e) => {
                 this.props.preventUpdate(true);
                 e.stopPropagation();
