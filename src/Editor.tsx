@@ -128,9 +128,8 @@ class Editor extends Component<Props> {
     const embedsLoadedCallback = () => {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
-      logging(`Embeds callback activated! New line bounds:`);
-      logging(bounds);
       this.maybeShowEmptyLineTooltip(bounds);
+      console.log(bounds);
       if (this.props.editable) {
         this.props.onTextChange(this.editor.getContents());
       }
