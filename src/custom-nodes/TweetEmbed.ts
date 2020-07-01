@@ -31,10 +31,18 @@ class TweetEmbed extends BlockEmbed {
           log.innerText = text;
           node.appendChild(log);
         };
-        el.style.height = "596px";
         logging(`Tweet was loaded!`);
         logging(node);
-        logging(el.querySelector("iframe")?.style.height);
+        logging(el.querySelector("iframe")?.style.cssText);
+        let attempts = 10;
+        const tryLog = () => {
+          logging(`h${attempts}: ${el.querySelector("iframe")?.style.height}`);
+          if (attempts--) {
+            setTimeout(tryLog, 100);
+          }
+        };
+        setTimeout(tryLog, 100);
+        logging(el.getBoundingClientRect().height);
         // @ts-ignore
         logging(el.parentNode?.classList);
         node.classList.remove("loading");
