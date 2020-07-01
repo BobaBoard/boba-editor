@@ -29,6 +29,11 @@ export default (props: {}) => {
         }
         :global(.ql-embed a) {
           color: white;
+          cursor: pointer;
+        }
+        :global(.ql-embed a:hover) {
+          color: white;
+          cursor: pointer;
         }
         :global(.ql-block-image) {
           text-align: center;
@@ -76,6 +81,7 @@ export default (props: {}) => {
           right: 0;
           left: 0;
           bottom: 0;
+          pointer-events: none;
         }
         :global(.close-button) {
           width: 35px;
@@ -87,6 +93,7 @@ export default (props: {}) => {
           right: 0;
           transform: translate(50%, -50%);
           border-radius: 50%;
+          pointer-events: all;
         }
         :global(.close-button svg) {
           fill: #ccc;
