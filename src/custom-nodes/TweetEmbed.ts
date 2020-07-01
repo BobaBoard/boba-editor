@@ -62,6 +62,10 @@ class TweetEmbed extends BlockEmbed {
       logging(`${attemptsRemaining} reload attempts remaining`);
       if (!attemptsRemaining) {
         logging(`We're out of attempts! Time to panic!`);
+        // Remove loading message
+        node.removeChild(
+          node.querySelector(".loading-message") as HTMLDivElement
+        );
         addErrorMessage(node, {
           message: "The Twitter Embeds library... it dead.",
           url: TweetEmbed.value(node) || "",

@@ -12,7 +12,7 @@ export const addEmbedOverlay = (
   }
 ) => {
   const containerDiv = document.createElement("div");
-  containerDiv.classList.add("embed-container");
+  containerDiv.classList.add("embed-overlay");
   const closeButton = document.createElement("div");
   closeButton.classList.add("close-button");
 
