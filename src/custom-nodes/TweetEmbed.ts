@@ -31,6 +31,7 @@ class TweetEmbed extends BlockEmbed {
           log.innerText = text;
           node.appendChild(log);
         };
+        el.style.height = "596px";
         logging(`Tweet was loaded!`);
         logging(node);
         logging(el.getBoundingClientRect().height);
