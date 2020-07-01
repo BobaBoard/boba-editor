@@ -284,6 +284,7 @@ class Editor extends Component<Props> {
   }
 
   componentWillUnmount() {
+    logging("hi!");
     logging("Unmounting editor");
     this.eventHandlers.forEach((handler) => {
       logging("Removing handler", handler);
