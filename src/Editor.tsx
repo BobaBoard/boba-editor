@@ -244,6 +244,7 @@ class Editor extends Component<Props> {
     if (this.props.singleLine) {
       logging("adding no linebreak handler...");
       withNoLinebreakHandler(quillConfig.modules.keyboard);
+      this.addRemoveLinebreaksOnPasteHandler();
     }
 
     this.editor = new QuillModule(
