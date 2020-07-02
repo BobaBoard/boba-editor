@@ -315,6 +315,7 @@ class Editor extends Component<Props> {
             right={this.state.tooltipPostion.right}
             onInsertEmbed={({ type, embed }) => {
               this.editor.focus();
+              this.setState({ showTooltip: false });
               this.skipTooltipUpdates = true;
               const range = this.editor.getSelection(true);
               // TODO: remove empty line before inserting image?
