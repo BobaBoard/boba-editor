@@ -80,6 +80,12 @@ export default (props: {}) => {
           height: 80px;
           overflow: hidden;
         }
+        :global(.ql-youtube-video .loading-message) {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
         :global(.ql-tiktok-embed.loading .loading-message) {
           position: relative;
           margin-bottom: 50px;

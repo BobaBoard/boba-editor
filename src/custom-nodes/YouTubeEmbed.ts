@@ -3,9 +3,10 @@ import Quill from "quill";
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import { addEmbedOverlay, addErrorMessage } from "./utils";
+import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 
 const logging = require("debug")("bobapost:embeds:youtube");
+
 /**
  * YouTubeEmbed represents a youtube video embedded into the editor.
  */
@@ -46,6 +47,10 @@ class YouTubeEmbed extends BlockEmbed {
       "accelerometer; encrypted-media; gyroscope; picture-in-picture";
     embedFrame.allowFullscreen = true;
 
+    addLoadingMessage(node, {
+      message: "Some loading message...",
+      url: url.toString(),
+    });
     addEmbedOverlay(node, {
       onClose: () => {
         YouTubeEmbed.onRemoveRequest?.(node);
@@ -66,6 +71,10 @@ class YouTubeEmbed extends BlockEmbed {
 
     embedFrame.onload = () => {
       node.classList.remove("loading");
+      YouTubeEmbed.onLoadCallback?.();
+      node.removeChild(
+        node.querySelector(".loading-message") as HTMLDivElement
+      );
     };
 
     return node;
