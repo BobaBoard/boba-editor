@@ -255,8 +255,6 @@ class Editor extends Component<Props> {
     // Add handlers
     this.addCharactersTypedHandler();
     this.addEmptyLineTooltipHandler();
-    if (this.props.singleLine) {
-    }
 
     // Set initial state
     this.editor.enable(this.props.editable);

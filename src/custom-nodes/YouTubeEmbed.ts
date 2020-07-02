@@ -48,7 +48,7 @@ class YouTubeEmbed extends BlockEmbed {
     embedFrame.allowFullscreen = true;
 
     addLoadingMessage(node, {
-      message: "Some loading message...",
+      message: "Loading Influencers-birthing Machine...",
       url: url.toString(),
     });
     addEmbedOverlay(node, {
