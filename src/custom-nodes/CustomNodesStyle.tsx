@@ -103,7 +103,9 @@ export default (props: {}) => {
           text-align: center;
           color: white;
           height: 80px;
-          overflow: hidden;
+          /*
+           * Figure out how to readd overflow hidden to this
+           */
         }
         :global(.ql-tumblr-embed .loading-message) {
           position: relative;

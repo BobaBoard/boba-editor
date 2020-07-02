@@ -1,7 +1,7 @@
 import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
-import { addEmbedOverlay, addLoadingMessage } from "./utils";
+import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
@@ -87,7 +87,10 @@ class TumblrEmbed extends BlockEmbed {
 
   static renderFromUrl(node: HTMLDivElement, url: string) {
     if (!url) {
-      // TODO: make a decent error here
+      addErrorMessage(node, {
+        message: "No valid url found in Tumblr post!",
+        url: "#",
+      });
       return;
     }
 

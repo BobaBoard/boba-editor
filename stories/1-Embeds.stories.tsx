@@ -20,7 +20,7 @@ setTumblrEmbedFetcher((url: string) => {
           "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
         did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
       });
-    }, 5000);
+    }, 25000);
   });
 });
 
