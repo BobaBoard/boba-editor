@@ -23,13 +23,12 @@ class BlockImage extends BlockEmbed {
     img.setAttribute("src", this.sanitize(value));
     node.setAttribute("contenteditable", false);
     node.classList.add("ql-block-image", "ql-embed", "loading");
-    node.appendChild(
-      addEmbedOverlay(img, {
-        onClose: () => {
-          BlockImage.onRemoveRequest?.(node);
-        },
-      })
-    );
+    addEmbedOverlay(node, {
+      onClose: () => {
+        BlockImage.onRemoveRequest?.(node);
+      },
+    });
+    node.appendChild(img);
     return node;
   }
 
