@@ -7,7 +7,7 @@ const Link = Quill.import("formats/link");
 
 import { addEmbedOverlay, addLoadingMessage, addErrorMessage } from "./utils";
 
-let logging = require("debug")("bobapost:embeds:tweet");
+const logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 
 // @ts-ignore

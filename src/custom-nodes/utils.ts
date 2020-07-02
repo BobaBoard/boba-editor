@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 // @ts-ignore
 import CloseButton from "../img/close.svg";
 
-const logging = require("debug")("bobapost:embeds:utils");
+//const logging = require("debug")("bobapost:embeds:utils");
 
 export const addEmbedOverlay = (
   embedRoot: HTMLElement,

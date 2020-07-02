@@ -62,7 +62,15 @@ export default (props: {}) => {
         :global(.ql-youtube-video) {
           text-align: center;
           margin: 10px 0;
-          background-color: gray;
+          background-color: #ff0000;
+          border-radius: 15px;
+        }
+        :global(.ql-youtube-video iframe) {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
         }
         :global(.ql-tiktok-embed.loading) {
           background-color: aquamarine;
@@ -114,6 +122,7 @@ export default (props: {}) => {
           transform: translate(50%, -50%);
           border-radius: 50%;
           pointer-events: all;
+          z-index: 2;
         }
         :global(.close-button svg) {
           fill: #ccc;
