@@ -56,6 +56,8 @@ export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
   const paste = (pasteEvent.clipboardData || pasteEvent.clipboardData).getData(
     "text"
   );
+  logging("Pasted data:");
+  logging(paste);
   const selection = window.getSelection();
   if (!selection || !selection.rangeCount) {
     return false;
@@ -117,4 +119,23 @@ export const importEmbedModule = (
   );
   QuillModule.import(`formats/${EmbedModule.blotName}`).onRemoveRequest =
     callbacks.onRemoveRequestCallback;
+};
+
+export const pasteImageAsBlockEmbed = (pasteEvent: ClipboardEvent) => {
+  // @ts-ignore
+  pasteEvent.clipboardData?.items.forEach((item) => {
+    if (item.type.startsWith("image/")) {
+      logging(item.kind);
+      logging(item.getAsFile());
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (!e.target?.result) {
+          return;
+        }
+        // TODO: Add embed here
+        // this.onInsertEmbed({ type: "block-image", embed: e.target?.result });
+      };
+      reader.readAsDataURL(item.getAsFile());
+    }
+  });
 };

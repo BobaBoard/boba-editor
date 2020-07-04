@@ -1,7 +1,7 @@
 import Quill from "quill";
 import axios from "axios";
 
-import { addEmbedOverlay } from "./utils";
+import { addEmbedOverlay, addLoadingMessage } from "./utils";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
@@ -76,6 +76,10 @@ class TikTokEmbed extends BlockEmbed {
       id: string;
     }
   ) {
+    addLoadingMessage(node, {
+      message: "Hello fellow kids, it's TikTok time™",
+      url: data.url,
+    });
     let tikTokNode = document.createElement("div");
     tikTokNode.classList.add("tiktok-video");
     tikTokNode.innerHTML = `
@@ -126,12 +130,12 @@ class TikTokEmbed extends BlockEmbed {
     node.contentEditable = false;
     node.dataset.rendered = false;
     node.classList.add("ql-embed", "tiktok", "loading");
-    const loadingMessage = document.createElement("p");
-    loadingMessage.innerHTML = "Hello fellow kids, it's TikTok time™";
-    loadingMessage.classList.add("loading-message");
-    node.appendChild(loadingMessage);
 
     if (typeof value == "string") {
+      addLoadingMessage(node, {
+        message: "Hello fellow kids, it's TikTok time™",
+        url: value,
+      });
       return TikTokEmbed.renderFromUrl(node, this.sanitize(value));
     }
     TikTokEmbed.loadVideo(node, value);

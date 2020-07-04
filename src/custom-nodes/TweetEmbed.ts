@@ -1,9 +1,17 @@
 import Quill from "quill";
+import React from "react";
+import ReactDOM from "react-dom";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import { addEmbedOverlay } from "./utils";
+import { addEmbedOverlay, addLoadingMessage, addErrorMessage } from "./utils";
+
+const logging = require("debug")("bobapost:embeds:tweet");
+const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
+
+// @ts-ignore
+import TwitterIcon from "../img/twitter.svg";
 
 /**
  * TweetEmbed represents a tweet embedded into the editor.
@@ -18,20 +26,39 @@ class TweetEmbed extends BlockEmbed {
     align: "center",
   };
 
+  static doneLoading(node: HTMLDivElement) {
+    logging(`Removing loading message!`);
+    node.classList.remove("loading");
+    // Remove loading message
+    node.removeChild(node.querySelector(".loading-message") as HTMLDivElement);
+  }
+
   static loadTweet(id: string, node: HTMLDivElement, attemptsRemaining = 5) {
     // @ts-ignore
     window?.twttr?.widgets
       ?.createTweet(id, node, TweetEmbed.tweetOptions)
       .then((el: HTMLDivElement) => {
-        node.classList.remove("loading");
+        logging(`Tweet was loaded!`);
         node.dataset.rendered = "true";
-        // Remove loading message
-        node.removeChild(
-          node.querySelector(".loading-message") as HTMLDivElement
-        );
+        TweetEmbed.doneLoading(node);
         if (!el) {
-          node.classList.add("error");
-          node.innerHTML = "This tweet.... it dead.";
+          addErrorMessage(node, {
+            message: "This tweet.... it dead.",
+            url: TweetEmbed.value(node) || "",
+          });
+          logging(`Ooops, there's no tweet there!`);
+        }
+        if (el.getBoundingClientRect().height == 0) {
+          node.classList.add("ios-bug");
+          ReactDOM.render(React.createElement(TwitterIcon, {}, null), node);
+          addErrorMessage(node, {
+            message: `You've been hit by... <br />
+             You've been strucky by... <br />
+             A smooth iOS bug.<br />
+             (click to access tweet)`,
+            url: TweetEmbed.value(node) || "",
+          });
+          logging(`That damn iOS bug!`);
         }
         if (TweetEmbed.onLoadCallback) {
           // Add some time to remove the loading class or the
@@ -40,13 +67,29 @@ class TweetEmbed extends BlockEmbed {
           // TODO: figure out why rather than hack it.
           setTimeout(() => TweetEmbed.onLoadCallback(el), 100);
         }
+      })
+      .catch((e: any) => {
+        logging(`There was a serious error with tweet creation!`);
+        logging(e);
+        TweetEmbed.doneLoading(node);
+        addErrorMessage(node, {
+          message: `This tweet.... it bad.<br />(${e.message})`,
+          url: TweetEmbed.value(node) || "",
+        });
       });
     // If the twitter library is not loaded yet, defer rendering
+    // TODO: https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/set-up-twitter-for-websites
     // @ts-ignore
     if (!window?.twttr?.widgets) {
+      logging(`Twitter main library is not loaded.`);
+      logging(`${attemptsRemaining} reload attempts remaining`);
       if (!attemptsRemaining) {
-        node.classList.add("error");
-        node.innerHTML = "This tweet.... it dead.";
+        logging(`We're out of attempts! Time to panic!`);
+        TweetEmbed.doneLoading(node);
+        addErrorMessage(node, {
+          message: "The Twitter Embeds library... it dead.",
+          url: TweetEmbed.value(node) || "",
+        });
         return;
       }
       setTimeout(
@@ -71,28 +114,32 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static create(value: any) {
-    let node = super.create();
-    console.log(value);
-    let url = this.sanitize(value);
-    let id = url.substr(url.lastIndexOf("/") + 1);
+    const node = super.create();
+    logging(`Creating new tweet embed with value ${value}`);
+    const url = this.sanitize(value);
+    const id = url.substr(url.lastIndexOf("/") + 1);
     node.dataset.url = url;
     node.contentEditable = false;
     node.dataset.id = id;
     node.dataset.rendered = false;
 
-    const loadingMessage = document.createElement("p");
-    loadingMessage.innerHTML = "Preparing to chirp...";
-    loadingMessage.classList.add("loading-message");
+    logging(`Tweet url: ${url}`);
+    logging(`Tweet id: ${id}`);
 
-    let embedNode = addEmbedOverlay(node, {
+    addLoadingMessage(node, {
+      message: "Preparing to chirp...",
+      url,
+    });
+
+    addEmbedOverlay(node, {
       onClose: () => {
-        TweetEmbed.onRemoveRequest?.(embedNode);
+        TweetEmbed.onRemoveRequest?.(node);
       },
     });
-    embedNode.appendChild(loadingMessage);
-    embedNode.classList.add("ql-embed", "tweet", "loading");
-    TweetEmbed.loadTweet(id, embedNode);
-    return embedNode;
+
+    node.classList.add("ql-embed", "tweet", "loading");
+    TweetEmbed.loadTweet(id, node);
+    return node;
   }
 
   static setOnLoadCallback(callback: (root: HTMLDivElement) => void) {
@@ -100,12 +147,12 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
-    return (domNode.querySelector("div.ql-tweet") as HTMLDivElement).dataset
-      .url;
+    loggingVerbose(`Getting value of embed from data:`);
+    loggingVerbose(domNode.dataset);
+    return domNode.dataset.url;
   }
 
   static sanitize(url: string) {
-    console.log(url);
     if (url.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));
     }

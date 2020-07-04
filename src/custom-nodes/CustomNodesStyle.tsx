@@ -4,7 +4,7 @@ export default (props: {}) => {
   return (
     <>
       <style jsx>{`
-        :global(.tweet.error) {
+        :global(.ql-embed .error-message) {
           width: 100%;
           height: 50px;
           background-color: red;
@@ -14,15 +14,46 @@ export default (props: {}) => {
           color: white;
           margin: 10px 0;
         }
+        :global(.ql-embed.ios-bug .error-message) {
+          width: 100%;
+          height: 150px;
+          background-color: black;
+          border-radius: 15px;
+          text-align: center;
+          line-height: 25px;
+          color: white;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+          padding: 20px;
+          margin: 10px 0;
+        }
+        :global(.ql-embed.ios-bug > svg) {
+          position: absolute;
+          width: 50px;
+          left: 10px;
+          top: 10px;
+        }
         :global(.tweet .loading-message) {
           width: 100%;
           height: 50px;
-          background-color: gray;
+          background-color: #1da1f2;
           margin: 10px 0;
           text-align: center;
+          border-radius: 15px;
           line-height: 50px;
           color: white;
           position: relative;
+        }
+        :global(.ql-embed) {
+          position: relative;
+        }
+        :global(.ql-embed a) {
+          color: white;
+          cursor: pointer;
+        }
+        :global(.ql-embed a:hover) {
+          color: white;
+          cursor: pointer;
         }
         :global(.ql-block-image) {
           text-align: center;
@@ -31,7 +62,15 @@ export default (props: {}) => {
         :global(.ql-youtube-video) {
           text-align: center;
           margin: 10px 0;
-          background-color: gray;
+          background-color: #ff0000;
+          border-radius: 15px;
+        }
+        :global(.ql-youtube-video iframe) {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
         }
         :global(.ql-tiktok-embed.loading) {
           background-color: aquamarine;
@@ -39,7 +78,15 @@ export default (props: {}) => {
           text-align: center;
           color: white;
           height: 80px;
-          overflow: hidden;
+          /*
+           * Figure out how to readd overflow hidden to this
+           */
+        }
+        :global(.ql-youtube-video .loading-message) {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
         :global(.ql-tiktok-embed.loading .loading-message) {
           position: relative;
@@ -58,14 +105,21 @@ export default (props: {}) => {
           text-align: center;
           color: white;
           height: 80px;
-          overflow: hidden;
+          /*
+           * Figure out how to readd overflow hidden to this
+           */
         }
         :global(.ql-tumblr-embed .loading-message) {
           position: relative;
           margin-bottom: 50px;
         }
-        :global(.embed-container) {
-          position: relative;
+        :global(.embed-overlay) {
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          pointer-events: none;
         }
         :global(.close-button) {
           width: 35px;
@@ -77,6 +131,8 @@ export default (props: {}) => {
           right: 0;
           transform: translate(50%, -50%);
           border-radius: 50%;
+          pointer-events: all;
+          z-index: 2;
         }
         :global(.close-button svg) {
           fill: #ccc;
@@ -90,9 +146,6 @@ export default (props: {}) => {
           fill: white;
           border-color: white;
           cursor: pointer;
-        }
-        :global(.ql-embed.loading .close-button) {
-          display: none;
         }
         :global(.editor.view-only .close-button) {
           display: none;
