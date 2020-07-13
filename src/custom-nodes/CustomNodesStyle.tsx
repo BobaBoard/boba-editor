@@ -150,6 +150,24 @@ export default (props: {}) => {
         :global(.editor.view-only .close-button) {
           display: none;
         }
+        :global(.inline-spoilers) {
+          padding: 1px;
+          border: 1px dashed black;
+          background-color: #e6dede;
+        }
+        :global(.inline-spoilers:hover) {
+          cursor: pointer;
+        }
+        :global(.inline-spoilers.visible) {
+        }
+        :global(.view-only .inline-spoilers) {
+          color: transparent;
+          background-color: black;
+        }
+        :global(.view-only .inline-spoilers.visible) {
+          background-color: transparent;
+          color: inherit;
+        }
       `}</style>
     </>
   );

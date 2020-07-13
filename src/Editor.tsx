@@ -1,4 +1,5 @@
 import React, { Component, createRef, forwardRef } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import classNames from "classnames";
 import {
   detectNewLine,
@@ -16,6 +17,8 @@ import "react-tenor/dist/styles.css";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
+// @ts-ignore
+import SpoilersIcon from "./img/spoilers.svg";
 // logging.enabled = true;
 // loggingVerbose.enabled = true;
 
@@ -36,6 +39,11 @@ if (typeof window !== "undefined") {
 
   const MagicUrl = require("quill-magic-url");
   QuillModule.register("modules/magicUrl", MagicUrl.default);
+  const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
+  QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
+  const icons = Quill.import("ui/icons");
+  icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
+  logging(icons["inline-spoilers"]);
 }
 
 class Editor extends Component<Props> {
@@ -99,6 +107,22 @@ class Editor extends Component<Props> {
     this.eventHandlers.push({
       type: "text-change" as const,
       handler: typingHandler,
+    });
+  }
+
+  addTextChangeHandler() {
+    const changeHandler = this.editor.on(
+      "text-change" as const,
+      (diff, old, source) => {
+        loggingVerbose(`Text change from ${source}!`);
+        loggingVerbose(this.editor.getContents());
+        this.props.onTextChange(this.editor.getContents());
+      }
+    );
+
+    this.eventHandlers.push({
+      type: "text-change" as const,
+      handler: changeHandler,
     });
   }
 
@@ -256,6 +280,7 @@ class Editor extends Component<Props> {
     // Add handlers
     this.addCharactersTypedHandler();
     this.addEmptyLineTooltipHandler();
+    this.addTextChangeHandler();
 
     // Set initial state
     this.editor.enable(this.props.editable);
@@ -390,6 +415,7 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-underline"></button>
             <button className="ql-strike"></button>
             <button className="ql-link"></button>
+            <button className="ql-inline-spoilers"></button>
           </span>
           <span className="ql-formats">
             <select className="ql-header">
