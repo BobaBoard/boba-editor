@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 // @ts-ignore
 import CloseButton from "../img/close.svg";
+// @ts-ignore
+import SpoilersIcon from "../img/spoilers.svg";
 
 //const logging = require("debug")("bobapost:embeds:utils");
 
@@ -9,6 +11,10 @@ export const addEmbedOverlay = (
   embedRoot: HTMLElement,
   callbacks: {
     onClose: (root: HTMLElement) => void;
+    onMarkSpoilers?: (root: HTMLElement, spoilers: boolean) => void;
+  },
+  initialSettings?: {
+    isSpoilers?: boolean;
   }
 ) => {
   const containerDiv = document.createElement("div");
@@ -18,10 +24,37 @@ export const addEmbedOverlay = (
 
   ReactDOM.render(React.createElement(CloseButton, {}, null), closeButton);
   containerDiv.appendChild(closeButton);
-
   closeButton.addEventListener("click", () => {
     callbacks.onClose(embedRoot);
   });
+
+  if (callbacks.onMarkSpoilers) {
+    const optionsOverlay = document.createElement("div");
+    optionsOverlay.classList.add("options-overlay");
+    const spoilersButton = document.createElement("div");
+    spoilersButton.classList.add("spoilers-button");
+    ReactDOM.render(
+      React.createElement(SpoilersIcon, {}, null),
+      spoilersButton
+    );
+    optionsOverlay.appendChild(spoilersButton);
+    spoilersButton.classList.toggle("active", !!initialSettings?.isSpoilers);
+    containerDiv.classList.toggle("spoilers", !!initialSettings?.isSpoilers);
+    spoilersButton.addEventListener("click", (e) => {
+      spoilersButton.classList.toggle("active");
+      callbacks.onMarkSpoilers?.(
+        embedRoot,
+        spoilersButton.classList.contains("active")
+      );
+      containerDiv.classList.toggle(
+        "spoilers",
+        spoilersButton.classList.contains("active")
+      );
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    containerDiv.appendChild(optionsOverlay);
+  }
 
   embedRoot.appendChild(containerDiv);
   return embedRoot;

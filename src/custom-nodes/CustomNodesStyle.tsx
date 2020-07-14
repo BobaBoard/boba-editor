@@ -59,6 +59,10 @@ export default (props: {}) => {
           text-align: center;
           margin: 10px 0;
         }
+        :global(.ql-block-image img) {
+          max-width: 100%;
+          height: auto;
+        }
         :global(.ql-youtube-video) {
           text-align: center;
           margin: 10px 0;
@@ -167,6 +171,64 @@ export default (props: {}) => {
         :global(.view-only .inline-spoilers.visible) {
           background-color: transparent;
           color: inherit;
+        }
+        :global(.view-only .options-overlay) {
+          display: none;
+        }
+        :global(.options-overlay) {
+          display: inline-flex;
+          background-color: #444;
+          max-width: 300px;
+          border-radius: 15px;
+          padding: 5px 15px;
+          margin-top: 5px;
+          pointer-events: all;
+          position: relative;
+          z-index: 2;
+        }
+        :global(.spoilers-button) {
+          height: 20px;
+          width: 20px;
+        }
+        :global(.spoilers-button.active .ql-fill) {
+          fill: white;
+        }
+        :global(.spoilers-button:hover) {
+          cursor: pointer;
+        }
+        :global(.spoilers-button > svg) {
+          height: 20px;
+          width: 20px;
+        }
+        :global(.view-only .embed-overlay.spoilers::after) {
+          opacity: 1;
+        }
+        :global(.view-only .embed-overlay.spoilers) {
+          pointer-events: all;
+        }
+        :global(.view-only .embed-overlay.spoilers:hover) {
+          cursor: pointer;
+        }
+        :global(.embed-overlay.spoilers::after) {
+          content: "";
+          background-image: url(https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fadmin%2Fspoilers.png?alt=media&token=a343aee0-e90f-4379-8d41-1cac1f65f7ee);
+          background-position: center;
+          background-size: cover;
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          opacity: 0.1;
+        }
+        :global(.view-only img.spoilers) {
+          visibility: hidden;
+        }
+        :global(.view-only .show-spoilers img.spoilers) {
+          visibility: visible;
+        }
+        :global(.show-spoilers .embed-overlay.spoilers::after) {
+          visibility: hidden;
         }
       `}</style>
     </>
