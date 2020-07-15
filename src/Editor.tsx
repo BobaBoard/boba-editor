@@ -308,6 +308,8 @@ class Editor extends Component<Props> {
 
   componentWillUnmount() {
     logging("Unmounting editor");
+    logging("Unmounted editor content:");
+    logging(this.editor.getContents());
     this.eventHandlers.forEach((handler) => {
       logging("Removing handler", handler);
       this.editor.off(handler.type as any, handler.handler);
