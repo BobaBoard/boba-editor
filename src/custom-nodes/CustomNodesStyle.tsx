@@ -4,7 +4,7 @@ export default (props: {}) => {
   return (
     <>
       <style jsx>{`
-        :global(.tweet.error) {
+        :global(.ql-embed .error-message) {
           width: 100%;
           height: 50px;
           background-color: red;
@@ -14,24 +14,67 @@ export default (props: {}) => {
           color: white;
           margin: 10px 0;
         }
+        :global(.ql-embed.ios-bug .error-message) {
+          width: 100%;
+          height: 150px;
+          background-color: black;
+          border-radius: 15px;
+          text-align: center;
+          line-height: 25px;
+          color: white;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+          padding: 20px;
+          margin: 10px 0;
+        }
+        :global(.ql-embed.ios-bug > svg) {
+          position: absolute;
+          width: 50px;
+          left: 10px;
+          top: 10px;
+        }
         :global(.tweet .loading-message) {
           width: 100%;
           height: 50px;
-          background-color: gray;
+          background-color: #1da1f2;
           margin: 10px 0;
           text-align: center;
+          border-radius: 15px;
           line-height: 50px;
           color: white;
           position: relative;
+        }
+        :global(.ql-embed) {
+          position: relative;
+        }
+        :global(.ql-embed a) {
+          color: white;
+          cursor: pointer;
+        }
+        :global(.ql-embed a:hover) {
+          color: white;
+          cursor: pointer;
         }
         :global(.ql-block-image) {
           text-align: center;
           margin: 10px 0;
         }
+        :global(.ql-block-image img) {
+          max-width: 100%;
+          height: auto;
+        }
         :global(.ql-youtube-video) {
           text-align: center;
           margin: 10px 0;
-          background-color: gray;
+          background-color: #ff0000;
+          border-radius: 15px;
+        }
+        :global(.ql-youtube-video iframe) {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
         }
         :global(.ql-tiktok-embed.loading) {
           background-color: aquamarine;
@@ -39,7 +82,15 @@ export default (props: {}) => {
           text-align: center;
           color: white;
           height: 80px;
-          overflow: hidden;
+          /*
+           * Figure out how to readd overflow hidden to this
+           */
+        }
+        :global(.ql-youtube-video .loading-message) {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
         :global(.ql-tiktok-embed.loading .loading-message) {
           position: relative;
@@ -58,14 +109,21 @@ export default (props: {}) => {
           text-align: center;
           color: white;
           height: 80px;
-          overflow: hidden;
+          /*
+           * Figure out how to readd overflow hidden to this
+           */
         }
         :global(.ql-tumblr-embed .loading-message) {
           position: relative;
           margin-bottom: 50px;
         }
-        :global(.embed-container) {
-          position: relative;
+        :global(.embed-overlay) {
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          pointer-events: none;
         }
         :global(.close-button) {
           width: 35px;
@@ -77,6 +135,8 @@ export default (props: {}) => {
           right: 0;
           transform: translate(50%, -50%);
           border-radius: 50%;
+          pointer-events: all;
+          z-index: 2;
         }
         :global(.close-button svg) {
           fill: #ccc;
@@ -91,11 +151,84 @@ export default (props: {}) => {
           border-color: white;
           cursor: pointer;
         }
-        :global(.ql-embed.loading .close-button) {
-          display: none;
-        }
         :global(.editor.view-only .close-button) {
           display: none;
+        }
+        :global(.inline-spoilers) {
+          padding: 1px;
+          border: 1px dashed black;
+          background-color: #e6dede;
+        }
+        :global(.inline-spoilers:hover) {
+          cursor: pointer;
+        }
+        :global(.inline-spoilers.visible) {
+        }
+        :global(.view-only .inline-spoilers) {
+          color: transparent;
+          background-color: black;
+        }
+        :global(.view-only .inline-spoilers.visible) {
+          background-color: transparent;
+          color: inherit;
+        }
+        :global(.view-only .options-overlay) {
+          display: none;
+        }
+        :global(.options-overlay) {
+          display: inline-flex;
+          background-color: #444;
+          max-width: 300px;
+          border-radius: 15px;
+          padding: 5px 15px;
+          margin-top: 5px;
+          pointer-events: all;
+          position: relative;
+          z-index: 2;
+        }
+        :global(.spoilers-button) {
+          height: 20px;
+          width: 20px;
+        }
+        :global(.spoilers-button.active .ql-fill) {
+          fill: white;
+        }
+        :global(.spoilers-button:hover) {
+          cursor: pointer;
+        }
+        :global(.spoilers-button > svg) {
+          height: 20px;
+          width: 20px;
+        }
+        :global(.view-only .embed-overlay.spoilers::after) {
+          opacity: 1;
+        }
+        :global(.view-only .embed-overlay.spoilers) {
+          pointer-events: all;
+        }
+        :global(.view-only .embed-overlay.spoilers:hover) {
+          cursor: pointer;
+        }
+        :global(.embed-overlay.spoilers::after) {
+          content: "";
+          background-image: url(https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fadmin%2Fspoilers.png?alt=media&token=a343aee0-e90f-4379-8d41-1cac1f65f7ee);
+          background-position: center;
+          background-size: cover;
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          bottom: 0;
+          opacity: 0.1;
+        }
+        :global(.view-only img.spoilers) {
+          visibility: hidden;
+        }
+        :global(.view-only .show-spoilers img.spoilers) {
+          visibility: visible;
+        }
+        :global(.show-spoilers .embed-overlay.spoilers::after) {
+          visibility: hidden;
         }
       `}</style>
     </>

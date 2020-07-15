@@ -1,4 +1,5 @@
 import React, { Component, createRef, forwardRef } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import classNames from "classnames";
 import {
   detectNewLine,
@@ -16,6 +17,8 @@ import "react-tenor/dist/styles.css";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
+// @ts-ignore
+import SpoilersIcon from "./img/spoilers.svg";
 // logging.enabled = true;
 // loggingVerbose.enabled = true;
 
@@ -36,6 +39,11 @@ if (typeof window !== "undefined") {
 
   const MagicUrl = require("quill-magic-url");
   QuillModule.register("modules/magicUrl", MagicUrl.default);
+  const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
+  QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
+  const icons = Quill.import("ui/icons");
+  icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
+  logging(icons["inline-spoilers"]);
 }
 
 class Editor extends Component<Props> {
@@ -102,6 +110,22 @@ class Editor extends Component<Props> {
     });
   }
 
+  addTextChangeHandler() {
+    const changeHandler = this.editor.on(
+      "text-change" as const,
+      (diff, old, source) => {
+        loggingVerbose(`Text change from ${source}!`);
+        loggingVerbose(this.editor.getContents());
+        this.props.onTextChange(this.editor.getContents());
+      }
+    );
+
+    this.eventHandlers.push({
+      type: "text-change" as const,
+      handler: changeHandler,
+    });
+  }
+
   // Adds handler that detects when the cursor is moved to a new line and
   // shows a tooltip.
   addEmptyLineTooltipHandler() {
@@ -128,8 +152,9 @@ class Editor extends Component<Props> {
     const embedsLoadedCallback = () => {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
+      logging(`Embeds callback activated! New line bounds:`);
+      logging(bounds);
       this.maybeShowEmptyLineTooltip(bounds);
-      console.log(bounds);
       if (this.props.editable) {
         this.props.onTextChange(this.editor.getContents());
       }
@@ -243,6 +268,7 @@ class Editor extends Component<Props> {
     if (this.props.singleLine) {
       logging("adding no linebreak handler...");
       withNoLinebreakHandler(quillConfig.modules.keyboard);
+      this.addRemoveLinebreaksOnPasteHandler();
     }
 
     this.editor = new QuillModule(
@@ -254,8 +280,7 @@ class Editor extends Component<Props> {
     // Add handlers
     this.addCharactersTypedHandler();
     this.addEmptyLineTooltipHandler();
-    if (this.props.singleLine) {
-    }
+    this.addTextChangeHandler();
 
     // Set initial state
     this.editor.enable(this.props.editable);
@@ -310,23 +335,27 @@ class Editor extends Component<Props> {
           <div className="spinner">
             <Spinner />
           </div>
+          {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
           <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
-          <Tooltip
-            top={this.state.tooltipPostion.top}
-            right={this.state.tooltipPostion.right}
-            onInsertEmbed={({ type, embed }) => {
-              this.editor.focus();
-              this.skipTooltipUpdates = true;
-              const range = this.editor.getSelection(true);
-              // TODO: remove empty line before inserting image?
-              this.editor.insertEmbed(range.index, type, embed, "user");
-              this.editor.setSelection((range.index + 1) as any, "silent");
-            }}
-            show={this.state.showTooltip && this.props.showTooltip != false}
-            preventUpdate={(shouldPrevent) => {
-              this.skipTooltipUpdates = shouldPrevent;
-            }}
-          />
+          {this.props.editable && (
+            <Tooltip
+              top={this.state.tooltipPostion.top}
+              right={this.state.tooltipPostion.right}
+              onInsertEmbed={({ type, embed }) => {
+                this.editor.focus();
+                this.setState({ showTooltip: false });
+                this.skipTooltipUpdates = true;
+                const range = this.editor.getSelection(true);
+                // TODO: remove empty line before inserting image?
+                this.editor.insertEmbed(range.index, type, embed, "user");
+                this.editor.setSelection((range.index + 1) as any, "silent");
+              }}
+              show={this.state.showTooltip && this.props.showTooltip != false}
+              preventUpdate={(shouldPrevent) => {
+                this.skipTooltipUpdates = shouldPrevent;
+              }}
+            />
+          )}
           {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
           <div className="editor-quill" ref={this.editorContainer}></div>
         </div>
@@ -388,6 +417,7 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-underline"></button>
             <button className="ql-strike"></button>
             <button className="ql-link"></button>
+            <button className="ql-inline-spoilers"></button>
           </span>
           <span className="ql-formats">
             <select className="ql-header">

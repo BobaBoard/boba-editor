@@ -1,7 +1,7 @@
 import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
-import { addEmbedOverlay } from "./utils";
+import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
@@ -71,16 +71,12 @@ class TumblrEmbed extends BlockEmbed {
     node.dataset.href = data.href;
     node.dataset.did = data.did;
     node.dataset.url = data.url;
-    const tumblrNodeContainer = document.createElement("div");
-    tumblrNodeContainer.appendChild(tumblrNode);
-    tumblrNodeContainer.style.visibility = "hidden";
-    node.appendChild(
-      addEmbedOverlay(tumblrNodeContainer, {
-        onClose: () => {
-          TumblrEmbed.onRemoveRequest?.(node);
-        },
-      })
-    );
+    node.appendChild(tumblrNode);
+    addEmbedOverlay(node, {
+      onClose: () => {
+        TumblrEmbed.onRemoveRequest?.(node);
+      },
+    });
     attachObserver(node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");
@@ -91,7 +87,10 @@ class TumblrEmbed extends BlockEmbed {
 
   static renderFromUrl(node: HTMLDivElement, url: string) {
     if (!url) {
-      // TODO: make a decent error here
+      addErrorMessage(node, {
+        message: "No valid url found in Tumblr post!",
+        url: "#",
+      });
       return;
     }
 
@@ -106,17 +105,18 @@ class TumblrEmbed extends BlockEmbed {
     return node;
   }
 
-  static create(value: string) {
+  static create(value: any) {
     let node = super.create();
-
     node.contentEditable = false;
     node.dataset.rendered = false;
-    node.classList.add("ql-embed", "loading");
-    const loadingMessage = document.createElement("p");
-    loadingMessage.innerHTML = "Loading female-presenting nipples...";
-    loadingMessage.classList.add("loading-message");
-    node.appendChild(loadingMessage);
+    const url = typeof value == "string" ? this.sanitize(value) : value.url;
 
+    addLoadingMessage(node, {
+      message: "Loading female-presenting nipples...",
+      url,
+    });
+
+    node.classList.add("ql-embed", "loading");
     if (typeof value == "string") {
       return TumblrEmbed.renderFromUrl(node, this.sanitize(value));
     }
