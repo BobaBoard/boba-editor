@@ -78,7 +78,8 @@ export const getAllImages = (delta: DeltaOperation[]) => {
   delta.forEach((deltaOp) => {
     imageNodeNames.forEach((imageNode) => {
       if (deltaOp.insert && deltaOp.insert[imageNode]) {
-        images.push(deltaOp.insert[imageNode]);
+        const src = deltaOp.insert[imageNode].src || deltaOp.insert[imageNode];
+        images.push(src);
       }
     });
   });
@@ -96,7 +97,12 @@ export const replaceImages = (
         deltaOp.insert[imageNode] &&
         replacements[deltaOp.insert[imageNode]]
       ) {
-        deltaOp.insert[imageNode] = replacements[deltaOp.insert[imageNode]];
+        if (deltaOp.insert[imageNode].src) {
+          deltaOp.insert[imageNode].src =
+            replacements[deltaOp.insert[imageNode]];
+        } else {
+          deltaOp.insert[imageNode] = replacements[deltaOp.insert[imageNode]];
+        }
       }
     });
   });

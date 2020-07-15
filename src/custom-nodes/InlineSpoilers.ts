@@ -1,6 +1,5 @@
 // Matches to <em class="alt-italic">...</em>
 import Quill from "quill";
-import { debug } from "console";
 
 const Inline = Quill.import("blots/inline");
 
@@ -11,21 +10,21 @@ export default class InlineSpoilers extends Inline {
   static tagName = "SPAN";
   static className = "inline-spoilers";
 
-  constructor(domNode) {
+  constructor(domNode: HTMLElement) {
     super(domNode);
     domNode.addEventListener("click", () => {
-      log(`Clickity click!`);
+      log(`Changing visibility of spoilers!`);
       domNode.classList.toggle("visible");
     });
   }
 
-  static formats(domNode) {
+  static formats(domNode: HTMLElement) {
     log(`Formatting spoilers node.`);
     super.formats(domNode);
     return true;
   }
 
-  optimize(context) {
+  optimize(context: any) {
     super.optimize(context);
     let next = this;
     let adjacentSpoilers = [];

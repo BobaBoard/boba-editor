@@ -41,7 +41,7 @@ if (typeof window !== "undefined") {
   QuillModule.register("modules/magicUrl", MagicUrl.default);
   const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
   QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
-  const icons = Quill.import("ui/icons");
+  const icons = QuillModule.import("ui/icons");
   icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
   logging(icons["inline-spoilers"]);
 }
