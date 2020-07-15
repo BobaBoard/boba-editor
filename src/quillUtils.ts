@@ -95,11 +95,12 @@ export const replaceImages = (
       if (
         deltaOp.insert &&
         deltaOp.insert[imageNode] &&
-        replacements[deltaOp.insert[imageNode]]
+        (replacements[deltaOp.insert[imageNode]] ||
+          replacements[deltaOp.insert[imageNode].src])
       ) {
         if (deltaOp.insert[imageNode].src) {
           deltaOp.insert[imageNode].src =
-            replacements[deltaOp.insert[imageNode]];
+            replacements[deltaOp.insert[imageNode].src];
         } else {
           deltaOp.insert[imageNode] = replacements[deltaOp.insert[imageNode]];
         }
