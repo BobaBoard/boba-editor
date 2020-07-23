@@ -3,7 +3,7 @@ import React from "react";
 import Editor from "../src";
 
 export default {
-  title: "Inline Modules Preview",
+  title: "Spoilers",
   component: Editor,
 };
 
