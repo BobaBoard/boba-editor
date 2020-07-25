@@ -8,6 +8,8 @@ An advanced text editor based on [QuillJS](https://quilljs.com/), vaguely inspir
 
 ## Try on Storybook
 
+Requires nodejs 12.9.1.
+
 `yarn run storybook`
 
 ## How to Use
