@@ -392,8 +392,12 @@ class Editor extends Component<Props> {
           .editor-quill :global(.ql-tooltip) {
             z-index: 5;
           }
+          .editor :global(.ql-editor) :global(p) {
+            word-break: break-word !important;
+          }
           .editor :global(.ql-container) :global(a) {
             white-space: normal !important;
+            word-break: break-word !important;
           }
         `}</style>
         {/* Add global styles for types*/}
