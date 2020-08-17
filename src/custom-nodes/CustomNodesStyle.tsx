@@ -230,6 +230,12 @@ export default (props: {}) => {
         :global(.show-spoilers .embed-overlay.spoilers::after) {
           visibility: hidden;
         }
+        :global(.show-spoilers .embed-overlay.spoilers) {
+          display: none;
+        }
+        :global(.show-spoilers img:hover) {
+          cursor: pointer;
+        }
       `}</style>
     </>
   );
