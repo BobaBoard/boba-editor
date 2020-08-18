@@ -53,6 +53,7 @@ export const withNoLinebreakHandler = (quillKeyboardConfig: any) => {
 };
 
 export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
+  logging("Past event detected!");
   const paste = pasteEvent.clipboardData?.getData("text/plain");
   logging("Pasted data:");
   logging(paste);
@@ -127,10 +128,16 @@ export const importEmbedModule = (
     callbacks.onRemoveRequestCallback;
 };
 
-export const pasteImageAsBlockEmbed = (pasteEvent: ClipboardEvent) => {
+export const pasteImageAsBlockEmbed = (
+  pasteEvent: ClipboardEvent,
+  embedMethod: (img: string | ArrayBuffer) => void
+) => {
+  logging("Paste event detected! Processing images...");
+  let found = false;
   // @ts-ignore
   pasteEvent.clipboardData?.items.forEach((item) => {
     if (item.type.startsWith("image/")) {
+      found = true;
       logging(item.kind);
       logging(item.getAsFile());
       const reader = new FileReader();
@@ -138,10 +145,13 @@ export const pasteImageAsBlockEmbed = (pasteEvent: ClipboardEvent) => {
         if (!e.target?.result) {
           return;
         }
-        // TODO: Add embed here
-        // this.onInsertEmbed({ type: "block-image", embed: e.target?.result });
+        embedMethod(e.target.result);
       };
       reader.readAsDataURL(item.getAsFile());
     }
   });
+  if (found) {
+    pasteEvent.preventDefault();
+    pasteEvent.stopPropagation();
+  }
 };

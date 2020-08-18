@@ -7,6 +7,7 @@ import {
   withNoLinebreakHandler,
   removeLineBreaksFromPaste,
   importEmbedModule,
+  pasteImageAsBlockEmbed,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
@@ -72,6 +73,7 @@ class Editor extends Component<Props> {
     handler: any;
   }> = [];
   removeLineBreaksHandler = null as any;
+  imagePasteHandler = null as any;
 
   // Adds handler that checks how many characters have been typed
   // and updates parents when editor is empty.
@@ -194,6 +196,36 @@ class Editor extends Component<Props> {
     );
   }
 
+  addImagesPasteHandler() {
+    this.editorContainer.current?.addEventListener(
+      "paste",
+      (e) => {
+        pasteImageAsBlockEmbed(e, (img) => {
+          this.addEmbed("block-image", img);
+        });
+      },
+      true
+    );
+  }
+
+  addEmbed(type: string, embed: any) {
+    this.editor.focus();
+    this.setState({ showTooltip: false });
+    this.skipTooltipUpdates = true;
+    const range = this.editor.getSelection(true);
+    // TODO: remove empty line before inserting image?
+    this.editor.insertEmbed(range.index, type, embed, "user");
+    let nextRange = range.index + 1;
+    while (
+      typeof this.editor.getContents(nextRange, 1).ops[0].insert != "string"
+    ) {
+      nextRange++;
+    }
+    this.editor.setSelection(nextRange as any, "silent");
+    // Request animation frame makes it work with gifs too
+    requestAnimationFrame(() => this.editor.focus());
+  }
+
   maybeShowEmptyLineTooltip(bounds: { top: number; right: number } | null) {
     if (this.skipTooltipUpdates) {
       return;
@@ -281,6 +313,7 @@ class Editor extends Component<Props> {
     this.addCharactersTypedHandler();
     this.addEmptyLineTooltipHandler();
     this.addTextChangeHandler();
+    this.addImagesPasteHandler();
 
     // Set initial state
     this.editor.enable(this.props.editable);
@@ -321,6 +354,12 @@ class Editor extends Component<Props> {
         this.removeLineBreaksHandler
       );
     }
+    if (this.imagePasteHandler) {
+      this.editorContainer.current?.removeEventListener(
+        "paste",
+        this.imagePasteHandler
+      );
+    }
   }
 
   render() {
@@ -342,13 +381,7 @@ class Editor extends Component<Props> {
               top={this.state.tooltipPostion.top}
               right={this.state.tooltipPostion.right}
               onInsertEmbed={({ type, embed }) => {
-                this.editor.focus();
-                this.setState({ showTooltip: false });
-                this.skipTooltipUpdates = true;
-                const range = this.editor.getSelection(true);
-                // TODO: remove empty line before inserting image?
-                this.editor.insertEmbed(range.index, type, embed, "user");
-                this.editor.setSelection((range.index + 1) as any, "silent");
+                this.addEmbed(type, embed);
               }}
               show={this.state.showTooltip && this.props.showTooltip != false}
               preventUpdate={(shouldPrevent) => {
