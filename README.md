@@ -12,6 +12,8 @@ Requires nodejs 12.9.1.
 
 `yarn run storybook`
 
+To enable all embed types you can run your own [Iframely instance](https://github.com/itteco/iframely) on your localhost (or server).
+
 ## How to Use
 
 ```
