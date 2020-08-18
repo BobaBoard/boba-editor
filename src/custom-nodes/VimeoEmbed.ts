@@ -1,13 +1,13 @@
 import Oembed from "./OEmbedBase";
 
-const logging = require("debug")("bobapost:embeds:pixiv");
+const logging = require("debug")("bobapost:embeds:vimeo");
 
-class PixivEmbed extends Oembed {
-  static LOADING_BACKGROUND_COLOR = "#0096fa";
-  static LOADING_TEXT = "行っ・・・行っちゃう!";
+class VimeoEmbed extends Oembed {
+  static LOADING_BACKGROUND_COLOR = "#1dbae8";
+  static LOADING_TEXT = "Time for the COOLER YouTube...";
   static SKIP_LOADING = true;
 
-  static blotName = "pixiv-embed";
+  static blotName = "vimeo-embed";
   static tagName = "div";
   static className = "ql-oembed-embed";
 
@@ -23,4 +23,4 @@ class PixivEmbed extends Oembed {
   }
 }
 
-export default PixivEmbed;
+export default VimeoEmbed;

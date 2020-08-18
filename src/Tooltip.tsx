@@ -12,6 +12,14 @@ import TumblrIcon from "./img/tumblr_icon.svg";
 import TiktokIcon from "./img/tiktok.svg";
 // @ts-ignore
 import TwitterIcon from "./img/twitter.svg";
+// @ts-ignore
+import RedditIcon from "./img/reddit.svg";
+// @ts-ignore
+import PixivIcon from "./img/pixiv.svg";
+// @ts-ignore
+import InstagramIcon from "./img/instagram.svg";
+// @ts-ignore
+import VimeoIcon from "./img/vimeo.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -85,6 +93,51 @@ class Tooltip extends Component<{
               <TwitterIcon key="twitter" />
             </button>
             <button
+              className="ql-reddit"
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a reddit url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "reddit-embed",
+                    embed: { url },
+                  });
+                }
+              }}
+            >
+              <RedditIcon key="reddit" />
+            </button>
+            <button
+              className="ql-pixiv"
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a pixiv url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "pixiv-embed",
+                    embed: { url },
+                  });
+                }
+              }}
+            >
+              <PixivIcon key="pixiv" />
+            </button>
+            <button
+              className="ql-instagram"
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a instagram url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "instagram-embed",
+                    embed: { url },
+                  });
+                }
+              }}
+            >
+              <InstagramIcon key="instagram" />
+            </button>
+            <button
               className="ql-tumblr"
               onClick={() => {
                 // TODO: make a prettier input
@@ -128,6 +181,21 @@ class Tooltip extends Component<{
               }}
             >
               <YouTubeIcon key="youtube_icon" />
+            </button>
+            <button
+              className="ql-vimeo"
+              onClick={() => {
+                // TODO: make a prettier input
+                let url = prompt("Gimme a vimeo url");
+                if (url) {
+                  this.props.onInsertEmbed({
+                    type: "vimeo-embed",
+                    embed: { url },
+                  });
+                }
+              }}
+            >
+              <VimeoIcon key="vimeo" />
             </button>
             <TenorKeyboard
               isOpen={this.state.tenorOpen}
