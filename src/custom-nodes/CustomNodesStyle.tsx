@@ -236,6 +236,23 @@ export default (props: {}) => {
         :global(.show-spoilers img:hover) {
           cursor: pointer;
         }
+        :global(.ql-oembed-embed) {
+          white-space: normal;
+        }
+        :global(.ql-oembed-embed .embed-node.loading) {
+          visibility: hidden;
+        }
+        :global(.ql-oembed-embed .loading-message) {
+          width: 100%;
+          height: 50px;
+          background-color: #1da1f2;
+          margin: 10px 0;
+          text-align: center;
+          border-radius: 15px;
+          line-height: 50px;
+          color: white;
+          position: relative;
+        }
       `}</style>
     </>
   );

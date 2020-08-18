@@ -63,19 +63,22 @@ export const addEmbedOverlay = (
 export const addLoadingMessage = (
   embedRoot: HTMLElement,
   {
+    color,
     message,
     url,
   }: {
-    message: string;
+    color?: string;
+    message?: string;
     url: string;
   }
 ) => {
   const loadingMessage = document.createElement("div");
   const linkToOriginal = document.createElement("a");
-  linkToOriginal.innerHTML = message;
+  linkToOriginal.innerHTML = message || "Loading...";
   linkToOriginal.href = url;
   loadingMessage.appendChild(linkToOriginal);
   loadingMessage.classList.add("loading-message");
+  loadingMessage.style.backgroundColor = color || "gray";
 
   embedRoot.appendChild(loadingMessage);
 

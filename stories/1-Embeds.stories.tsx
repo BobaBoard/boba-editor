@@ -1,6 +1,6 @@
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
-import Editor, { setTumblrEmbedFetcher } from "../src";
+import Editor, { setTumblrEmbedFetcher, setOEmbedFetcher } from "../src";
 
 const logging = require("debug")("bobapost:stories:embeds");
 
@@ -22,6 +22,13 @@ setTumblrEmbedFetcher((url: string) => {
       });
     }, 25000);
   });
+});
+
+setOEmbedFetcher((url: string) => {
+  logging(`""Fetching"" from ${url}`);
+  return fetch(`http://localhost:8061/iframely?uri=${url}`).then((response) =>
+    response.json()
+  );
 });
 
 export const ImageEmbed = () => (
@@ -152,4 +159,82 @@ export const TikTokStory = () => (
 
 TikTokStory.story = {
   name: "tiktok",
+};
+
+export const InstagramStory = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"It\'s Instagram time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"instagram-embed":{"id":"6718335390845095173","url":"https://instagram.com/p/89CUyVoVY9/"}}},{"insert":"\\n"}]'
+      )}
+      onTextChange={() => {
+        logging("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        logging("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        logging("submit!");
+      }}
+    />
+  </div>
+);
+
+InstagramStory.story = {
+  name: "instagram",
+};
+
+export const RedditStory = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"It\'s Reddit time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"reddit-embed":{"id":"6718335390845095173","url":"https://www.reddit.com/r/nextfuckinglevel/comments/ibikdr/50_year_old_firefighter_deadlifts_600_lbs_of/"}}},{"insert":"\\n"}]'
+      )}
+      onTextChange={() => {
+        logging("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        logging("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        logging("submit!");
+      }}
+    />
+  </div>
+);
+
+RedditStory.story = {
+  name: "reddit",
+};
+
+export const PixivStory = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"It\'s Pixiv time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"pixiv-embed":{"id":"6718335390845095173","url":"https://www.pixiv.net/en/artworks/83682624"}}},{"insert":"\\n"}]'
+      )}
+      onTextChange={() => {
+        logging("changed!");
+      }}
+      focus={true}
+      onIsEmptyChange={() => {
+        logging("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        logging("submit!");
+      }}
+    />
+  </div>
+);
+
+PixivStory.story = {
+  name: "pixiv",
 };

@@ -8,5 +8,12 @@ export const setTumblrEmbedFetcher = (fetcher: (url: string) => any) => {
   }
 };
 
+export const setOEmbedFetcher = (fetcher: (url: string) => any) => {
+  if (typeof window !== "undefined") {
+    const OEmbed = require("./custom-nodes/OEmbedBase");
+    OEmbed.default.getOEmbedFromUrl = fetcher;
+  }
+};
+
 export { getAllImages, replaceImages };
 export default Editor;
