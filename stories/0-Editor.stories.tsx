@@ -33,6 +33,31 @@ EditorSimple.story = {
   name: "simple",
 };
 
+export const SingleLineEditor = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse('[{"insert":"This is a single line editor."}]')}
+      onTextChange={() => {
+        console.log("changed!");
+      }}
+      focus={true}
+      singleLine={true}
+      onIsEmptyChange={() => {
+        console.log("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        console.log("submit!");
+      }}
+    />
+  </div>
+);
+
+SingleLineEditor.story = {
+  name: "single line",
+};
+
 export const EditorState = () => {
   const [enabled, setEnabled] = React.useState(false);
   return (

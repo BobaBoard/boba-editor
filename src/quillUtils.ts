@@ -53,9 +53,7 @@ export const withNoLinebreakHandler = (quillKeyboardConfig: any) => {
 };
 
 export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
-  const paste = (pasteEvent.clipboardData || pasteEvent.clipboardData).getData(
-    "text"
-  );
+  const paste = pasteEvent.clipboardData?.getData("text/plain");
   logging("Pasted data:");
   logging(paste);
   const selection = window.getSelection();
@@ -68,6 +66,7 @@ export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
     .insertNode(document.createTextNode(paste.replace(/(\r\n|\n|\r)/gm, " ")));
   (window.getSelection() as any).collapseToEnd();
   pasteEvent.preventDefault();
+  pasteEvent.stopPropagation();
 
   return true;
 };
