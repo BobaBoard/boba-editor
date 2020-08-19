@@ -156,7 +156,9 @@ export const pasteImageAsBlockEmbed = (
   logging("Paste event detected! Processing images...");
   let found = false;
   // @ts-ignore
-  pasteEvent.clipboardData?.items.forEach((item) => {
+  logging(pasteEvent.clipboardData?.items?.length);
+  for (let i = 0; i < (pasteEvent.clipboardData?.items?.length || -1); i++) {
+    const item = pasteEvent.clipboardData?.items[i] as DataTransferItem;
     if (item.type.startsWith("image/")) {
       found = true;
       logging(item.kind);
@@ -168,9 +170,12 @@ export const pasteImageAsBlockEmbed = (
         }
         embedMethod(e.target.result);
       };
-      reader.readAsDataURL(item.getAsFile());
+      const file = item.getAsFile();
+      if (file) {
+        reader.readAsDataURL(file);
+      }
     }
-  });
+  }
   if (found) {
     pasteEvent.preventDefault();
     pasteEvent.stopPropagation();
