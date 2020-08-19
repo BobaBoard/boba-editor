@@ -86,6 +86,27 @@ export const getAllImages = (delta: DeltaOperation[]) => {
   return images;
 };
 
+export const removeTrailingWhitespace = (delta: DeltaOperation[]) => {
+  let lastNotEmpty: number | null = null;
+  delta.forEach((deltaOp, index) => {
+    if (typeof deltaOp.insert === "string" && deltaOp.insert.trim() !== "") {
+      lastNotEmpty = index;
+    }
+  });
+  const resultDelta =
+    !lastNotEmpty || lastNotEmpty == delta.length - 1
+      ? delta
+      : // Filter out all the empty ops at the end
+        delta.filter((op, index) => index <= (lastNotEmpty as number));
+  // Remove trailing whitespace from end of last deltaOp, if it's a string
+  if (typeof resultDelta[resultDelta.length - 1].insert === "string") {
+    resultDelta[resultDelta.length - 1].insert = resultDelta[
+      resultDelta.length - 1
+    ].insert.trimRight();
+  }
+  return resultDelta;
+};
+
 export const replaceImages = (
   delta: DeltaOperation[],
   replacements: { [key: string]: string }
@@ -133,7 +154,6 @@ export const pasteImageAsBlockEmbed = (
   embedMethod: (img: string | ArrayBuffer) => void
 ) => {
   logging("Paste event detected! Processing images...");
-  logging(pasteEvent.clipboardData?.getData("text/html"));
   let found = false;
   // @ts-ignore
   pasteEvent.clipboardData?.items.forEach((item) => {

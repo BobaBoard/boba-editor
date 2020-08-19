@@ -1,5 +1,9 @@
 import Editor from "./Editor";
-import { getAllImages, replaceImages } from "./quillUtils";
+import {
+  getAllImages,
+  replaceImages,
+  removeTrailingWhitespace,
+} from "./quillUtils";
 
 export const setTumblrEmbedFetcher = (fetcher: (url: string) => any) => {
   if (typeof window !== "undefined") {
@@ -15,5 +19,5 @@ export const setOEmbedFetcher = (fetcher: (url: string) => any) => {
   }
 };
 
-export { getAllImages, replaceImages };
+export { getAllImages, replaceImages, removeTrailingWhitespace };
 export default Editor;
