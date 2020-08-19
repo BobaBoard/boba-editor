@@ -327,6 +327,19 @@ class Editor extends Component<Props> {
       this.editor.focus();
     }
 
+    // Remove unwanted formatting on paste
+    // TODO: check if same mechanism can be used to simplify code
+    // in other parts of this codebase.
+    this.editor.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+      delta.forEach((e: any) => {
+        if (e.attributes) {
+          e.attributes.color = undefined;
+          e.attributes.background = undefined;
+        }
+      });
+      return delta;
+    });
+
     // Initialize characters counts (if handlers attached)
     this.props.onIsEmptyChange &&
       this.props.onIsEmptyChange(this.editor.getLength() == 1);

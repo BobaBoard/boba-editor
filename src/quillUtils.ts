@@ -133,6 +133,7 @@ export const pasteImageAsBlockEmbed = (
   embedMethod: (img: string | ArrayBuffer) => void
 ) => {
   logging("Paste event detected! Processing images...");
+  logging(pasteEvent.clipboardData?.getData("text/html"));
   let found = false;
   // @ts-ignore
   pasteEvent.clipboardData?.items.forEach((item) => {
