@@ -8,7 +8,6 @@ import {
   removeLineBreaksFromPaste,
   importEmbedModule,
   pasteImageAsBlockEmbed,
-  removeTrailingWhitespace,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
@@ -351,7 +350,6 @@ class Editor extends Component<Props> {
       logging("Adding editor to global namespace.");
       // Save this editor for easy debug access.
       window["editor"] = this.editor;
-      window["f"] = removeTrailingWhitespace;
     }
   }
 
