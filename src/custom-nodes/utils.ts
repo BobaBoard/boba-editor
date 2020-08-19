@@ -5,7 +5,7 @@ import CloseButton from "../img/close.svg";
 // @ts-ignore
 import SpoilersIcon from "../img/spoilers.svg";
 
-//const logging = require("debug")("bobapost:embeds:utils");
+const logging = require("debug")("bobapost:embeds:utils");
 
 export const addEmbedOverlay = (
   embedRoot: HTMLElement,
@@ -66,10 +66,14 @@ export const addLoadingMessage = (
     color,
     message,
     url,
+    width,
+    height,
   }: {
     color?: string;
     message?: string;
     url: string;
+    width?: string;
+    height?: string;
   }
 ) => {
   const loadingMessage = document.createElement("div");
@@ -78,7 +82,14 @@ export const addLoadingMessage = (
   linkToOriginal.href = url;
   loadingMessage.appendChild(linkToOriginal);
   loadingMessage.classList.add("loading-message");
-  loadingMessage.style.backgroundColor = color || "gray";
+  if (color) {
+    loadingMessage.style.backgroundColor = color;
+  }
+  if (width && height) {
+    const ratio = (parseInt(height) / parseInt(width)) * 100;
+    logging(ratio);
+    loadingMessage.style.paddingTop = `${ratio}%`;
+  }
 
   embedRoot.appendChild(loadingMessage);
 

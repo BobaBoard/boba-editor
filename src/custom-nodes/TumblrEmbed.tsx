@@ -5,7 +5,12 @@ import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
-const attachObserver = (domNode: HTMLDivElement) => {
+// const logging = require("debug")("bobapost:embeds:tumblr");
+
+const attachObserver = (
+  domNode: HTMLDivElement,
+  destinationNode: HTMLDivElement
+) => {
   let newObserver = new MutationObserver((mutations, observer) => {
     if (mutations[0]?.addedNodes[0]?.nodeName == "IFRAME") {
       const tumblrFrame = mutations[0]?.addedNodes[0] as HTMLIFrameElement;
@@ -13,15 +18,21 @@ const attachObserver = (domNode: HTMLDivElement) => {
       observer.disconnect();
       const checkNewHeight = () => {
         if (tumblrFrame.getBoundingClientRect().height != currentHeight) {
-          const loadingMessage = domNode.querySelector(".loading-message");
+          const loadingMessage = destinationNode.querySelector(
+            ".loading-message"
+          );
           loadingMessage?.parentNode?.removeChild(loadingMessage);
-          domNode.classList.add("loaded");
-          domNode.classList.remove("loading");
+          destinationNode.classList.add("loaded");
+          destinationNode.classList.remove("loading");
+          domNode.parentNode?.removeChild(domNode);
+          destinationNode.appendChild(
+            domNode.querySelector("iframe") as HTMLIFrameElement
+          );
           // Add an extra timeout so the size will have set
           setTimeout(() => {
             const embedSizes = tumblrFrame.getBoundingClientRect();
-            domNode.dataset.embedWidth = `${embedSizes.width}`;
-            domNode.dataset.embedHeight = `${embedSizes.height}`;
+            destinationNode.dataset.embedWidth = `${embedSizes.width}`;
+            destinationNode.dataset.embedHeight = `${embedSizes.height}`;
             TumblrEmbed.onLoadCallback?.();
           }, 200);
           return;
@@ -62,6 +73,7 @@ class TumblrEmbed extends BlockEmbed {
     }
   ) {
     const tumblrNode = document.createElement("div");
+    const containerNode = document.createElement("div");
     tumblrNode.classList.add("tumblr-post");
     // Add this to the post for rendering, but
     // also to the node for value retrieval
@@ -71,13 +83,16 @@ class TumblrEmbed extends BlockEmbed {
     node.dataset.href = data.href;
     node.dataset.did = data.did;
     node.dataset.url = data.url;
-    node.appendChild(tumblrNode);
+    containerNode.appendChild(tumblrNode);
+    document.body.appendChild(containerNode);
+    containerNode.style.position = "absolute";
+    containerNode.style.left = `-10000px`;
     addEmbedOverlay(node, {
       onClose: () => {
         TumblrEmbed.onRemoveRequest?.(node);
       },
     });
-    attachObserver(node);
+    attachObserver(containerNode, node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");
     fileref.setAttribute("async", "");
@@ -114,6 +129,8 @@ class TumblrEmbed extends BlockEmbed {
     addLoadingMessage(node, {
       message: "Loading female-presenting nipples...",
       url,
+      width: value.embedWidth,
+      height: value.embedHeight,
     });
 
     node.classList.add("ql-embed", "loading");

@@ -35,7 +35,7 @@ export default (props: {}) => {
         }
         :global(.tweet .loading-message) {
           width: 100%;
-          height: 50px;
+          min-height: 50px;
           background-color: #1da1f2;
           margin: 10px 0;
           text-align: center;
@@ -105,10 +105,9 @@ export default (props: {}) => {
         }
         :global(.ql-tumblr-embed.loading) {
           background-color: #34526f;
-          padding: 30px;
           text-align: center;
           color: white;
-          height: 80px;
+          min-height: 80px;
           /*
            * Figure out how to readd overflow hidden to this
            */
@@ -242,16 +241,25 @@ export default (props: {}) => {
         :global(.ql-oembed-embed .embed-node.loading) {
           visibility: hidden;
         }
-        :global(.ql-oembed-embed .loading-message) {
+        :global(.ql-oembed-embed .loading-message, .ql-tumblr-embed
+            .loading-message) {
           width: 100%;
           height: 50px;
-          background-color: #1da1f2;
           margin: 10px 0;
           text-align: center;
           border-radius: 15px;
           line-height: 50px;
           color: white;
           position: relative;
+        }
+        :global(.ql-oembed-embed .loading-message a, .ql-tumblr-embed
+            .loading-message
+            a, .tweet .loading-message a) {
+          position: absolute !important;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
         }
       `}</style>
     </>

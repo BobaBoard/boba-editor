@@ -44,7 +44,7 @@ class TweetEmbed extends BlockEmbed {
         if (!el) {
           addErrorMessage(node, {
             message: "This tweet.... it dead.",
-            url: TweetEmbed.value(node) || "",
+            url: TweetEmbed.value(node).url || "",
           });
           logging(`Ooops, there's no tweet there!`);
         }
@@ -56,9 +56,13 @@ class TweetEmbed extends BlockEmbed {
              You've been strucky by... <br />
              A smooth iOS bug.<br />
              (click to access tweet)`,
-            url: TweetEmbed.value(node) || "",
+            url: TweetEmbed.value(node).url || "",
           });
           logging(`That damn iOS bug!`);
+        } else {
+          const embedSizes = el.getBoundingClientRect();
+          node.dataset.embedWidth = `${embedSizes.width}`;
+          node.dataset.embedHeight = `${embedSizes.height}`;
         }
         if (TweetEmbed.onLoadCallback) {
           // Add some time to remove the loading class or the
@@ -74,7 +78,7 @@ class TweetEmbed extends BlockEmbed {
         TweetEmbed.doneLoading(node);
         addErrorMessage(node, {
           message: `This tweet.... it bad.<br />(${e.message})`,
-          url: TweetEmbed.value(node) || "",
+          url: TweetEmbed.value(node).url || "",
         });
       });
     // If the twitter library is not loaded yet, defer rendering
@@ -88,7 +92,7 @@ class TweetEmbed extends BlockEmbed {
         TweetEmbed.doneLoading(node);
         addErrorMessage(node, {
           message: "The Twitter Embeds library... it dead.",
-          url: TweetEmbed.value(node) || "",
+          url: TweetEmbed.value(node).url || "",
         });
         return;
       }
@@ -116,7 +120,7 @@ class TweetEmbed extends BlockEmbed {
   static create(value: any) {
     const node = super.create();
     logging(`Creating new tweet embed with value ${value}`);
-    const url = this.sanitize(value);
+    const url = typeof value == "string" ? this.sanitize(value) : value.url;
     const id = url.substr(url.lastIndexOf("/") + 1);
     node.dataset.url = url;
     node.contentEditable = false;
@@ -129,6 +133,8 @@ class TweetEmbed extends BlockEmbed {
     addLoadingMessage(node, {
       message: "Preparing to chirp...",
       url,
+      width: value.embedWidth,
+      height: value.embedHeight,
     });
 
     addEmbedOverlay(node, {
@@ -149,7 +155,11 @@ class TweetEmbed extends BlockEmbed {
   static value(domNode: HTMLDivElement) {
     loggingVerbose(`Getting value of embed from data:`);
     loggingVerbose(domNode.dataset);
-    return domNode.dataset.url;
+    return {
+      url: domNode.dataset.url,
+      embedWidth: domNode.dataset.embedWidth,
+      embedHeight: domNode.dataset.embedHeight,
+    };
   }
 
   static sanitize(url: string) {

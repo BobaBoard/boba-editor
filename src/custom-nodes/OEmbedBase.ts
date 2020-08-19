@@ -124,7 +124,11 @@ class OEmbed extends BlockEmbed {
     return node;
   }
 
-  static create(value: { url: string }) {
+  static create(value: {
+    url: string;
+    embedHeight?: string;
+    embedWidth?: string;
+  }) {
     logging(`Creating oEmbed object with value:`);
     logging(value);
     let node = super.create();
@@ -135,6 +139,8 @@ class OEmbed extends BlockEmbed {
       color: this.LOADING_BACKGROUND_COLOR,
       message: this.LOADING_TEXT,
       url: value.url,
+      width: value.embedWidth,
+      height: value.embedHeight,
     });
     addEmbedOverlay(node, {
       onClose: () => {
@@ -143,6 +149,13 @@ class OEmbed extends BlockEmbed {
     });
 
     node.classList.add("ql-embed", "loading");
+    if (value.embedHeight && value.embedWidth) {
+      const ratio =
+        (parseInt(value.embedHeight) / parseInt(value.embedWidth)) * 100;
+      logging(ratio);
+
+      node.style.setProperty("--ratio-padding", `${ratio}%`);
+    }
     return this.renderFromUrl(node, this.sanitize(value.url));
   }
 
