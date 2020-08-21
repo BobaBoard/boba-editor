@@ -279,9 +279,6 @@ class Editor extends Component<Props> {
         },
         magicUrl: {
           urlRegularExpression: /(https?:\/\/[\S]+)|(www\.[\S]+)|(mailto:[\S]+)|(tel:[\S]+)/,
-          normalizeUrlOptions: {
-            stripProtocol: true,
-          },
         },
         keyboard: {
           bindings: {},
