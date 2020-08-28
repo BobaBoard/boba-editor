@@ -63,27 +63,36 @@ ImageEmbed.story = {
   name: "image",
 };
 
-export const TwitterEmbed = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"embedHeight": "596", "embedWidth": "500", "url": "https://twitter.com/BobaBoard/status/1263913643650908160"}}},{"insert":"\\n"}]}'
-      )}
-      onTextChange={() => {
-        logging("changed!");
-      }}
-      focus={true}
-      onIsEmptyChange={() => {
-        logging("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        logging("submit!");
-      }}
-    />
-  </div>
-);
+export const TwitterEmbed = () => {
+  const [loading, setLoading] = React.useState(true);
+  return (
+    <div>
+      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+        <Editor
+          editable={true}
+          initialText={JSON.parse(
+            '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"embedHeight": "596", "embedWidth": "500", "url": "https://twitter.com/BobaBoard/status/1263913643650908160"}}},{"insert":"\\n"}]}'
+          )}
+          onTextChange={() => {
+            logging("changed!");
+          }}
+          focus={true}
+          onIsEmptyChange={() => {
+            logging("empty!");
+          }}
+          onSubmit={() => {
+            // This is for cmd + enter
+            logging("submit!");
+          }}
+          onEmbedLoaded={() => {
+            setLoading(false);
+          }}
+        />
+      </div>
+      Embed Status: {loading ? "loading" : "loaded"}.
+    </div>
+  );
+};
 
 TwitterEmbed.story = {
   name: "twitter",

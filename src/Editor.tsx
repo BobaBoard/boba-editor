@@ -160,6 +160,9 @@ class Editor extends Component<Props> {
       if (this.props.editable) {
         this.props.onTextChange(this.editor.getContents());
       }
+      if (this.props.onEmbedLoaded) {
+        this.props.onEmbedLoaded();
+      }
     };
 
     const embedCloseCallback = (root: HTMLImageElement) => {
@@ -500,6 +503,11 @@ interface Props {
   onCharactersChange?: (_: number) => void;
   onSubmit: () => void;
   onEditorCreated?: (editor: Quill) => void;
+  // Called when any embed has finished loading and has assumed the
+  // final width and height. Might trigger multiple times if multiple
+  // embeds are present.
+  // TODO: allow knowing when everything is done loading.
+  onEmbedLoaded?: () => void;
 }
 
 export default Editor;
