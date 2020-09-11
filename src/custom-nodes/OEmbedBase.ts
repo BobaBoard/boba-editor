@@ -103,6 +103,14 @@ class OEmbed extends BlockEmbed {
     }
   }
 
+  static renderError(node: HTMLDivElement, url: string) {
+    addErrorMessage(node, {
+      message: "The embeds bug strikes again!",
+      url,
+    });
+    this.onLoadEnd(node);
+  }
+
   static renderFromUrl(node: HTMLDivElement, url: string) {
     if (!url) {
       addErrorMessage(node, {
@@ -114,7 +122,10 @@ class OEmbed extends BlockEmbed {
 
     OEmbed.getOEmbedFromUrl(url)
       .then((data) => {
-        logging(data);
+        if (!data.html) {
+          this.renderError(node, url);
+          return;
+        }
         this.loadPost(node, { html: data.html, url });
       })
       .catch((err) => {
