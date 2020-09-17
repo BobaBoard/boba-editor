@@ -30,7 +30,10 @@ class TweetEmbed extends BlockEmbed {
     logging(`Removing loading message!`);
     node.classList.remove("loading");
     // Remove loading message
-    node.removeChild(node.querySelector(".loading-message") as HTMLDivElement);
+    const loadingNode = node.querySelector(".loading-message");
+    if (loadingNode) {
+      node.removeChild(loadingNode);
+    }
   }
 
   static loadTweet(id: string, node: HTMLDivElement, attemptsRemaining = 5) {
@@ -47,6 +50,7 @@ class TweetEmbed extends BlockEmbed {
             url: TweetEmbed.value(node).url || "",
           });
           logging(`Ooops, there's no tweet there!`);
+          return;
         }
         if (el.getBoundingClientRect().height == 0) {
           node.classList.add("ios-bug");

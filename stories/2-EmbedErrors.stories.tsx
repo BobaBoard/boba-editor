@@ -1,6 +1,6 @@
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
-import Editor, { setTumblrEmbedFetcher } from "../src";
+import Editor, { setTumblrEmbedFetcher, setOEmbedFetcher } from "../src";
 
 const logging = require("debug")("bobapost:stories:embeds");
 
@@ -22,6 +22,15 @@ setTumblrEmbedFetcher((url: string) => {
       });
     }, 5000);
   });
+});
+
+const LOAD_DELAY = 1000;
+setOEmbedFetcher((url: string) => {
+  logging(`""Fetching"" from ${url}`);
+  const promise = new Promise((resolve) => {
+    resolve({});
+  });
+  return promise;
 });
 
 export const ImageEmbed = () => (
@@ -128,12 +137,12 @@ EmbedStories.story = {
   name: "youtube",
 };
 
-export const TumblrStory = () => (
+export const MissingUrl = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor
       editable={true}
       initialText={JSON.parse(
-        '[{"insert":"NOTE: Tumblr Posts"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Tumblr posts are a bit weird. Unless you provide an endpoint that allows fetching the oEmbed data given the Tumblr URL, they won\'t work. It sucks, and I accept solutions.\\n"},{"insert":{"tumblr-embed":{"href":"https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720","did":"22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa","url":"https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a"}}},{"insert":"\\n"}]'
+        '[{"insert":"It\'s TikTok time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"pixiv-embed":{"id":"6718335390845095173"}}},{"insert":"\\n"}]'
       )}
       onTextChange={() => {
         logging("changed!");
@@ -150,32 +159,6 @@ export const TumblrStory = () => (
   </div>
 );
 
-TumblrStory.story = {
-  name: "tumblr",
-};
-
-export const TikTokStory = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"It\'s TikTok time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tiktok-embed":{"id":"6718335390845095173","url":"https://www.tiktok.com/@scout2015/video/6718335390845095173"}}},{"insert":"\\n"}]'
-      )}
-      onTextChange={() => {
-        logging("changed!");
-      }}
-      focus={true}
-      onIsEmptyChange={() => {
-        logging("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        logging("submit!");
-      }}
-    />
-  </div>
-);
-
-TikTokStory.story = {
-  name: "tiktok",
+MissingUrl.story = {
+  name: "missing url",
 };

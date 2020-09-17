@@ -117,13 +117,21 @@ class OEmbed extends BlockEmbed {
         message: "No valid url found in embed post!",
         url: "#",
       });
-      return;
+      this.onLoadEnd(node);
+      return node;
     }
 
     OEmbed.getOEmbedFromUrl(url)
       .then((data) => {
         if (!data.html) {
           this.renderError(node, url);
+          // Add the url to the dataset anyway, in case the error
+          // comes from the embed not being world-visible and the
+          // user wants to post it anyway.
+          // TODO: this should instead look at whether other embed data
+          // to get a better preview that allows clicking on the URL
+          // without it looking ugly or appearing like an error.
+          node.dataset.url = url;
           return;
         }
         this.loadPost(node, { html: data.html, url });
@@ -183,6 +191,9 @@ class OEmbed extends BlockEmbed {
   }
 
   static sanitize(url: string) {
+    if (!url) {
+      return "";
+    }
     if (url.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));
     }
