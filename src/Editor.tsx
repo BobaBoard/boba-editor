@@ -335,6 +335,7 @@ class Editor extends Component<Props> {
         if (e.attributes) {
           e.attributes.color = undefined;
           e.attributes.background = undefined;
+          e.attributes["code-block"] = false;
         }
       });
       return delta;
