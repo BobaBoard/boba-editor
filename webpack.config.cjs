@@ -15,7 +15,7 @@ module.exports = {
     library: "boba-editor",
     libraryTarget: "umd",
   },
-  entry: path.join(__dirname, "src", "index.ts"),
+  entry: path.join(__dirname, "src/", "index.ts"),
   optimization: {
     minimize: false,
   },
