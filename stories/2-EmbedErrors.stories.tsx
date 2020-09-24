@@ -33,32 +33,6 @@ setOEmbedFetcher((url: string) => {
   return promise;
 });
 
-export const ImageEmbed = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"Image Embed"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://pbs.twimg.com/media/EY-RqiyUwAAfgzd?format=png&name=small"}}]'
-      )}
-      onTextChange={() => {
-        logging("changed!");
-      }}
-      focus={true}
-      onIsEmptyChange={() => {
-        logging("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        logging("submit!");
-      }}
-    />
-  </div>
-);
-
-ImageEmbed.story = {
-  name: "image",
-};
-
 export const TwitterEmbed = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor
@@ -109,32 +83,6 @@ export const TwitterEmbedNoId = () => (
 
 TwitterEmbedNoId.story = {
   name: "twitter (no id)",
-};
-
-export const EmbedStories = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"youtube-video":"https://www.youtube.com/embed/ROPpn-QcLZM"}},{"insert":"\\n"}]'
-      )}
-      onTextChange={() => {
-        logging("changed!");
-      }}
-      focus={true}
-      onIsEmptyChange={() => {
-        logging("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        logging("submit!");
-      }}
-    />
-  </div>
-);
-
-EmbedStories.story = {
-  name: "youtube",
 };
 
 export const MissingUrl = () => (
