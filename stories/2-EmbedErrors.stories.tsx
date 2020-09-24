@@ -43,7 +43,7 @@ export const TwitterEmbed = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -69,7 +69,7 @@ export const TwitterEmbedNoId = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -95,7 +95,7 @@ export const MissingUrl = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}

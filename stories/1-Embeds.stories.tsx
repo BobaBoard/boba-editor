@@ -47,7 +47,7 @@ export const ImageEmbed = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -76,7 +76,7 @@ export const TwitterEmbed = () => {
           onTextChange={() => {
             logging("changed!");
           }}
-          focus={true}
+          focusOnMount={true}
           onIsEmptyChange={() => {
             logging("empty!");
           }}
@@ -108,7 +108,7 @@ export const EmbedStories = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -134,7 +134,7 @@ export const TumblrStory = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -160,7 +160,7 @@ export const TikTokStory = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -186,7 +186,7 @@ export const InstagramStory = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -212,7 +212,7 @@ export const RedditStory = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}
@@ -238,7 +238,7 @@ export const PixivStory = () => (
       onTextChange={() => {
         logging("changed!");
       }}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         logging("empty!");
       }}

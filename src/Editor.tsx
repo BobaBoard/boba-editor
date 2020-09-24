@@ -44,7 +44,6 @@ if (typeof window !== "undefined") {
   QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
   const icons = QuillModule.import("ui/icons");
   icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
-  logging(icons["inline-spoilers"]);
 }
 
 class Editor extends Component<Props> {
@@ -211,6 +210,10 @@ class Editor extends Component<Props> {
     );
   }
 
+  focus() {
+    this.editor?.focus();
+  }
+
   addEmbed(type: string, embed: any) {
     this.editor.focus();
     this.setState({ showTooltip: false });
@@ -253,19 +256,14 @@ class Editor extends Component<Props> {
     update = update || newState.showTooltip != this.state.showTooltip;
     update = update || newState.tooltipPostion != this.state.tooltipPostion;
     update = update || newState.loaded != this.state.loaded;
-    update = update || newProps.focus != this.props.focus;
     loggingVerbose(update ? "...yes." : "...no.");
     return update;
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate() {
     this.editor.enable(this.props.editable);
     if (!this.props.editable) {
       this.setState({ showTooltip: false });
-    }
-
-    if (this.props.focus && !prevProps.focus) {
-      this.editor.focus();
     }
   }
 
@@ -323,10 +321,16 @@ class Editor extends Component<Props> {
       this.editor.setContents(this.props.initialText);
     }
 
-    if (this.props.focus) {
-      this.editor.focus();
+    if (this.props.handler) {
+      // Note: Typescript marks current as a read-only property, which it isn't.
+      // @ts-ignore
+      this.props.handler.current = {
+        focus: this.focus.bind(this),
+      };
     }
-
+    if (this.props.focusOnMount) {
+      this.focus();
+    }
     // Remove unwanted formatting on paste
     // TODO: check if same mechanism can be used to simplify code
     // in other parts of this codebase.
@@ -492,13 +496,18 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
   }
 );
 
-interface Props {
+export interface EditorHandler {
+  focus: () => void;
+}
+
+export interface Props {
   editable: boolean;
-  focus: boolean;
   initialText: any;
   // Note: this prop cannot be changed after initialization.
   singleLine?: boolean;
   showTooltip?: boolean;
+  handler?: React.RefObject<EditorHandler>;
+  focusOnMount?: boolean;
   onTextChange: (_: any) => void;
   onIsEmptyChange?: (empty: boolean) => void;
   onCharactersChange?: (_: number) => void;

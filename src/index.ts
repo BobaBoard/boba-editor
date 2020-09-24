@@ -1,4 +1,4 @@
-import Editor from "./Editor";
+import Editor, { EditorHandler } from "./Editor";
 import {
   getAllImages,
   replaceImages,
@@ -19,5 +19,5 @@ export const setOEmbedFetcher = (fetcher: (url: string) => any) => {
   }
 };
 
-export { getAllImages, replaceImages, removeTrailingWhitespace };
+export { getAllImages, replaceImages, removeTrailingWhitespace, EditorHandler };
 export default Editor;

@@ -1,6 +1,6 @@
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
-import Editor, { getAllImages, replaceImages } from "../src";
+import Editor, { EditorHandler, getAllImages, replaceImages } from "../src";
 
 export default {
   title: "Editor Preview",
@@ -14,10 +14,10 @@ export const EditorSimple = () => (
       initialText={JSON.parse(
         '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]'
       )}
+      focusOnMount={true}
       onTextChange={() => {
         console.log("changed!");
       }}
-      focus={true}
       onIsEmptyChange={() => {
         console.log("empty!");
       }}
@@ -41,8 +41,8 @@ export const SingleLineEditor = () => (
       onTextChange={() => {
         console.log("changed!");
       }}
-      focus={true}
       singleLine={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {
         console.log("empty!");
       }}
@@ -71,7 +71,6 @@ export const EditorState = () => {
           onTextChange={() => {
             console.log("changed!");
           }}
-          focus={true}
           onIsEmptyChange={() => {
             console.log("empty!");
           }}
@@ -113,7 +112,7 @@ export const ImageLoading = () => {
           onTextChange={(text) => {
             setText(text);
           }}
-          focus={true}
+          focusOnMount={true}
           onIsEmptyChange={() => {
             console.log("empty!");
           }}
@@ -153,4 +152,42 @@ export const ImageLoading = () => {
 
 ImageLoading.story = {
   name: "image upload",
+};
+
+export const EditorFocus = () => {
+  const editorRef = React.createRef<EditorHandler>();
+  return (
+    <>
+      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+        <Editor
+          handler={editorRef}
+          editable={true}
+          initialText={JSON.parse(
+            '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]'
+          )}
+          onTextChange={() => {
+            console.log("changed!");
+          }}
+          onIsEmptyChange={() => {
+            console.log("empty!");
+          }}
+          onSubmit={() => {
+            // This is for cmd + enter
+            console.log("submit!");
+          }}
+        />
+      </div>
+      <input
+        type="button"
+        onClick={(e) => {
+          editorRef.current?.focus();
+        }}
+        value="focus"
+      />
+    </>
+  );
+};
+
+EditorSimple.story = {
+  name: "simple",
 };

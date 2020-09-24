@@ -15,7 +15,7 @@ export const EditorSimple = () => (
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"italic":true,"inline-spoilers":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
       onTextChange={() => {}}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {}}
       onSubmit={() => {
         // This is for cmd + enter
@@ -37,7 +37,7 @@ export const SpoilersNotEditable = () => (
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"italic":true,"inline-spoilers":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
       onTextChange={() => {}}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {}}
       onSubmit={() => {
         // This is for cmd + enter
@@ -59,7 +59,7 @@ export const SpoilersImage = () => (
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://media.tenor.com/images/caee629b8e640f7217b2b4b9bda49bac/tenor.gif"}},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
       onTextChange={() => {}}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {}}
       onSubmit={() => {
         // This is for cmd + enter
@@ -81,7 +81,7 @@ export const SpoilersImageNonEditable = () => (
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":{"src":"https://media.tenor.com/images/caee629b8e640f7217b2b4b9bda49bac/tenor.gif","spoilers":true,"width":498,"height":392}}},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
       onTextChange={() => {}}
-      focus={true}
+      focusOnMount={true}
       onIsEmptyChange={() => {}}
       onSubmit={() => {
         // This is for cmd + enter
