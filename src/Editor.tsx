@@ -464,7 +464,7 @@ class Editor extends Component<Props> {
           .editor :global(.ql-container) :global(a) {
             white-space: normal !important;
             word-break: break-word !important;
-            color: var(--a-color, rgb(249, 102, 128));
+            color: var(--link-color, rgb(249, 102, 128));
           }
 
           .editor :global(.ql-mention-list) {
@@ -483,6 +483,7 @@ class Editor extends Component<Props> {
             border-right: 1px solid black;
             border-bottom: 4px solid black;
             border-radius: 15px;
+            font-size: small;
           }
           .editor :global(.ql-mention-list-item.selected) {
             background-color: black;
