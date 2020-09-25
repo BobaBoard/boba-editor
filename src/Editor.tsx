@@ -44,6 +44,7 @@ if (typeof window !== "undefined") {
   QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
   const icons = QuillModule.import("ui/icons");
   icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
+  require("quill-mention");
 }
 
 class Editor extends Component<Props> {
@@ -284,6 +285,17 @@ class Editor extends Component<Props> {
         keyboard: {
           bindings: {},
         },
+        mention: {
+          allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+          mentionDenotationChars: ["@", "#"],
+          source: async function (searchTerm, renderList) {
+            renderList([
+              { id: 1, value: "The LuigiFuckers" },
+              { id: 2, value: "Webmaster" },
+              { id: 3, value: "A BobaBoard Friend" },
+            ]);
+          },
+        },
       },
       theme: "bubble",
     };
@@ -453,6 +465,28 @@ class Editor extends Component<Props> {
             white-space: normal !important;
             word-break: break-word !important;
             color: var(--a-color, rgb(249, 102, 128));
+          }
+
+          .editor :global(.ql-mention-list) {
+            background-color: aquamarine;
+            border-radius: 15px;
+            border: 2px solid black;
+            list-style: none;
+            padding: 3px;
+            border-bottom: 8px solid black;
+            margin-top: 0px;
+          }
+          .editor :global(.ql-mention-list-item) {
+            background-color: white;
+            padding: 10px;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-bottom: 4px solid black;
+            border-radius: 15px;
+          }
+          .editor :global(.ql-mention-list-item.selected) {
+            background-color: black;
+            color: white;
           }
         `}</style>
         {/* Add global styles for types*/}
