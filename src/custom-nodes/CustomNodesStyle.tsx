@@ -4,6 +4,9 @@ export default (props: {}) => {
   return (
     <>
       <style jsx>{`
+        :global(.ql-embed a) {
+          color: white !important;
+        }
         :global(.ql-embed .error-message) {
           width: 100%;
           height: 50px;
