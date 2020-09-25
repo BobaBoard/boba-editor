@@ -33,6 +33,32 @@ EditorSimple.story = {
   name: "simple",
 };
 
+export const MultiParagraph = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"You have my sword...\\nBut "},{"attributes":{"link":"https://www.youtube.com/watch?v=dQw4w9WgXcQ"},"insert":"do you know what else you have"},{"insert": "?\\n\\nMy heart.\\n\\nLorem Ipsum, fam.\\n"}]'
+      )}
+      focusOnMount={true}
+      onTextChange={() => {
+        console.log("changed!");
+      }}
+      onIsEmptyChange={() => {
+        console.log("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        console.log("submit!");
+      }}
+    />
+  </div>
+);
+
+MultiParagraph.story = {
+  name: "multiparagraph",
+};
+
 export const SingleLineEditor = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor

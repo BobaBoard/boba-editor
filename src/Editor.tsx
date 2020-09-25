@@ -418,6 +418,8 @@ class Editor extends Component<Props> {
           .editor-quill,
           .editor :global(.ql-editor) {
             min-height: inherit;
+            font-family: "Inter", sans-serif;
+            color: var(--text-color, inherit);
           }
           .editor {
             position: relative;
@@ -450,6 +452,7 @@ class Editor extends Component<Props> {
           .editor :global(.ql-container) :global(a) {
             white-space: normal !important;
             word-break: break-word !important;
+            color: var(--a-color, rgb(249, 102, 128));
           }
         `}</style>
         {/* Add global styles for types*/}
@@ -473,6 +476,8 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-underline"></button>
             <button className="ql-strike"></button>
             <button className="ql-link"></button>
+            <button className="ql-list" value="bullet"></button>
+            <button className="ql-list" value="ordered"></button>
             <button className="ql-inline-spoilers"></button>
           </span>
           <span className="ql-formats">
@@ -481,6 +486,9 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
               <option value="h2">Heading 2</option>
               <option value="">Normal</option>
             </select>
+          </span>
+          <span className="ql-formats">
+            <button className="ql-clean"></button>
           </span>
         </div>
         <style jsx>{`
