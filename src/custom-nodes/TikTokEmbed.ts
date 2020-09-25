@@ -23,13 +23,16 @@ const attachObserver = (
     if (mutations[0]?.removedNodes[0]?.nodeName == "SECTION") {
       const loadingMessage = domNode.querySelector(".loading-message");
       loadingMessage?.parentNode?.removeChild(loadingMessage);
-      const iframe = domNode.querySelector("iframe") as HTMLIFrameElement;
+      const iframe = tikTokNode.querySelector("iframe") as HTMLIFrameElement;
       // Add an extra timeout so the size will have set
       let tries = 0;
       const checkNewHeight = () => {
         if (iframe.getBoundingClientRect().height > 1) {
           domNode.classList.add("loaded");
           domNode.classList.remove("loading");
+          tikTokNode.style.position = "relative";
+          tikTokNode.style.left = "0";
+          console.log(tikTokNode);
           const embedSizes = iframe.getBoundingClientRect();
           domNode.dataset.embedWidth = `${embedSizes.width}`;
           domNode.dataset.embedHeight = `${embedSizes.height}`;
@@ -95,6 +98,9 @@ class TikTokEmbed extends BlockEmbed {
         },
       })
     );
+    tikTokNode.style.position = "absolute";
+    tikTokNode.style.left = `-10000px`;
+    node.appendChild(tikTokNode);
 
     attachObserver(node, tikTokNode);
     let fileref = document.createElement("script");
