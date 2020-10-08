@@ -98,6 +98,41 @@ TwitterEmbed.story = {
   name: "twitter",
 };
 
+export const TwitterThreadEmbed = () => {
+  const [loading, setLoading] = React.useState(true);
+  return (
+    <div>
+      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+        <Editor
+          editable={true}
+          initialText={JSON.parse(
+            '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"thread": true, "embedHeight": "197", "embedWidth": "500", "url": "https://twitter.com/hasenschneck/status/1311215026506784768"}}},{"insert":"\\n"}]}'
+          )}
+          onTextChange={() => {
+            logging("changed!");
+          }}
+          focusOnMount={true}
+          onIsEmptyChange={() => {
+            logging("empty!");
+          }}
+          onSubmit={() => {
+            // This is for cmd + enter
+            logging("submit!");
+          }}
+          onEmbedLoaded={() => {
+            setLoading(false);
+          }}
+        />
+      </div>
+      Embed Status: {loading ? "loading" : "loaded"}.
+    </div>
+  );
+};
+
+TwitterThreadEmbed.story = {
+  name: "twitter thread",
+};
+
 export const EmbedStories = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
     <Editor

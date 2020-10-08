@@ -26,7 +26,7 @@ class TweetEmbed extends BlockEmbed {
     align: "center",
   };
 
-  static doneLoading(node: HTMLDivElement) {
+  static doneLoading(node: HTMLElement) {
     logging(`Removing loading message!`);
     node.classList.remove("loading");
     // Remove loading message
@@ -36,11 +36,20 @@ class TweetEmbed extends BlockEmbed {
     }
   }
 
-  static loadTweet(id: string, node: HTMLDivElement, attemptsRemaining = 5) {
+  static loadTweet(id: string, node: HTMLElement, attemptsRemaining = 5) {
     // @ts-ignore
     window?.twttr?.widgets
-      ?.createTweet(id, node, TweetEmbed.tweetOptions)
+      ?.createTweet(id, node, {
+        ...TweetEmbed.tweetOptions,
+        conversation: node.dataset.thread === "true" ? undefined : "none",
+      })
       .then((el: HTMLDivElement) => {
+        // If there is more than one rendered tweet here, it means we're in a
+        // "option change" situation. Remove the older.
+        const renderedNode = node.querySelectorAll(".twitter-tweet");
+        if (renderedNode.length > 1) {
+          renderedNode[0].parentElement?.removeChild(renderedNode[0]);
+        }
         logging(`Tweet was loaded!`);
         node.dataset.rendered = "true";
         TweetEmbed.doneLoading(node);
@@ -130,10 +139,12 @@ class TweetEmbed extends BlockEmbed {
     node.contentEditable = false;
     node.dataset.id = id;
     node.dataset.rendered = false;
+    node.dataset.thread = !!value["thread"] ? "true" : undefined;
 
     logging(`Tweet url: ${url}`);
     logging(`Tweet id: ${id}`);
 
+    node.classList.toggle("spoilers", !!value["spoilers"]);
     addLoadingMessage(node, {
       message: "Preparing to chirp...",
       url,
@@ -141,14 +152,40 @@ class TweetEmbed extends BlockEmbed {
       height: value.embedHeight,
     });
 
-    addEmbedOverlay(node, {
-      onClose: () => {
-        TweetEmbed.onRemoveRequest?.(node);
+    // TODO: this should be generalized rather than making everyone have access
+    // to a method only twitter really needs
+    addEmbedOverlay(
+      node,
+      {
+        onClose: () => {
+          TweetEmbed.onRemoveRequest?.(node);
+        },
+        onMarkSpoilers: (node, spoilers) => {
+          if (spoilers) {
+            node.setAttribute("spoilers", "true");
+          } else {
+            node.removeAttribute("spoilers");
+          }
+        },
+        onChangeThread: (node, thread) => {
+          node.dataset.thread = thread ? "true" : "";
+          TweetEmbed.loadTweet(id, node);
+        },
       },
-    });
+      {
+        isThread: node.dataset.thread === "true",
+        isSpoilers: !!value["spoilers"],
+      }
+    );
 
     node.classList.add("ql-embed", "tweet", "loading");
     TweetEmbed.loadTweet(id, node);
+
+    if (!!value["spoilers"]) {
+      node.addEventListener("click", () => {
+        node.classList.toggle("show-spoilers");
+      });
+    }
     return node;
   }
 
@@ -156,13 +193,16 @@ class TweetEmbed extends BlockEmbed {
     TweetEmbed.onLoadCallback = callback;
   }
 
-  static value(domNode: HTMLDivElement) {
+  static value(domNode: HTMLElement) {
     loggingVerbose(`Getting value of embed from data:`);
     loggingVerbose(domNode.dataset);
+    const spoilers = domNode.getAttribute("spoilers");
     return {
       url: domNode.dataset.url,
       embedWidth: domNode.dataset.embedWidth,
       embedHeight: domNode.dataset.embedHeight,
+      spoilers: !!spoilers,
+      thread: !!domNode.dataset.thread,
     };
   }
 

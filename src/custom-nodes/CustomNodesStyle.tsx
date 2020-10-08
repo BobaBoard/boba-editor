@@ -47,6 +47,9 @@ export default (props: {}) => {
           color: white;
           position: relative;
         }
+        :global(.ql-embed.tweet) {
+          text-align: center;
+        }
         :global(.ql-embed) {
           position: relative;
         }
@@ -188,17 +191,18 @@ export default (props: {}) => {
           position: relative;
           z-index: 2;
         }
-        :global(.spoilers-button) {
+        :global(.embed-options-button) {
           height: 20px;
           width: 20px;
+          margin: 0px 3px;
         }
-        :global(.spoilers-button.active .ql-fill) {
+        :global(.embed-options-button.active .ql-fill) {
           fill: white;
         }
-        :global(.spoilers-button:hover) {
+        :global(.embed-options-button:hover) {
           cursor: pointer;
         }
-        :global(.spoilers-button > svg) {
+        :global(.embed-options-button > svg) {
           height: 20px;
           width: 20px;
         }

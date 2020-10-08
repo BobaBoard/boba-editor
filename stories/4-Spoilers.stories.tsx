@@ -94,3 +94,34 @@ export const SpoilersImageNonEditable = () => (
 SpoilersImageNonEditable.story = {
   name: "image (not editable)",
 };
+
+export const TwitterThreadEmbed = () => {
+  const [loading, setLoading] = React.useState(true);
+  return (
+    <div>
+      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+        <Editor
+          editable={false}
+          initialText={JSON.parse(
+            '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"thread": true, "spoilers": true, "embedHeight": "689", "embedWidth": "500", "url": "https://twitter.com/hasenschneck/status/1311215026506784768"}}},{"insert":"\\n"}]}'
+          )}
+          onTextChange={() => {}}
+          focusOnMount={true}
+          onIsEmptyChange={() => {}}
+          onEmbedLoaded={() => {
+            setLoading(false);
+          }}
+          onSubmit={() => {
+            // This is for cmd + enter
+            console.log("submit!");
+          }}
+        />
+      </div>
+      Embed Status: {loading ? "loading" : "loaded"}.
+    </div>
+  );
+};
+
+TwitterThreadEmbed.story = {
+  name: "twitter thread",
+};

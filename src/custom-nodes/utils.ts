@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 import CloseButton from "../img/close.svg";
 // @ts-ignore
 import SpoilersIcon from "../img/spoilers.svg";
+// @ts-ignore
+import ThreadIcon from "../img/thread.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
@@ -12,9 +14,12 @@ export const addEmbedOverlay = (
   callbacks: {
     onClose: (root: HTMLElement) => void;
     onMarkSpoilers?: (root: HTMLElement, spoilers: boolean) => void;
+    onChangeThread?: (root: HTMLElement, thread: boolean) => void;
   },
   initialSettings?: {
     isSpoilers?: boolean;
+    // TODO: make this configurable
+    isThread?: boolean;
   }
 ) => {
   const containerDiv = document.createElement("div");
@@ -28,31 +33,51 @@ export const addEmbedOverlay = (
     callbacks.onClose(embedRoot);
   });
 
-  if (callbacks.onMarkSpoilers) {
+  // TODO: generalize this code
+  if (callbacks.onMarkSpoilers || callbacks.onChangeThread) {
     const optionsOverlay = document.createElement("div");
     optionsOverlay.classList.add("options-overlay");
-    const spoilersButton = document.createElement("div");
-    spoilersButton.classList.add("spoilers-button");
-    ReactDOM.render(
-      React.createElement(SpoilersIcon, {}, null),
-      spoilersButton
-    );
-    optionsOverlay.appendChild(spoilersButton);
-    spoilersButton.classList.toggle("active", !!initialSettings?.isSpoilers);
-    containerDiv.classList.toggle("spoilers", !!initialSettings?.isSpoilers);
-    spoilersButton.addEventListener("click", (e) => {
-      spoilersButton.classList.toggle("active");
-      callbacks.onMarkSpoilers?.(
-        embedRoot,
-        spoilersButton.classList.contains("active")
+    if (callbacks.onMarkSpoilers) {
+      const spoilersButton = document.createElement("div");
+      spoilersButton.classList.add("spoilers-button", "embed-options-button");
+      ReactDOM.render(
+        React.createElement(SpoilersIcon, {}, null),
+        spoilersButton
       );
-      containerDiv.classList.toggle(
-        "spoilers",
-        spoilersButton.classList.contains("active")
-      );
-      e.stopPropagation();
-      e.preventDefault();
-    });
+      optionsOverlay.appendChild(spoilersButton);
+      spoilersButton.classList.toggle("active", !!initialSettings?.isSpoilers);
+      containerDiv.classList.toggle("spoilers", !!initialSettings?.isSpoilers);
+      spoilersButton.addEventListener("click", (e) => {
+        spoilersButton.classList.toggle("active");
+        callbacks.onMarkSpoilers?.(
+          embedRoot,
+          spoilersButton.classList.contains("active")
+        );
+        containerDiv.classList.toggle(
+          "spoilers",
+          spoilersButton.classList.contains("active")
+        );
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    }
+    if (callbacks.onChangeThread) {
+      const threadButton = document.createElement("div");
+      threadButton.classList.add("thread-button", "embed-options-button");
+      ReactDOM.render(React.createElement(ThreadIcon, {}, null), threadButton);
+      optionsOverlay.appendChild(threadButton);
+      threadButton.classList.toggle("active", !!initialSettings?.isThread);
+      threadButton.addEventListener("click", (e) => {
+        threadButton.classList.toggle("active");
+        callbacks.onChangeThread?.(
+          embedRoot,
+          threadButton.classList.contains("active")
+        );
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    }
+
     containerDiv.appendChild(optionsOverlay);
   }
 
