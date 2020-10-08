@@ -3,6 +3,8 @@ import axios from "axios";
 
 import { addEmbedOverlay, addLoadingMessage } from "./utils";
 
+const logging = require("debug")("bobapost:embeds:tiktok");
+
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
@@ -32,7 +34,7 @@ const attachObserver = (
           domNode.classList.remove("loading");
           tikTokNode.style.position = "relative";
           tikTokNode.style.left = "0";
-          console.log(tikTokNode);
+          logging(tikTokNode);
           const embedSizes = iframe.getBoundingClientRect();
           domNode.dataset.embedWidth = `${embedSizes.width}`;
           domNode.dataset.embedHeight = `${embedSizes.height}`;
@@ -124,7 +126,7 @@ class TikTokEmbed extends BlockEmbed {
         });
       })
       .catch((err) => {
-        console.log(err);
+        logging(err);
       });
 
     return node;

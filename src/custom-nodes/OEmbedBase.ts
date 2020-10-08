@@ -137,7 +137,7 @@ class OEmbed extends BlockEmbed {
         this.loadPost(node, { html: data.html, url });
       })
       .catch((err) => {
-        console.log(err);
+        logging(err);
       });
 
     return node;

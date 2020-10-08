@@ -1,5 +1,7 @@
 import Quill from "quill";
 
+const logging = require("debug")("bobapost:embeds:tumblt");
+
 const BlockEmbed = Quill.import("blots/block/embed");
 import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
@@ -114,7 +116,7 @@ class TumblrEmbed extends BlockEmbed {
         TumblrEmbed.loadPost(node, data);
       })
       .catch((err) => {
-        console.log(err);
+        logging(err);
       });
 
     return node;
