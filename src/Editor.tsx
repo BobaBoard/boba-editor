@@ -454,6 +454,9 @@ class Editor extends Component<Props> {
             word-break: break-word !important;
             color: var(--a-color, rgb(249, 102, 128));
           }
+          .editor :global(.ql-container) :global(a:visited) {
+            color: var(--a-visited-color, #eb0f37);
+          }
         `}</style>
         {/* Add global styles for types*/}
         <CustomNodesStyle />

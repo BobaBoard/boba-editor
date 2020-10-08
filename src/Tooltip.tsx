@@ -217,9 +217,12 @@ class Tooltip extends Component<{
           .tooltip {
             position: absolute;
             z-index: 5;
-            height: 25px;
             padding: 0 5px;
-            display: block;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            max-width: 70vw;
             transform: translateY(-5px);
           }
           .tooltip.hidden {
