@@ -500,6 +500,7 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
           }
           .toolbar.loaded {
             display: block;
+            text-align: center;
           }
         `}</style>
       </>

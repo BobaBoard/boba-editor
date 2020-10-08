@@ -89,7 +89,11 @@ export const getAllImages = (delta: DeltaOperation[]) => {
 export const removeTrailingWhitespace = (delta: DeltaOperation[]) => {
   let lastNotEmpty: number | null = null;
   delta.forEach((deltaOp, index) => {
-    if (typeof deltaOp.insert !== "string" || deltaOp.insert.trim() !== "") {
+    if (
+      typeof deltaOp.insert !== "string" ||
+      deltaOp.insert.trim() !== "" ||
+      deltaOp.attributes?.list
+    ) {
       lastNotEmpty = index;
     }
   });
