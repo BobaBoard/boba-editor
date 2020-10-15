@@ -505,7 +505,9 @@ class Editor extends Component<EditorProps> {
             margin-bottom: 0px;
             margin-top: 0px;
           }
-          .editor :global(.ql-editor) :global(h1) {
+          .editor :global(.ql-editor) :global(h1),
+          .editor :global(.ql-editor) :global(h2),
+          .editor :global(.ql-editor) :global(h3) {
             font-weight: normal;
           }
         `}</style>
