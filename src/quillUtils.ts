@@ -103,7 +103,10 @@ export const removeTrailingWhitespace = (delta: DeltaOperation[]) => {
       : // Filter out all the empty ops at the end
         delta.filter((op, index) => index <= (lastNotEmpty as number));
   // Remove trailing whitespace from end of last deltaOp, if it's a string
-  if (typeof resultDelta[resultDelta.length - 1].insert === "string") {
+  if (
+    typeof resultDelta[resultDelta.length - 1].insert === "string" &&
+    !resultDelta[resultDelta.length - 1].attributes
+  ) {
     resultDelta[resultDelta.length - 1].insert = resultDelta[
       resultDelta.length - 1
     ].insert.trimRight();
