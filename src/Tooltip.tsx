@@ -32,6 +32,7 @@ class Tooltip extends Component<{
   top: number | undefined;
   right: number | undefined;
   onInsertEmbed: ({}: { type: string; embed: any }) => void;
+  onSetFormat: (format: string) => void;
   preventUpdate: (shouldPrevent: boolean) => void;
 }> {
   state = {
@@ -54,6 +55,24 @@ class Tooltip extends Component<{
               right: `${this.props.right}px`,
             }}
           >
+            <button
+              className="ql-image"
+              onClick={() => {
+                this.props.onSetFormat("blockquote");
+              }}
+              dangerouslySetInnerHTML={{
+                __html: QuillModule.import("ui/icons")["blockquote"],
+              }}
+            />
+            <button
+              className="ql-image"
+              onClick={() => {
+                this.props.onSetFormat("code-block");
+              }}
+              dangerouslySetInnerHTML={{
+                __html: QuillModule.import("ui/icons")["code-block"],
+              }}
+            />
             <button
               className="ql-image"
               onClick={() => {

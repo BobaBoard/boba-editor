@@ -8,6 +8,7 @@ import {
   removeLineBreaksFromPaste,
   importEmbedModule,
   pasteImageAsBlockEmbed,
+  withBlockquotesKeyboardBehavior,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
@@ -155,7 +156,7 @@ class Editor extends Component<EditorProps> {
     });
   }
 
-  initializeEditableEditor() {
+  maybeInitializeEditableEditor() {
     if (!this.props.editable) {
       return;
     }
@@ -272,6 +273,13 @@ class Editor extends Component<EditorProps> {
     requestAnimationFrame(() => this.editor.focus());
   }
 
+  setFormat(format: string) {
+    this.editor.focus();
+    // const range = this.editor.getSelection(true);
+    //debugger;
+    this.editor.format(format, true);
+  }
+
   maybeShowEmptyLineTooltip(bounds: { top: number; right: number } | null) {
     if (this.skipTooltipUpdates) {
       return;
@@ -341,6 +349,7 @@ class Editor extends Component<EditorProps> {
       withNoLinebreakHandler(quillConfig.modules.keyboard);
       this.addRemoveLinebreaksOnPasteHandler();
     }
+    withBlockquotesKeyboardBehavior(quillConfig.modules.keyboard);
 
     this.editor = new QuillModule(
       this.editorContainer.current as any,
@@ -375,7 +384,7 @@ class Editor extends Component<EditorProps> {
     }
 
     this.setState({ loaded: true });
-    this.initializeEditableEditor();
+    this.maybeInitializeEditableEditor();
   }
 
   componentWillUnmount() {
@@ -421,6 +430,9 @@ class Editor extends Component<EditorProps> {
               right={this.state.tooltipPostion.right}
               onInsertEmbed={({ type, embed }) => {
                 this.addEmbed(type, embed);
+              }}
+              onSetFormat={(format: string) => {
+                this.setFormat(format);
               }}
               show={this.state.showTooltip && this.props.showTooltip != false}
               preventUpdate={(shouldPrevent) => {
@@ -481,6 +493,14 @@ class Editor extends Component<EditorProps> {
           .editor :global(.ql-container) :global(a:visited) {
             color: var(--a-visited-color, #eb0f37);
           }
+
+          .editor :global(blockquote) + :global(:not(blockquote)) {
+            background-color: red;
+          }
+          .editor :global(blockquote) {
+            margin-bottom: 0px;
+            margin-top: 0px;
+          }
         `}</style>
         {/* Add global styles for types*/}
         <CustomNodesStyle />
@@ -506,11 +526,15 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-list" value="bullet"></button>
             <button className="ql-list" value="ordered"></button>
             <button className="ql-inline-spoilers"></button>
+            <button className="ql-code"></button>
+            <button className="ql-code-block"></button>
+            <button className="ql-blockquote"></button>
           </span>
           <span className="ql-formats">
             <select className="ql-header">
               <option value="h1">Heading 1</option>
               <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
               <option value="">Normal</option>
             </select>
           </span>

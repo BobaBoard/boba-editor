@@ -1,4 +1,5 @@
-import Quill, { BoundsStatic, DeltaOperation } from "quill";
+import { request } from "http";
+import Quill, { BoundsStatic, DeltaOperation, RangeStatic } from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
@@ -36,6 +37,49 @@ export const withKeyboardSubmitHandler = (
     shortKey: true,
     shiftKey: false,
     handler,
+  };
+};
+
+export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
+  const Keyboard = QuillModule.import("modules/keyboard") as any;
+  // TODO: at some point submit a PR to Quill to allow to
+  // bind this after configuration and clean this up.
+  quillKeyboardConfig.bindings["blockquote-backspace"] = {
+    key: Keyboard.keys.BACKSPACE,
+    collapsed: true,
+    format: ["blockquote"],
+    offset: 0,
+    handler: function (range: RangeStatic, context: any) {
+      if (
+        range.index > 0 &&
+        (this.quill.getText(range.index - 1, 1) != "\n" ||
+          !this.quill.getFormat(range.index - 1, 1).blockquote)
+      ) {
+        this.quill.format("blockquote", false);
+      }
+      return true;
+    },
+  };
+  quillKeyboardConfig.bindings["blockquote-enter"] = {
+    key: Keyboard.keys.ENTER,
+    shiftKey: false,
+    collapsed: true,
+    format: ["blockquote"],
+    handler: function (range: RangeStatic, context: any) {
+      if (
+        this.quill.getText(range.index - 1, 1) == "\n" ||
+        !this.quill.getFormat(range.index - 1, 1).blockquote
+      ) {
+        this.quill.format("blockquote", false);
+        // With request animation frame, we're able to remove also the
+        // formatting at the line we were currently at.
+        // TODO: do this in a less hacky way.
+        requestAnimationFrame(() => {
+          this.quill.formatText(range.index, 1, "blockquote", false);
+        });
+      }
+      return true;
+    },
   };
 };
 
@@ -92,7 +136,7 @@ export const removeTrailingWhitespace = (delta: DeltaOperation[]) => {
     if (
       typeof deltaOp.insert !== "string" ||
       deltaOp.insert.trim() !== "" ||
-      deltaOp.attributes?.list
+      deltaOp.attributes
     ) {
       lastNotEmpty = index;
     }

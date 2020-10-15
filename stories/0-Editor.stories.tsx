@@ -174,7 +174,7 @@ export const EditorFocus = () => {
 export const OutputTest = () => {
   const [text, setText] = React.useState(
     JSON.parse(
-      '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"You have my sword..."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"sdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"asdasd"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"adsdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"}]'
+      '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"You have my sword..."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"sdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"asdasd"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"adsdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"This is a blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},{"attributes":{"italic":true},"insert":"A beautiful blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},{"insert":"Hello look at this blockquote"},{"attributes":{"blockquote":true},"insert":"\\n\\n"},{"insert":"dfdsf\\n// This is code"},{"attributes":{"code-block":true},"insert":"\\n"},{"insert":"function () {}"},{"attributes":{"code-block":true},"insert":"\\n"},{"insert":"And last, the "},{"attributes":{"code":true},"insert":"inline style"},{"insert":"!\\nsddfsdf\\n"}]'
     )
   );
   const [quillEditor, setEditor] = React.useState<any>(null);
