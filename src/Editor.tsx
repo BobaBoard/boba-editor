@@ -493,13 +493,20 @@ class Editor extends Component<EditorProps> {
           .editor :global(.ql-container) :global(a:visited) {
             color: var(--a-visited-color, #eb0f37);
           }
-
+          .editor :global(:not(blockquote)) + :global(blockquote) {
+            background-color: red;
+            margin-top: 5px;
+          }
           .editor :global(blockquote) + :global(:not(blockquote)) {
+            margin-top: 5px;
             background-color: red;
           }
           .editor :global(blockquote) {
             margin-bottom: 0px;
             margin-top: 0px;
+          }
+          .editor :global(.ql-editor) :global(h1) {
+            font-weight: normal;
           }
         `}</style>
         {/* Add global styles for types*/}
