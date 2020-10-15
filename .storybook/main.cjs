@@ -1,9 +1,10 @@
 module.exports = {
   stories: ["../stories/**/*.stories.tsx"],
   addons: [
-    "@storybook/addon-actions",
     "@storybook/addon-links",
+    "@storybook/addon-controls",
     "@storybook/addon-viewport/register",
+    "@storybook/addon-actions",
   ],
   webpackFinal: async (config) => {
     config.devtool = "inline-source-map";

@@ -1,84 +1,55 @@
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import Editor, { EditorHandler, getAllImages, replaceImages } from "../src";
+import { action } from "@storybook/addon-actions";
 
 export default {
   title: "Editor Preview",
   component: Editor,
 };
 
-export const EditorSimple = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]'
-      )}
-      focusOnMount={true}
-      onTextChange={() => {
-        console.log("changed!");
-      }}
-      onIsEmptyChange={() => {
-        console.log("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        console.log("submit!");
-      }}
-    />
-  </div>
-);
+const EditableEditorTemplate = (args: any) => {
+  return (
+    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+      <Editor
+        editable={true}
+        initialText={JSON.parse(args.initialText)}
+        focusOnMount={args.focusOnMount}
+        singleLine={args.singleLine}
+        onTextChange={action("TextChange")}
+        onIsEmptyChange={action("EmptyChange")}
+        onSubmit={action("Submit")}
+      />
+    </div>
+  );
+};
 
-EditorSimple.story = {
+export const SimpleEditor = EditableEditorTemplate.bind({});
+SimpleEditor.args = {
+  initialText:
+    '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]',
+  focusOnMount: true,
+};
+
+SimpleEditor.story = {
   name: "simple",
 };
 
-export const MultiParagraph = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"You have my sword...\\nBut "},{"attributes":{"link":"https://www.youtube.com/watch?v=dQw4w9WgXcQ"},"insert":"do you know what else you have"},{"insert": "?\\n\\nMy heart.\\n\\nLorem Ipsum, fam.\\n"}]'
-      )}
-      focusOnMount={true}
-      onTextChange={() => {
-        console.log("changed!");
-      }}
-      onIsEmptyChange={() => {
-        console.log("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        console.log("submit!");
-      }}
-    />
-  </div>
-);
+export const MultiParagraph = EditableEditorTemplate.bind({});
+MultiParagraph.args = {
+  initialText:
+    '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"You have my sword...\\nBut "},{"attributes":{"link":"https://www.youtube.com/watch?v=dQw4w9WgXcQ"},"insert":"do you know what else you have"},{"insert": "?\\n\\nMy heart.\\n\\nLorem Ipsum, fam.\\n"}]',
+};
 
 MultiParagraph.story = {
   name: "multiparagraph",
 };
 
-export const SingleLineEditor = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse('[{"insert":"This is a single line editor."}]')}
-      onTextChange={() => {
-        console.log("changed!");
-      }}
-      singleLine={true}
-      focusOnMount={true}
-      onIsEmptyChange={() => {
-        console.log("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        console.log("submit!");
-      }}
-    />
-  </div>
-);
+export const SingleLineEditor = EditableEditorTemplate.bind({});
+SingleLineEditor.args = {
+  initialText: '[{"insert":"This is a single line editor."}]',
+  singleLine: true,
+};
 
 SingleLineEditor.story = {
   name: "single line",
@@ -94,16 +65,9 @@ export const EditorState = () => {
           initialText={JSON.parse(
             '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]'
           )}
-          onTextChange={() => {
-            console.log("changed!");
-          }}
-          onIsEmptyChange={() => {
-            console.log("empty!");
-          }}
-          onSubmit={() => {
-            // This is for cmd + enter
-            console.log("submit!");
-          }}
+          onTextChange={action("TextChange")}
+          onIsEmptyChange={action("EmptyChange")}
+          onSubmit={action("Submit")}
         />
       </div>
       <input
@@ -139,13 +103,8 @@ export const ImageLoading = () => {
             setText(text);
           }}
           focusOnMount={true}
-          onIsEmptyChange={() => {
-            console.log("empty!");
-          }}
-          onSubmit={() => {
-            // This is for cmd + enter
-            console.log("submit!");
-          }}
+          onIsEmptyChange={action("EmptyChange")}
+          onSubmit={action("Submit")}
           onEditorCreated={(editor) => setEditor(editor)}
         />
       </div>
@@ -191,16 +150,9 @@ export const EditorFocus = () => {
           initialText={JSON.parse(
             '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]'
           )}
-          onTextChange={() => {
-            console.log("changed!");
-          }}
-          onIsEmptyChange={() => {
-            console.log("empty!");
-          }}
-          onSubmit={() => {
-            // This is for cmd + enter
-            console.log("submit!");
-          }}
+          onTextChange={action("TextChange")}
+          onIsEmptyChange={action("EmptyChange")}
+          onSubmit={action("Submit")}
         />
       </div>
       <input
@@ -212,8 +164,4 @@ export const EditorFocus = () => {
       />
     </>
   );
-};
-
-EditorSimple.story = {
-  name: "simple",
 };

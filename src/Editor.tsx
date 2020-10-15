@@ -46,7 +46,7 @@ if (typeof window !== "undefined") {
   icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
 }
 
-class Editor extends Component<Props> {
+class Editor extends Component<EditorProps> {
   state = {
     // QuillJS "empty state" still has one character.
     charactersTyped: 1,
@@ -84,6 +84,9 @@ class Editor extends Component<Props> {
         `Text changed: ${currentCharacters}(current) ${stateCharacters}(previous)`
       );
       this.setState({ charactersTyped: currentCharacters }, () => {
+        if (!this.props.editable) {
+          return;
+        }
         // We're only updating if the number of characters effectively changed
         // as it's possible for "text formatting" changes to also trigger
         // this callback and we don't want to continuously do so.
@@ -115,6 +118,9 @@ class Editor extends Component<Props> {
     const changeHandler = this.editor.on(
       "text-change" as const,
       (diff, old, source) => {
+        if (!this.props.editable) {
+          return;
+        }
         loggingVerbose(`Text change from ${source}!`);
         loggingVerbose(this.editor.getContents());
         this.props.onTextChange(this.editor.getContents());
@@ -247,7 +253,7 @@ class Editor extends Component<Props> {
     });
   }
 
-  shouldComponentUpdate(newProps: Props, newState: any) {
+  shouldComponentUpdate(newProps: EditorProps, newState: any) {
     loggingVerbose("New State:");
     loggingVerbose(newState);
     loggingVerbose("Should I update?");
@@ -328,6 +334,16 @@ class Editor extends Component<Props> {
         focus: this.focus.bind(this),
       };
     }
+    if (logging.enabled) {
+      logging("Adding editor to global namespace.");
+      // Save this editor for easy debug access.
+      window["editor"] = this.editor;
+    }
+
+    if (!this.props.editable) {
+      return;
+    }
+
     if (this.props.focusOnMount) {
       this.focus();
     }
@@ -346,16 +362,9 @@ class Editor extends Component<Props> {
     });
 
     // Initialize characters counts (if handlers attached)
-    this.props.onIsEmptyChange &&
-      this.props.onIsEmptyChange(this.editor.getLength() == 1);
-    this.props.onCharactersChange &&
-      this.props.onCharactersChange(this.editor.getLength());
+    this.props.onIsEmptyChange?.(this.editor.getLength() == 1);
+    this.props.onCharactersChange?.(this.editor.getLength());
     this.setState({ loaded: true });
-    if (logging.enabled) {
-      logging("Adding editor to global namespace.");
-      // Save this editor for easy debug access.
-      window["editor"] = this.editor;
-    }
   }
 
   componentWillUnmount() {
@@ -512,24 +521,46 @@ export interface EditorHandler {
   focus: () => void;
 }
 
-export interface Props {
-  editable: boolean;
+interface BaseProps {
+  // A QuillJS delta. Changes won't be reflected here.
   initialText: any;
+  // If singleLine is true, the formatting options allowed are limited,
+  // and new line characters are ignored.
   // Note: this prop cannot be changed after initialization.
   singleLine?: boolean;
+  // Enables tooltip on empty line.
   showTooltip?: boolean;
   handler?: React.RefObject<EditorHandler>;
-  focusOnMount?: boolean;
-  onTextChange: (_: any) => void;
-  onIsEmptyChange?: (empty: boolean) => void;
-  onCharactersChange?: (_: number) => void;
-  onSubmit: () => void;
-  onEditorCreated?: (editor: Quill) => void;
   // Called when any embed has finished loading and has assumed the
   // final width and height. Might trigger multiple times if multiple
   // embeds are present.
-  // TODO: allow knowing when everything is done loading.
+  // TODO: allow knowing when everything is every embed is done loading.
   onEmbedLoaded?: () => void;
+  // A callback for when the editor is created, returning a reference to
+  // the undelying Quill editor. Shouldn't be used unless in testing emergencies.
+  // TODO: remove this.
+  onEditorCreated?: (editor: Quill) => void;
 }
+
+interface EditableProps extends BaseProps {
+  editable: true;
+  // Whether to focus the editor when it's first mounted.
+  focusOnMount?: boolean;
+  // Every time the text is changed, this method will be called with
+  // the new QuillJS delta.
+  onTextChange: (newText: any) => void;
+  // Called every time the "empty" status of the editor changes.
+  // This is not the same as counting the characters on the "text" parameter in
+  // onTextChange, because that contains additional QuillJS
+  onIsEmptyChange?: (empty: boolean) => void;
+  onCharactersChange?: (_: number) => void;
+  onSubmit: () => void;
+}
+
+interface NonEditableProps extends BaseProps {
+  editable?: false;
+}
+
+export type EditorProps = EditableProps | NonEditableProps;
 
 export default Editor;
