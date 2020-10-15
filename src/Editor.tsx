@@ -155,33 +155,67 @@ class Editor extends Component<EditorProps> {
     });
   }
 
+  initializeEditableEditor() {
+    if (!this.props.editable) {
+      return;
+    }
+
+    if (this.props.focusOnMount) {
+      this.focus();
+    }
+    // Remove unwanted formatting on paste
+    // TODO: check if same mechanism can be used to simplify code
+    // in other parts of this codebase.
+    this.editor.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+      delta.forEach((e: any) => {
+        if (e.attributes) {
+          e.attributes.color = undefined;
+          e.attributes.background = undefined;
+          e.attributes["code-block"] = false;
+        }
+      });
+      return delta;
+    });
+
+    // Initialize characters counts (if handlers attached)
+    this.props.onIsEmptyChange?.(this.editor.getLength() == 1);
+    this.props.onCharactersChange?.(this.editor.getLength());
+  }
+
+  onEmbedChange(changes?: { isEmbedLoad?: boolean }) {
+    if (this.props.editable) {
+      this.props.onTextChange(this.editor.getContents());
+    }
+    if (changes?.isEmbedLoad) {
+      this.props.onEmbedLoaded?.();
+    }
+  }
+
   addCustomEmbeds() {
+    // TODO: note these are apparently called always from the context of the latest
+    // Editor component to be initialized in a page. As such, using methods that refer to
+    // props is undesiderable (but using this to refer to methods that then refer to props is fine).
+    // At least, this is my best guess as to what's happening.
+    // I couldn't figure out how to fix this without moving all the methods outside.
     const embedsLoadedCallback = () => {
       this.skipTooltipUpdates = false;
       const bounds = detectNewLine(this.editor);
       logging(`Embeds callback activated! New line bounds:`);
       logging(bounds);
       this.maybeShowEmptyLineTooltip(bounds);
-      if (this.props.editable) {
-        this.props.onTextChange(this.editor.getContents());
-      }
-      if (this.props.onEmbedLoaded) {
-        this.props.onEmbedLoaded();
-      }
+      this.onEmbedChange({ isEmbedLoad: true });
     };
 
     const embedCloseCallback = (root: HTMLImageElement) => {
       logging(`deleting embed`);
-      if (this.props.editable) {
-        QuillModule.find(root, true)?.remove();
-        this.props.onTextChange(this.editor.getContents());
-        this.skipTooltipUpdates = false;
-        const bounds = detectNewLine(this.editor);
-        this.maybeShowEmptyLineTooltip(bounds);
-      }
+      QuillModule.find(root, true)?.remove();
+      this.skipTooltipUpdates = false;
+      const bounds = detectNewLine(this.editor);
+      this.maybeShowEmptyLineTooltip(bounds);
+      this.onEmbedChange();
     };
 
-    // TODO: context not existing has probably something to do with
+    // TODO: context not existing (for typescript) has probably something to do with
     // nodes types missing
     require
       //@ts-ignore
@@ -340,31 +374,8 @@ class Editor extends Component<EditorProps> {
       window["editor"] = this.editor;
     }
 
-    if (!this.props.editable) {
-      return;
-    }
-
-    if (this.props.focusOnMount) {
-      this.focus();
-    }
-    // Remove unwanted formatting on paste
-    // TODO: check if same mechanism can be used to simplify code
-    // in other parts of this codebase.
-    this.editor.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
-      delta.forEach((e: any) => {
-        if (e.attributes) {
-          e.attributes.color = undefined;
-          e.attributes.background = undefined;
-          e.attributes["code-block"] = false;
-        }
-      });
-      return delta;
-    });
-
-    // Initialize characters counts (if handlers attached)
-    this.props.onIsEmptyChange?.(this.editor.getLength() == 1);
-    this.props.onCharactersChange?.(this.editor.getLength());
     this.setState({ loaded: true });
+    this.initializeEditableEditor();
   }
 
   componentWillUnmount() {
@@ -443,6 +454,10 @@ class Editor extends Component<EditorProps> {
           }
           .spinner {
             text-align: center;
+            position: absolute;
+            z-index: 5;
+            right: 50%;
+            transform: translateX(50%);
           }
           .editor.view-only .editor-quill :global(.ql-editor) > :global(*) {
             cursor: auto !important;

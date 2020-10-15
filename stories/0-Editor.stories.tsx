@@ -1,6 +1,11 @@
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
-import Editor, { EditorHandler, getAllImages, replaceImages } from "../src";
+import Editor, {
+  EditorHandler,
+  getAllImages,
+  removeTrailingWhitespace,
+  replaceImages,
+} from "../src";
 import { action } from "@storybook/addon-actions";
 
 export default {
@@ -164,4 +169,57 @@ export const EditorFocus = () => {
       />
     </>
   );
+};
+
+export const OutputTest = () => {
+  const [text, setText] = React.useState(
+    JSON.parse(
+      '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"You have my sword..."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"sdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"asdasd"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"adsdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"}]'
+    )
+  );
+  const [quillEditor, setEditor] = React.useState<any>(null);
+  return (
+    <div>
+      <div
+        style={{ backgroundColor: "white", maxWidth: "500px" }}
+        key="editor1div"
+      >
+        <Editor
+          key="editor1"
+          editable
+          initialText={text}
+          onTextChange={(text) => {
+            setText(text);
+          }}
+          focusOnMount={true}
+          onIsEmptyChange={action("EmptyChange")}
+          onSubmit={action("Submit")}
+        />
+      </div>
+      <input
+        type="button"
+        onClick={(e) => {
+          // @ts-ignore
+          console.log(JSON.stringify(text.ops).replaceAll("\\n", "\\\\n"));
+          quillEditor?.setContents(removeTrailingWhitespace(text));
+        }}
+        value={`Submit`}
+      />
+
+      <div
+        style={{ backgroundColor: "white", maxWidth: "500px" }}
+        key="editor2div"
+      >
+        <Editor
+          key="editor2"
+          initialText={text}
+          onEditorCreated={(editor) => setEditor(editor)}
+        />
+      </div>
+    </div>
+  );
+};
+
+OutputTest.story = {
+  name: "outputTest",
 };
