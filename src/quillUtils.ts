@@ -75,7 +75,7 @@ export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
         // formatting at the line we were currently at.
         // TODO: do this in a less hacky way.
         requestAnimationFrame(() => {
-          this.quill.formatText(range.index, 1, "blockquote", false);
+          this.quill.deleteText(range.index, 1);
         });
       }
       return true;
