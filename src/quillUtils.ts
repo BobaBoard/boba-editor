@@ -91,7 +91,9 @@ export const withNoLinebreakHandler = (quillKeyboardConfig: any) => {
     shiftKey: null,
     shortKey: false,
     // Simply returning false will prevent the new line character
-    handler: () => false,
+    handler: () => {
+      return false;
+    },
   };
 };
 
@@ -100,6 +102,14 @@ export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
   const paste = pasteEvent.clipboardData?.getData("text/plain");
   logging("Pasted data:");
   logging(paste);
+  const targetParent = (pasteEvent.target as HTMLElement)?.parentElement;
+  // TODO: this should likely be checking whether the final target itself is the
+  // editor, rather than making a special case for the tooltip.
+  // Note: we must skip doing this in the tooltip cause it will cause all kinds of
+  // issues.
+  if (targetParent?.classList.contains("ql-tooltip-editor")) {
+    return false;
+  }
   const selection = window.getSelection();
   if (!selection || !selection.rangeCount) {
     return false;

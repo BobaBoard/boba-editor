@@ -309,7 +309,7 @@ class Editor extends Component<EditorProps> {
   }
 
   componentDidUpdate() {
-    this.editor.enable(this.props.editable);
+    this.editor.enable(!!this.props.editable);
     if (!this.props.editable) {
       this.setState({ showTooltip: false });
     }
@@ -364,7 +364,7 @@ class Editor extends Component<EditorProps> {
     this.addImagesPasteHandler();
 
     // Set initial state
-    this.editor.enable(this.props.editable);
+    this.editor.enable(!!this.props.editable);
     loggingVerbose(this.props.initialText);
     if (this.props.initialText) {
       this.editor.setContents(this.props.initialText);
@@ -496,6 +496,12 @@ class Editor extends Component<EditorProps> {
             color: var(--a-color, rgb(249, 102, 128));
             cursor: pointer;
           }
+          .editor :global(.ql-bubble .ql-toolbar .ql-formats) {
+            margin-right: 8px;
+          }
+          .editor :global(.ql-bubble .ql-picker-label) {
+            padding-left: 0px;
+          }
           .editor :global(.ql-container) :global(a:visited) {
             color: var(--a-visited-color, #eb0f37);
           }
@@ -537,10 +543,14 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-italic"></button>
             <button className="ql-underline"></button>
             <button className="ql-strike"></button>
+          </span>
+          <span className="ql-formats">
             <button className="ql-link"></button>
+            <button className="ql-inline-spoilers"></button>
+          </span>
+          <span className="ql-formats">
             <button className="ql-list" value="bullet"></button>
             <button className="ql-list" value="ordered"></button>
-            <button className="ql-inline-spoilers"></button>
             <button className="ql-code"></button>
             <button className="ql-blockquote"></button>
           </span>

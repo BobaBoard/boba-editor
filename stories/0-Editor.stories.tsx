@@ -15,7 +15,13 @@ export default {
 
 const EditableEditorTemplate = (args: any) => {
   return (
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <div
+      style={{
+        backgroundColor: "white",
+        maxWidth: "500px",
+        marginTop: "100px",
+      }}
+    >
       <Editor
         editable={true}
         initialText={JSON.parse(args.initialText)}
