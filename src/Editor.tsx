@@ -479,6 +479,11 @@ class Editor extends Component<EditorProps> {
             height: 100%;
             padding: 0;
           }
+          :global(.ql-container.ql-bubble:not(.ql-disabled) a::before),
+          :global(.ql-container.ql-bubble:not(.ql-disabled) a::after) {
+            word-break: keep-all;
+            max-width: min(300px, 60vw);
+          }
           .editor-quill :global(.ql-tooltip) {
             z-index: 5;
           }
@@ -489,6 +494,7 @@ class Editor extends Component<EditorProps> {
             white-space: normal !important;
             word-break: break-word !important;
             color: var(--a-color, rgb(249, 102, 128));
+            cursor: pointer;
           }
           .editor :global(.ql-container) :global(a:visited) {
             color: var(--a-visited-color, #eb0f37);
@@ -536,7 +542,6 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-list" value="ordered"></button>
             <button className="ql-inline-spoilers"></button>
             <button className="ql-code"></button>
-            <button className="ql-code-block"></button>
             <button className="ql-blockquote"></button>
           </span>
           <span className="ql-formats">
