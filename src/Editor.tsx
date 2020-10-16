@@ -495,32 +495,44 @@ class Editor extends Component<EditorProps> {
             word-break: break-word !important;
             color: var(--a-color, rgb(249, 102, 128));
             cursor: pointer;
+<<<<<<< HEAD
           }
           .editor :global(.ql-bubble .ql-toolbar .ql-formats) {
             margin-right: 8px;
           }
           .editor :global(.ql-bubble .ql-picker-label) {
             padding-left: 0px;
+=======
+>>>>>>> 302ad2339c54c98c7111496261876e683373ec57
           }
           .editor :global(.ql-container) :global(a:visited) {
             color: var(--a-visited-color, #eb0f37);
           }
           .editor :global(:not(blockquote)) + :global(blockquote) {
-            background-color: red;
             margin-top: 5px;
           }
           .editor :global(blockquote) + :global(:not(blockquote)) {
             margin-top: 5px;
-            background-color: red;
           }
           .editor :global(blockquote) {
             margin-bottom: 0px;
             margin-top: 0px;
+            border-left: 5px solid #E6E6E9; 
           }
           .editor :global(.ql-editor) :global(h1),
           .editor :global(.ql-editor) :global(h2),
           .editor :global(.ql-editor) :global(h3) {
             font-weight: normal;
+          }
+          .editor :global(ul) {
+            padding-left: 0;
+          }
+          .editor :global(.ql-bubble .ql-editor pre.ql-syntax), .editor :global(.ql-bubble .ql-editor code) {
+            background-color: #E6E6E9;
+            color: black;
+            border-radius: 8px;
+            font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+            font-size: small;
           }
         `}</style>
         {/* Add global styles for types*/}
