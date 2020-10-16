@@ -27,6 +27,8 @@ if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
 
+const error = require("debug")("bobapost:editor:tooltip-error");
+
 class Tooltip extends Component<{
   show: boolean;
   top: number | undefined;
@@ -56,7 +58,7 @@ class Tooltip extends Component<{
             }}
           >
             <button
-              className="ql-image"
+              className="ql-blockquote"
               onClick={() => {
                 this.props.onSetFormat("blockquote");
               }}
@@ -84,8 +86,11 @@ class Tooltip extends Component<{
             />
             <ImageLoader
               ref={this.imageInput}
-              onImageLoaded={(image) => {
-                this.props.onInsertEmbed({ type: "block-image", embed: image });
+              onImageLoadStarts={(loadPromise) => {
+                this.props.onInsertEmbed({
+                  type: "block-image",
+                  embed: { loadPromise },
+                });
               }}
             />
             <button
@@ -259,7 +264,9 @@ class Tooltip extends Component<{
 
 const ImageLoader = forwardRef<
   HTMLInputElement,
-  { onImageLoaded: (img: string | ArrayBuffer) => void }
+  {
+    onImageLoadStarts: (loadPromise: Promise<string | ArrayBuffer>) => void;
+  }
 >((props, ref) => {
   return (
     <input
@@ -271,13 +278,21 @@ const ImageLoader = forwardRef<
         const fileInput = e.target;
         if (fileInput.files != null && fileInput.files[0] != null) {
           const reader = new FileReader();
-          reader.onload = (e) => {
-            if (!e.target?.result) {
-              return;
-            }
-            props.onImageLoaded(e.target.result);
-            fileInput.value = "";
-          };
+          props.onImageLoadStarts(
+            new Promise((resolve, reject) => {
+              reader.onload = (e) => {
+                if (!e.target?.result) {
+                  return;
+                }
+                resolve(e.target.result);
+                fileInput.value = "";
+              };
+              reader.onerror = (e) => {
+                error(e);
+                reject();
+              };
+            })
+          );
           reader.readAsDataURL(fileInput.files[0]);
         }
       }}

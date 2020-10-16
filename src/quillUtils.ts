@@ -1,4 +1,3 @@
-import { request } from "http";
 import Quill, { BoundsStatic, DeltaOperation, RangeStatic } from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {

@@ -69,6 +69,34 @@ export default (props: {}) => {
           max-width: 100%;
           height: auto;
         }
+        :global(.ql-block-image.loading) {
+          width: 100%;
+          height: 100px;
+        }
+        :global(.ql-block-image.loading .spinner) {
+          position: absolute;
+          top: 50%;
+          right: 50%;
+          transform: translate(50%, -50%);
+        }
+        :global(.ql-block-image.error) {
+          width: 100%;
+          height: 100px;
+          background-color: red;
+          content: "Error! Error!";
+          color: white;
+          text-align: center;
+        }
+        :global(.ql-block-image.error::after) {
+          content: "Error! Error!";
+          color: white;
+          text-align: center;
+          width: 100%;
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+        }
         :global(.ql-youtube-video) {
           text-align: center;
           margin: 10px 0;
