@@ -479,6 +479,11 @@ class Editor extends Component<EditorProps> {
             height: 100%;
             padding: 0;
           }
+          :global(.ql-container.ql-bubble:not(.ql-disabled) a::before),
+          :global(.ql-container.ql-bubble:not(.ql-disabled) a::after) {
+            word-break: keep-all;
+            max-width: min(300px, 60vw);
+          }
           .editor-quill :global(.ql-tooltip) {
             z-index: 5;
           }
@@ -489,26 +494,36 @@ class Editor extends Component<EditorProps> {
             white-space: normal !important;
             word-break: break-word !important;
             color: var(--a-color, rgb(249, 102, 128));
+            cursor: pointer;
           }
           .editor :global(.ql-container) :global(a:visited) {
             color: var(--a-visited-color, #eb0f37);
           }
           .editor :global(:not(blockquote)) + :global(blockquote) {
-            background-color: red;
             margin-top: 5px;
           }
           .editor :global(blockquote) + :global(:not(blockquote)) {
             margin-top: 5px;
-            background-color: red;
           }
           .editor :global(blockquote) {
             margin-bottom: 0px;
             margin-top: 0px;
+            border-left: 5px solid #E6E6E9; 
           }
           .editor :global(.ql-editor) :global(h1),
           .editor :global(.ql-editor) :global(h2),
           .editor :global(.ql-editor) :global(h3) {
             font-weight: normal;
+          }
+          .editor :global(ul) {
+            padding-left: 0;
+          }
+          .editor :global(.ql-bubble .ql-editor pre.ql-syntax), .editor :global(.ql-bubble .ql-editor code) {
+            background-color: #E6E6E9;
+            color: black;
+            border-radius: 8px;
+            font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+            font-size: small;
           }
         `}</style>
         {/* Add global styles for types*/}
@@ -536,7 +551,6 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
             <button className="ql-list" value="ordered"></button>
             <button className="ql-inline-spoilers"></button>
             <button className="ql-code"></button>
-            <button className="ql-code-block"></button>
             <button className="ql-blockquote"></button>
           </span>
           <span className="ql-formats">
