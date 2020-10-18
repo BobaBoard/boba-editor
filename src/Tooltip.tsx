@@ -58,24 +58,6 @@ class Tooltip extends Component<{
             }}
           >
             <button
-              className="ql-blockquote"
-              onClick={() => {
-                this.props.onSetFormat("blockquote");
-              }}
-              dangerouslySetInnerHTML={{
-                __html: QuillModule.import("ui/icons")["blockquote"],
-              }}
-            />
-            <button
-              className="ql-image"
-              onClick={() => {
-                this.props.onSetFormat("code-block");
-              }}
-              dangerouslySetInnerHTML={{
-                __html: QuillModule.import("ui/icons")["code-block"],
-              }}
-            />
-            <button
               className="ql-image"
               onClick={() => {
                 this.imageInput.current?.click();
@@ -104,6 +86,24 @@ class Tooltip extends Component<{
             >
               <GifImage key="gif_image" />
             </button>
+            <button
+              className="ql-blockquote"
+              onClick={() => {
+                this.props.onSetFormat("blockquote");
+              }}
+              dangerouslySetInnerHTML={{
+                __html: QuillModule.import("ui/icons")["blockquote"],
+              }}
+            />
+            <button
+              className="ql-code-block"
+              onClick={() => {
+                this.props.onSetFormat("code-block");
+              }}
+              dangerouslySetInnerHTML={{
+                __html: QuillModule.import("ui/icons")["code-block"],
+              }}
+            />
             <button
               className="ql-tweet"
               onClick={() => {
