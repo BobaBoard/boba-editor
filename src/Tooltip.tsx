@@ -1,25 +1,10 @@
 import React, { Component, forwardRef } from "react";
 const TenorKeyboard = require("./TenorKeyboard").default;
 import classNames from "classnames";
+import { TooltipConfig, EmbedType } from "./config";
 
 // @ts-ignore
 import GifImage from "./img/gif.svg";
-// @ts-ignore
-import YouTubeIcon from "./img/yt_icon.svg";
-// @ts-ignore
-import TumblrIcon from "./img/tumblr_icon.svg";
-// @ts-ignore
-import TiktokIcon from "./img/tiktok.svg";
-// @ts-ignore
-import TwitterIcon from "./img/twitter.svg";
-// @ts-ignore
-import RedditIcon from "./img/reddit.svg";
-// @ts-ignore
-import PixivIcon from "./img/pixiv.svg";
-// @ts-ignore
-import InstagramIcon from "./img/instagram.svg";
-// @ts-ignore
-import VimeoIcon from "./img/vimeo.svg";
 
 import Quill from "quill";
 let QuillModule: typeof Quill;
@@ -30,6 +15,7 @@ if (typeof window !== "undefined") {
 const error = require("debug")("bobapost:editor:tooltip-error");
 
 class Tooltip extends Component<{
+  config: TooltipConfig;
   show: boolean;
   top: number | undefined;
   right: number | undefined;
@@ -45,6 +31,28 @@ class Tooltip extends Component<{
   imageInput = React.createRef<HTMLInputElement>();
 
   render() {
+    let embedButtons = this.props.config.enabledEmbeds.map((embed: EmbedType) => {
+      let Icon = embed.icon;
+      return (
+        <>
+          <button
+            className={"ql-" + embed.embedName}
+            onClick={() => {
+              // TODO: make a prettier input
+              let url = prompt("Gimme a " + embed.embedName + " url");
+              if (url) {
+                this.props.onInsertEmbed({
+                  type: embed.embedClass.blotName,
+                  embed: { url },
+                });
+              }
+            }}
+          >
+            <Icon key={embed.embedName} />
+          </button>
+        </>
+      )
+    });
     return (
       <>
         <div className="ql-bubble">
@@ -104,123 +112,7 @@ class Tooltip extends Component<{
             >
               <GifImage key="gif_image" />
             </button>
-            <button
-              className="ql-tweet"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a tweet url");
-                if (url) {
-                  this.props.onInsertEmbed({ type: "tweet", embed: url });
-                }
-              }}
-            >
-              <TwitterIcon key="twitter" />
-            </button>
-            <button
-              className="ql-reddit"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a reddit url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "reddit-embed",
-                    embed: { url },
-                  });
-                }
-              }}
-            >
-              <RedditIcon key="reddit" />
-            </button>
-            <button
-              className="ql-pixiv"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a pixiv url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "pixiv-embed",
-                    embed: { url },
-                  });
-                }
-              }}
-            >
-              <PixivIcon key="pixiv" />
-            </button>
-            <button
-              className="ql-instagram"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a instagram url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "instagram-embed",
-                    embed: { url },
-                  });
-                }
-              }}
-            >
-              <InstagramIcon key="instagram" />
-            </button>
-            <button
-              className="ql-tumblr"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a tumblr url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "tumblr-embed",
-                    embed: url,
-                  });
-                }
-              }}
-            >
-              <TumblrIcon key="tumblr_icon" />
-            </button>
-            <button
-              className="ql-tiktok"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a TikTok url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "tiktok-embed",
-                    embed: url,
-                  });
-                }
-              }}
-            >
-              <TiktokIcon key="tiktok_icon" />
-            </button>
-            <button
-              className="ql-youtube"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a YouTube url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "youtube-video",
-                    embed: url,
-                  });
-                }
-              }}
-            >
-              <YouTubeIcon key="youtube_icon" />
-            </button>
-            <button
-              className="ql-vimeo"
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a vimeo url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: "vimeo-embed",
-                    embed: { url },
-                  });
-                }
-              }}
-            >
-              <VimeoIcon key="vimeo" />
-            </button>
+            {embedButtons}
             <TenorKeyboard
               isOpen={this.state.tenorOpen}
               target={this.gifButton}
