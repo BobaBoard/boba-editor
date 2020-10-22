@@ -163,11 +163,12 @@ class TumblrEmbed extends BlockEmbed {
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
   }
+
+  static blotName = "tumblr-embed";
+  static tagName = "div";
+  static className = "ql-tumblr-embed";
 }
 
-TumblrEmbed.blotName = "tumblr-embed";
-TumblrEmbed.tagName = "div";
-TumblrEmbed.className = "ql-tumblr-embed";
 
 Icon["tumblr"] = TumblrEmbed.icon();
 

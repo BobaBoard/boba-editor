@@ -95,10 +95,10 @@ class YouTubeEmbed extends BlockEmbed {
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
   }
-}
 
-YouTubeEmbed.blotName = "youtube-video";
-YouTubeEmbed.tagName = "div";
-YouTubeEmbed.className = "ql-youtube-video";
+  static blotName = "youtube-video";
+  static tagName = "div";
+  static className = "ql-youtube-video";
+}
 
 export default YouTubeEmbed;
