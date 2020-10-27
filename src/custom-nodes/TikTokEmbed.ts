@@ -169,11 +169,11 @@ class TikTokEmbed extends BlockEmbed {
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
   }
-}
 
-TikTokEmbed.blotName = "tiktok-embed";
-TikTokEmbed.tagName = "div";
-TikTokEmbed.className = "ql-tiktok-embed";
+  static blotName = "tiktok-embed";
+  static tagName = "div";
+  static className = "ql-tiktok-embed";
+}
 
 Icon["tiktok"] = TikTokEmbed.icon();
 

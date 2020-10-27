@@ -10,7 +10,7 @@
     "build:dev": "rm -rf dist && tsc -p tsconfig.export.json --emitDeclarationOnly && ./node_modules/.bin/webpack --mode development",
     "build:force-dev": "rm -rf dist && ./node_modules/.bin/webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "storybook": "DEBUG=bobapost:* start-storybook -p 6006",
+    "storybook": "cross-env DEBUG=bobapost:* start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "visual-testing": "backstop test",
     "approve-visuals": "backstop approve"

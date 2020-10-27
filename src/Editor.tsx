@@ -13,6 +13,7 @@ import {
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
 import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
+import { defaultConfig } from './defaultConfig'
 
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
@@ -426,6 +427,7 @@ class Editor extends Component<EditorProps> {
           <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
           {this.props.editable && (
             <Tooltip
+              config={defaultConfig}
               top={this.state.tooltipPostion.top}
               right={this.state.tooltipPostion.right}
               onInsertEmbed={({ type, embed }) => {

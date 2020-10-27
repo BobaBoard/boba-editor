@@ -212,10 +212,10 @@ class TweetEmbed extends BlockEmbed {
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
   }
-}
 
-TweetEmbed.blotName = "tweet";
-TweetEmbed.tagName = "div";
-TweetEmbed.className = "ql-tweet";
+  static blotName = "tweet";
+  static tagName = "div";
+  static className = "ql-tweet";
+}
 
 export default TweetEmbed;

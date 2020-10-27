@@ -71,7 +71,7 @@ export default (props: {}) => {
         }
         :global(.ql-block-image.loading) {
           width: 100%;
-          height: 100px;
+          min-height: 100px;
         }
         :global(.ql-block-image.loading .spinner) {
           position: absolute;

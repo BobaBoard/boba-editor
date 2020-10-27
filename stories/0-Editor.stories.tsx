@@ -38,7 +38,7 @@ const EditableEditorTemplate = (args: any) => {
 export const SimpleEditor = EditableEditorTemplate.bind({});
 SimpleEditor.args = {
   initialText:
-    '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]',
+    '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":{"src":"http://www.deelay.me/10000/https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png","width":3840,"height":2160}}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]',
   focusOnMount: true,
 };
 
