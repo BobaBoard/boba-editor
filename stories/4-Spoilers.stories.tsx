@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import Editor from "../src";
@@ -14,13 +15,13 @@ export const EditorSimple = () => (
       initialText={JSON.parse(
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"italic":true,"inline-spoilers":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
-      onTextChange={() => {}}
-      focusOnMount={true}
-      onIsEmptyChange={() => {}}
-      onSubmit={() => {
-        // This is for cmd + enter
-        console.log("submit!");
+      onTextChange={(text) => {
+        console.log(JSON.stringify(text));
+        action("text")(text);
       }}
+      focusOnMount={true}
+      onIsEmptyChange={action("empty")}
+      onSubmit={action("submit")}
     />
   </div>
 );
@@ -36,13 +37,6 @@ export const SpoilersNotEditable = () => (
       initialText={JSON.parse(
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"italic":true,"inline-spoilers":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
-      onTextChange={() => {}}
-      focusOnMount={true}
-      onIsEmptyChange={() => {}}
-      onSubmit={() => {
-        // This is for cmd + enter
-        console.log("submit!");
-      }}
     />
   </div>
 );
@@ -80,13 +74,6 @@ export const SpoilersImageNonEditable = () => (
       initialText={JSON.parse(
         '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":{"src":"https://media.tenor.com/images/caee629b8e640f7217b2b4b9bda49bac/tenor.gif","spoilers":true,"width":498,"height":392}}},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by Solid Snake\'s Perfect Bubble Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
       )}
-      onTextChange={() => {}}
-      focusOnMount={true}
-      onIsEmptyChange={() => {}}
-      onSubmit={() => {
-        // This is for cmd + enter
-        console.log("submit!");
-      }}
     />
   </div>
 );
@@ -105,15 +92,8 @@ export const TwitterThreadEmbed = () => {
           initialText={JSON.parse(
             '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"thread": true, "spoilers": true, "embedHeight": "689", "embedWidth": "500", "url": "https://twitter.com/hasenschneck/status/1311215026506784768"}}},{"insert":"\\n"}]}'
           )}
-          onTextChange={() => {}}
-          focusOnMount={true}
-          onIsEmptyChange={() => {}}
           onEmbedLoaded={() => {
             setLoading(false);
-          }}
-          onSubmit={() => {
-            // This is for cmd + enter
-            console.log("submit!");
           }}
         />
       </div>
@@ -125,3 +105,32 @@ export const TwitterThreadEmbed = () => {
 TwitterThreadEmbed.story = {
   name: "twitter thread",
 };
+
+export const LinkAndMultipleFormattingEditable = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by "},{"attributes":{"inline-spoilers":true,"italic":true,"bold":true},"insert":"Solid Snake"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"\'s "},{"attributes":{"inline-spoilers":true,"italic":true,"link":"https://www.youtube.com/watch?v=Xet47C7yyqw"},"insert":"Perfect Bubble"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":" Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
+      )}
+      onTextChange={(text) => {
+        console.log(JSON.stringify(text));
+        action("text")(text);
+      }}
+      focusOnMount={true}
+      onIsEmptyChange={action("empty")}
+      onSubmit={action("submit")}
+    />
+  </div>
+);
+
+export const LinkAndMultipleFormattingNotEditable = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={false}
+      initialText={JSON.parse(
+        '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by "},{"attributes":{"inline-spoilers":true,"italic":true,"bold":true},"insert":"Solid Snake"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"\'s "},{"attributes":{"inline-spoilers":true,"italic":true,"link":"https://www.youtube.com/watch?v=Xet47C7yyqw"},"insert":"Perfect Bubble"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":" Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
+      )}
+    />
+  </div>
+);

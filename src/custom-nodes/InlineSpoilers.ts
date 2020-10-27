@@ -12,7 +12,10 @@ export default class InlineSpoilers extends Inline {
 
   constructor(domNode: HTMLElement) {
     super(domNode);
-    domNode.addEventListener("click", () => {
+    domNode.addEventListener("click", (e) => {
+      if (!domNode.classList.contains("visible")) {
+        e.preventDefault();
+      }
       log(`Changing visibility of spoilers!`);
       domNode.classList.toggle("visible");
     });
@@ -41,3 +44,4 @@ export default class InlineSpoilers extends Inline {
     }
   }
 }
+Inline.order.push("inline-spoilers");

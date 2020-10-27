@@ -198,8 +198,11 @@ export default (props: {}) => {
         :global(.inline-spoilers.visible) {
         }
         :global(.view-only .inline-spoilers) {
-          color: transparent;
           background-color: black;
+        }
+        :global(.view-only .inline-spoilers:not(.visible) *) {
+          color: transparent;
+          text-decoration-color: transparent;
         }
         :global(.view-only .inline-spoilers.visible) {
           background-color: transparent;
