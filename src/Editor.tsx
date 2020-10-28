@@ -13,7 +13,7 @@ import {
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
 import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
-import { defaultConfig } from './defaultConfig'
+import { defaultConfig } from "./defaultConfig";
 
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
@@ -44,6 +44,10 @@ if (typeof window !== "undefined") {
   QuillModule.register("modules/magicUrl", MagicUrl.default);
   const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
   QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
+  const CustomBreak = require("./custom-nodes/CustomBreak");
+  QuillModule.register("blots/break", CustomBreak.default);
+  const CustomText = require("./custom-nodes/CustomText");
+  QuillModule.register("blots/text", CustomText.default);
   const icons = QuillModule.import("ui/icons");
   icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
 }
@@ -508,10 +512,10 @@ class Editor extends Component<EditorProps> {
             color: var(--a-visited-color, #eb0f37);
           }
           .editor :global(:not(blockquote)) + :global(blockquote) {
-            margin-top: 5px;
+            margin-top: 10px;
           }
           .editor :global(blockquote) + :global(:not(blockquote)) {
-            margin-top: 5px;
+            margin-top: 10px;
           }
           .editor :global(blockquote) {
             margin-bottom: 0px;
@@ -521,10 +525,13 @@ class Editor extends Component<EditorProps> {
           .editor :global(.ql-editor) :global(h1),
           .editor :global(.ql-editor) :global(h2),
           .editor :global(.ql-editor) :global(h3) {
+            margin-bottom: 8px;
             font-weight: normal;
           }
-          .editor :global(ul) {
+          .editor :global(ul),
+          .editor :global(ol) {
             padding-left: 0;
+            margin-bottom: 10px;
           }
           .editor :global(.ql-bubble .ql-editor pre.ql-syntax),
           .editor :global(.ql-bubble .ql-editor code) {
@@ -534,6 +541,12 @@ class Editor extends Component<EditorProps> {
             font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo,
               monospace;
             font-size: small;
+          }
+          .editor :global(p.empty:not(:last-child)) {
+            line-height: 10px;
+          }
+          .editor.view-only :global(p.empty:last-child) {
+            display: none;
           }
         `}</style>
         {/* Add global styles for types*/}
