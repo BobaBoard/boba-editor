@@ -18,7 +18,7 @@ const getParentParagraph = (node: any) => {
  * there is text within them. Used with CustomBreak to simulate <br /> vs <p>.
  */
 class CustomText extends Text {
-  optimize(context) {
+  optimize(context: any) {
     const paragraphParent = getParentParagraph(this);
     if (this.text.length > 0 && paragraphParent?.classList.contains("empty")) {
       paragraphParent.classList.remove("empty");

@@ -1,15 +1,13 @@
-import Quill from "quill";
-
 interface EmbedBase {
-    blotName : string;
+  blotName: string;
 }
 
 export interface EmbedType {
-    embedName: string;
-    embedClass: EmbedBase;
-    icon: any;
+  embedName: string;
+  embedClass: EmbedBase;
+  icon: any;
 }
-  
+
 export interface TooltipConfig {
-    enabledEmbeds: EmbedType[];
+  enabledEmbeds: EmbedType[];
 }

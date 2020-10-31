@@ -136,8 +136,8 @@ class TumblrEmbed extends BlockEmbed {
     });
 
     node.classList.add("ql-embed", "loading");
-    if (typeof value == "string") {
-      return TumblrEmbed.renderFromUrl(node, this.sanitize(value));
+    if (!value.href || typeof value == "string") {
+      return TumblrEmbed.renderFromUrl(node, this.sanitize(value.url || value));
     }
     TumblrEmbed.loadPost(node, value);
     return node;
@@ -168,7 +168,6 @@ class TumblrEmbed extends BlockEmbed {
   static tagName = "div";
   static className = "ql-tumblr-embed";
 }
-
 
 Icon["tumblr"] = TumblrEmbed.icon();
 

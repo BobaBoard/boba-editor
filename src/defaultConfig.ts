@@ -1,13 +1,24 @@
 import { TooltipConfig } from "./config";
 
-import RedditEmbed from "./custom-nodes/RedditEmbed";
-import TweetEmbed from "./custom-nodes/TweetEmbed";
-import PixivEmbed from "./custom-nodes/PixivEmbed";
-import InstagramEmbed from "./custom-nodes/InstagramEmbed";
-import TumblrEmbed from "./custom-nodes/TumblrEmbed";
-import TikTokEmbed from "./custom-nodes/TikTokEmbed";
-import YouTubeEmbed from "./custom-nodes/YouTubeEmbed";
-import VimeoEmbed from "./custom-nodes/VimeoEmbed";
+let RedditEmbed;
+let TweetEmbed;
+let PixivEmbed;
+let InstagramEmbed;
+let TumblrEmbed;
+let TikTokEmbed;
+let YouTubeEmbed;
+let VimeoEmbed;
+
+if (typeof window !== "undefined") {
+  RedditEmbed = require("./custom-nodes/RedditEmbed").default;
+  TweetEmbed = require("./custom-nodes/TweetEmbed").default;
+  PixivEmbed = require("./custom-nodes/PixivEmbed").default;
+  InstagramEmbed = require("./custom-nodes/InstagramEmbed").default;
+  TumblrEmbed = require("./custom-nodes/TumblrEmbed").default;
+  TikTokEmbed = require("./custom-nodes/TikTokEmbed").default;
+  YouTubeEmbed = require("./custom-nodes/YouTubeEmbed").default;
+  VimeoEmbed = require("./custom-nodes/VimeoEmbed").default;
+}
 
 // @ts-ignore
 import YouTubeIcon from "./img/yt_icon.svg";
@@ -27,47 +38,46 @@ import InstagramIcon from "./img/instagram.svg";
 import VimeoIcon from "./img/vimeo.svg";
 
 export const defaultConfig: TooltipConfig = {
-    enabledEmbeds: [
-        {
-            embedName: "twitter",
-            embedClass: TweetEmbed,
-            icon: TwitterIcon
-        },
-        {
-            embedName: "reddit",
-            embedClass: RedditEmbed,
-            icon: RedditIcon
-        },
-        {
-            embedName: "pixiv",
-            embedClass: PixivEmbed,
-            icon: PixivIcon
-        },
-        {
-            embedName: "instagram",
-            embedClass: InstagramEmbed,
-            icon: InstagramIcon
-        },
-        {
-            embedName: "tumblr",
-            embedClass: TumblrEmbed,
-            icon: TumblrIcon
-        },
-        {
-            embedName: "tiktok",
-            embedClass: TikTokEmbed,
-            icon: TiktokIcon
-        },
-        {
-            embedName: "vimeo",
-            embedClass: VimeoEmbed,
-            icon: VimeoIcon
-        },
-        {
-            embedName: "youtube",
-            embedClass: YouTubeEmbed,
-            icon: YouTubeIcon
-        }
-
-    ]
+  enabledEmbeds: [
+    {
+      embedName: "twitter",
+      embedClass: TweetEmbed,
+      icon: TwitterIcon,
+    },
+    {
+      embedName: "reddit",
+      embedClass: RedditEmbed,
+      icon: RedditIcon,
+    },
+    {
+      embedName: "pixiv",
+      embedClass: PixivEmbed,
+      icon: PixivIcon,
+    },
+    {
+      embedName: "instagram",
+      embedClass: InstagramEmbed,
+      icon: InstagramIcon,
+    },
+    {
+      embedName: "tumblr",
+      embedClass: TumblrEmbed,
+      icon: TumblrIcon,
+    },
+    {
+      embedName: "tiktok",
+      embedClass: TikTokEmbed,
+      icon: TiktokIcon,
+    },
+    {
+      embedName: "vimeo",
+      embedClass: VimeoEmbed,
+      icon: VimeoIcon,
+    },
+    {
+      embedName: "youtube",
+      embedClass: YouTubeEmbed,
+      icon: YouTubeIcon,
+    },
+  ],
 };

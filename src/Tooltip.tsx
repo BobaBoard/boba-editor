@@ -35,23 +35,22 @@ class Tooltip extends Component<{
       (embed: EmbedType) => {
         let Icon = embed.icon;
         return (
-          <>
-            <button
-              className={"ql-" + embed.embedName}
-              onClick={() => {
-                // TODO: make a prettier input
-                let url = prompt("Gimme a " + embed.embedName + " url");
-                if (url) {
-                  this.props.onInsertEmbed({
-                    type: embed.embedClass.blotName,
-                    embed: { url },
-                  });
-                }
-              }}
-            >
-              <Icon key={embed.embedName} />
-            </button>
-          </>
+          <button
+            className={"ql-" + embed.embedName}
+            key={embed.embedName}
+            onClick={() => {
+              // TODO: make a prettier input
+              let url = prompt("Gimme a " + embed.embedName + " url");
+              if (url) {
+                this.props.onInsertEmbed({
+                  type: embed.embedClass.blotName,
+                  embed: { url },
+                });
+              }
+            }}
+          >
+            <Icon key={embed.embedName} />
+          </button>
         );
       }
     );
