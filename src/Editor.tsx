@@ -151,7 +151,6 @@ class Editor extends Component<EditorProps> {
           }
           const bounds = detectNewLine(this.editor);
           this.maybeShowEmptyLineTooltip(bounds);
-          this.props.onTextChange(this.editor.getContents());
         }
       }
     );
