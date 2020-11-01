@@ -1,3 +1,4 @@
+import { EmbedValue } from "../config";
 import Quill from "quill";
 
 const logging = require("debug")("bobapost:embeds:tumblt");
@@ -6,6 +7,11 @@ const BlockEmbed = Quill.import("blots/block/embed");
 import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
+
+interface TumblrEmbedValue extends EmbedValue {
+  href: string;
+  did: string;
+}
 
 // const logging = require("debug")("bobapost:embeds:tumblr");
 
@@ -122,22 +128,33 @@ class TumblrEmbed extends BlockEmbed {
     return node;
   }
 
-  static create(value: any) {
+  static create(value: string | EmbedValue | TumblrEmbedValue) {
     let node = super.create();
     node.contentEditable = false;
     node.dataset.rendered = false;
     const url = typeof value == "string" ? this.sanitize(value) : value.url;
 
+    if (!url) {
+      addErrorMessage(node, {
+        message: "There's no url for this Tumblr embed!",
+        url: "#error",
+      });
+      return node;
+    }
+
     addLoadingMessage(node, {
       message: "Loading female-presenting nipples...",
       url,
-      width: value.embedWidth,
-      height: value.embedHeight,
+      width: typeof value == "string" ? "" : value.embedWidth,
+      height: typeof value == "string" ? "" : value.embedHeight,
     });
 
     node.classList.add("ql-embed", "loading");
-    if (!value.href || typeof value == "string") {
-      return TumblrEmbed.renderFromUrl(node, this.sanitize(value.url || value));
+    if (typeof value == "string" || !("href" in value)) {
+      return TumblrEmbed.renderFromUrl(
+        node,
+        this.sanitize(typeof value == "string" ? value : value.url)
+      );
     }
     TumblrEmbed.loadPost(node, value);
     return node;
@@ -158,7 +175,7 @@ class TumblrEmbed extends BlockEmbed {
   }
 
   static sanitize(url: string) {
-    if (url.indexOf("?") !== -1) {
+    if (url?.indexOf("?") !== -1) {
       url = url.substring(0, url.indexOf("?"));
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member

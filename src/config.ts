@@ -8,6 +8,12 @@ export interface EmbedType {
   icon: any;
 }
 
+export interface EmbedValue {
+  url: string;
+  embedWidth?: string;
+  embedHeight?: string;
+}
+
 export interface TooltipConfig {
   enabledEmbeds: EmbedType[];
 }

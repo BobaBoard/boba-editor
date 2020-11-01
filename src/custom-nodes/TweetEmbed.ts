@@ -12,6 +12,14 @@ const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 
 // @ts-ignore
 import TwitterIcon from "../img/twitter.svg";
+import { EmbedValue } from "../config";
+
+interface TweetEmbed extends EmbedValue {
+  href: string;
+  did: string;
+  spoilers?: boolean;
+  thread?: boolean;
+}
 
 /**
  * TweetEmbed represents a tweet embedded into the editor.
@@ -86,7 +94,7 @@ class TweetEmbed extends BlockEmbed {
         }
       })
       .catch((e: any) => {
-        logging(`There was a serious error with tweet creation!`);
+        logging(`There was a serious error  tweet creation!`);
         logging(e);
         TweetEmbed.doneLoading(node);
         addErrorMessage(node, {
@@ -130,16 +138,20 @@ class TweetEmbed extends BlockEmbed {
     }
   }
 
-  static create(value: any) {
+  static create(value: string | EmbedValue | TweetEmbed) {
     const node = super.create();
     logging(`Creating new tweet embed with value ${value}`);
-    const url = typeof value == "string" ? this.sanitize(value) : value.url;
-    const id = url.substr(url.lastIndexOf("/") + 1);
-    node.dataset.url = url;
+    const url = new URL(
+      typeof value == "string" ? this.sanitize(value) : value.url
+    );
+    const id = url.pathname.substr(url.pathname.lastIndexOf("/") + 1);
+    node.dataset.url = url.href;
     node.contentEditable = false;
     node.dataset.id = id;
     node.dataset.rendered = false;
-    node.dataset.thread = !!value["thread"] ? "true" : undefined;
+    if (!!value["thread"]) {
+      node.dataset.thread = "true";
+    }
 
     logging(`Tweet url: ${url}`);
     logging(`Tweet id: ${id}`);
@@ -147,9 +159,9 @@ class TweetEmbed extends BlockEmbed {
     node.classList.toggle("spoilers", !!value["spoilers"]);
     addLoadingMessage(node, {
       message: "Preparing to chirp...",
-      url,
-      width: value.embedWidth,
-      height: value.embedHeight,
+      url: url.href,
+      width: value["embedWidth"],
+      height: value["embedHeight"],
     });
 
     // TODO: this should be generalized rather than making everyone have access

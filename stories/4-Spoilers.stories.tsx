@@ -125,12 +125,22 @@ export const LinkAndMultipleFormattingEditable = () => (
 );
 
 export const LinkAndMultipleFormattingNotEditable = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={false}
-      initialText={JSON.parse(
-        '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by "},{"attributes":{"inline-spoilers":true,"italic":true,"bold":true},"insert":"Solid Snake"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"\'s "},{"attributes":{"inline-spoilers":true,"italic":true,"link":"https://www.youtube.com/watch?v=Xet47C7yyqw"},"insert":"Perfect Bubble"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":" Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
-      )}
-    />
+  <div>
+    <div
+      className="test"
+      style={{ backgroundColor: "white", maxWidth: "500px" }}
+    >
+      <Editor
+        editable={false}
+        initialText={JSON.parse(
+          '[{"insert":"I have a secret"},{"attributes":{"header":1},"insert":"\\n"},{"attributes":{"italic":true},"insert":"The truth is, I\'m "},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"tormented by "},{"attributes":{"inline-spoilers":true,"italic":true,"bold":true},"insert":"Solid Snake"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":"\'s "},{"attributes":{"inline-spoilers":true,"italic":true,"link":"https://www.youtube.com/watch?v=Xet47C7yyqw"},"insert":"Perfect Bubble"},{"attributes":{"inline-spoilers":true,"italic":true},"insert":" Butt"},{"attributes":{"italic":true},"insert":"."},{"insert":"\\n"}]'
+        )}
+      />
+    </div>
+    <style jsx>{`
+      .test {
+        --a-visited-color: green;
+      }
+    `}</style>
   </div>
 );

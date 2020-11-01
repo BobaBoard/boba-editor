@@ -5,8 +5,36 @@ import Editor, {
   getAllImages,
   removeTrailingWhitespace,
   replaceImages,
+  setOEmbedFetcher,
+  setTumblrEmbedFetcher,
 } from "../src";
 import { action } from "@storybook/addon-actions";
+
+setTumblrEmbedFetcher((url: string) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        url:
+          "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
+        href:
+          "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
+        did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
+      });
+    }, 25000);
+  });
+});
+
+const LOAD_DELAY = 1000;
+setOEmbedFetcher((url: string) => {
+  const promise = new Promise((resolve) => {
+    fetch(`http://localhost:8061/iframely?uri=${url}`).then((response) => {
+      setTimeout(() => {
+        resolve(response.json());
+      }, LOAD_DELAY);
+    });
+  });
+  return promise;
+});
 
 export default {
   title: "Editor Preview",

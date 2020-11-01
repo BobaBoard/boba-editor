@@ -1,3 +1,4 @@
+import { EmbedValue } from "../config";
 import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -7,6 +8,23 @@ import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 
 const logging = require("debug")("bobapost:embeds:youtube");
 
+const extractYouTubeUrl = (url: URL) => {
+  let videoUrl = "";
+  if (url.href.startsWith("https://www.youtube.com/embed/")) {
+    videoUrl = url.href;
+  } else if (url.href.startsWith("https://youtu.be/")) {
+    videoUrl = `https://www.youtube.com/embed/${url.pathname.substring(1)}}`;
+  } else {
+    videoUrl = `https://www.youtube.com/embed/${url.searchParams.get("v")}`;
+  }
+
+  if (url.searchParams.has("t")) {
+    videoUrl += `?start=${url.searchParams.get("t")}`;
+  }
+
+  return videoUrl;
+};
+
 /**
  * YouTubeEmbed represents a youtube video embedded into the editor.
  */
@@ -15,9 +33,9 @@ class YouTubeEmbed extends BlockEmbed {
     align: "center",
   };
 
-  static create(value: string) {
+  static create(value: string | EmbedValue) {
     let node = super.create();
-    const url = new URL(value);
+    const url = new URL(typeof value === "string" ? value : value.url);
     logging(`Creating new youtube video embed with url ${url}`);
     if (!url) {
       addErrorMessage(node, {
@@ -26,19 +44,9 @@ class YouTubeEmbed extends BlockEmbed {
       });
       return;
     }
-    let videoUrl;
+    let videoUrl = extractYouTubeUrl(url);
     // TODO: figure out why timestamp doesn't work
-    if (url.href.startsWith("https://www.youtube.com/embed/")) {
-      videoUrl = value;
-    } else if (url.href.startsWith("https://youtu.be/")) {
-      videoUrl = `https://www.youtube.com/embed/${url.pathname.substring(
-        1
-      )}?start=${url.searchParams.get("t")}`;
-    } else {
-      videoUrl = `https://www.youtube.com/embed/${url.searchParams.get(
-        "v"
-      )}?start=${url.searchParams.get("t")}`;
-    }
+
     logging(`Embed url ${videoUrl}`);
     const embedFrame = document.createElement("iframe");
     embedFrame.setAttribute("src", this.sanitize(videoUrl));
@@ -86,13 +94,10 @@ class YouTubeEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
-    return domNode.querySelector("iframe")?.src;
+    return { url: domNode.querySelector("iframe")?.src };
   }
 
   static sanitize(url: string) {
-    if (url.indexOf("?") !== -1) {
-      url = url.substring(0, url.indexOf("?"));
-    }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
   }
 
