@@ -13,7 +13,7 @@ const extractYouTubeUrl = (url: URL) => {
   if (url.href.startsWith("https://www.youtube.com/embed/")) {
     videoUrl = url.href;
   } else if (url.href.startsWith("https://youtu.be/")) {
-    videoUrl = `https://www.youtube.com/embed/${url.pathname.substring(1)}}`;
+    videoUrl = `https://www.youtube.com/embed/${url.pathname.substring(1)}`;
   } else {
     videoUrl = `https://www.youtube.com/embed/${url.searchParams.get("v")}`;
   }
