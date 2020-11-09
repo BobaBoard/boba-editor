@@ -259,6 +259,10 @@ class Editor extends Component<EditorProps> {
     this.editor?.focus();
   }
 
+  getEditorContents() {
+    return this.editor?.getContents()?.ops as any;
+  }
+
   addEmbed(type: string, embed: any) {
     this.editor.focus();
     this.setState({ showTooltip: false });
@@ -379,6 +383,7 @@ class Editor extends Component<EditorProps> {
       // @ts-ignore
       this.props.handler.current = {
         focus: this.focus.bind(this),
+        getEditorContents: this.getEditorContents.bind(this),
       };
     }
     if (logging.enabled) {
@@ -607,6 +612,7 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
 
 export interface EditorHandler {
   focus: () => void;
+  getEditorContents(): () => any;
 }
 
 interface BaseProps {
