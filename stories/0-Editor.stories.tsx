@@ -46,12 +46,13 @@ const EditableEditorTemplate = (args: any) => {
     <div
       style={{
         backgroundColor: "white",
+        minHeight: "10px",
         maxWidth: "500px",
         marginTop: "100px",
       }}
     >
       <Editor
-        editable={true}
+        editable={args.editable ?? true}
         initialText={JSON.parse(args.initialText)}
         focusOnMount={args.focusOnMount}
         singleLine={args.singleLine}
@@ -92,6 +93,18 @@ SingleLineEditor.args = {
 
 SingleLineEditor.story = {
   name: "single line",
+};
+
+export const LegacyImageEditor = EditableEditorTemplate.bind({});
+LegacyImageEditor.args = {
+  initialText:
+    '[{"insert":{"image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}},{"insert":"\\n"}]',
+  singleLine: true,
+  editable: false,
+};
+
+LegacyImageEditor.story = {
+  name: "legacy image",
 };
 
 export const EditorState = () => {

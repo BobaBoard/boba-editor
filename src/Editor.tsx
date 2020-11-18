@@ -411,6 +411,10 @@ class Editor extends Component<EditorProps> {
       const CustomText = require("./custom-nodes/CustomText");
       QuillModule.register("blots/text", CustomText.default);
     }
+    if (QuillModule.import("formats/image")?.name != "CustomImage") {
+      const CustomImage = require("./custom-nodes/CustomImage");
+      QuillModule.register("formats/image", CustomImage.default);
+    }
     const icons = QuillModule.import("ui/icons");
     icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
   }

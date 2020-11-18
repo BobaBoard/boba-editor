@@ -202,11 +202,9 @@ export const importEmbedModule = (
 
   QuillModule.register(`formats/${EmbedModule.blotName}`, EmbedModule, true);
 
-  QuillModule.import(`formats/${EmbedModule.blotName}`).setOnLoadCallback(
-    callbacks.onLoadCallback
-  );
-  QuillModule.import(`formats/${EmbedModule.blotName}`).onRemoveRequest =
-    callbacks.onRemoveRequestCallback;
+  const moduleImport = QuillModule.import(`formats/${EmbedModule.blotName}`);
+  moduleImport.setOnLoadCallback?.(callbacks.onLoadCallback);
+  moduleImport.onRemoveRequest = callbacks.onRemoveRequestCallback;
 };
 
 export const pasteImageAsBlockEmbed = (
