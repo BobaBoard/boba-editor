@@ -35,21 +35,9 @@ import SpoilersIcon from "./img/spoilers.svg";
 // Also follow: https://github.com/zeit/next.js/issues/11196
 //import type Quill from "quill";
 import Quill from "quill";
-
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
-
-  const MagicUrl = require("quill-magic-url");
-  QuillModule.register("modules/magicUrl", MagicUrl.default);
-  const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
-  QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
-  const CustomBreak = require("./custom-nodes/CustomBreak");
-  QuillModule.register("blots/break", CustomBreak.default);
-  const CustomText = require("./custom-nodes/CustomText");
-  QuillModule.register("blots/text", CustomText.default);
-  const icons = QuillModule.import("ui/icons");
-  icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
 }
 
 class Editor extends Component<EditorProps> {
@@ -189,6 +177,11 @@ class Editor extends Component<EditorProps> {
 
   onEmbedChange(changes?: { isEmbedLoad?: boolean }) {
     if (this.props.editable) {
+      this.skipTooltipUpdates = false;
+      const bounds = detectNewLine(this.editor);
+      logging(`Embeds callback activated! New line bounds:`);
+      logging(bounds);
+      this.maybeShowEmptyLineTooltip(bounds);
       this.props.onTextChange(this.editor.getContents());
     }
     if (changes?.isEmbedLoad) {
@@ -202,12 +195,8 @@ class Editor extends Component<EditorProps> {
     // props is undesiderable (but using this to refer to methods that then refer to props is fine).
     // At least, this is my best guess as to what's happening.
     // I couldn't figure out how to fix this without moving all the methods outside.
+    // TODO: maybe things will change if using arrow functions for methods?
     const embedsLoadedCallback = () => {
-      this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
-      logging(`Embeds callback activated! New line bounds:`);
-      logging(bounds);
-      this.maybeShowEmptyLineTooltip(bounds);
       this.onEmbedChange({ isEmbedLoad: true });
     };
 
@@ -316,9 +305,15 @@ class Editor extends Component<EditorProps> {
     return update;
   }
 
-  componentDidUpdate() {
-    this.editor.enable(!!this.props.editable);
-    if (!this.props.editable) {
+  componentDidUpdate(previousProps: EditorProps, previousState: any) {
+    // @ts-ignore
+    if (this.editor.isEnabled() != !!this.props.editable) {
+      this.editor.enable(!!this.props.editable);
+    }
+    if (
+      this.state.showTooltip &&
+      previousProps.editable != this.props.editable
+    ) {
       this.setState({ showTooltip: false });
     }
   }
@@ -359,6 +354,7 @@ class Editor extends Component<EditorProps> {
     }
     withBlockquotesKeyboardBehavior(quillConfig.modules.keyboard);
 
+    this.maybeRegisterModules();
     this.editor = new QuillModule(
       this.editorContainer.current as any,
       quillConfig
@@ -394,6 +390,29 @@ class Editor extends Component<EditorProps> {
 
     this.setState({ loaded: true });
     this.maybeInitializeEditableEditor();
+  }
+
+  maybeRegisterModules() {
+    // @ts-ignore
+    if (!QuillModule.imports["modules/magicUrl"]) {
+      const MagicUrl = require("quill-magic-url");
+      QuillModule.register("modules/magicUrl", MagicUrl.default);
+    }
+    // @ts-ignore
+    if (!QuillModule.imports["formats/inline-spoilers"]) {
+      const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
+      QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
+    }
+    if (QuillModule.import("blots/break")?.name != "CustomBreak") {
+      const CustomBreak = require("./custom-nodes/CustomBreak");
+      QuillModule.register("blots/break", CustomBreak.default);
+    }
+    if (QuillModule.import("blots/text")?.name != "CustomText") {
+      const CustomText = require("./custom-nodes/CustomText");
+      QuillModule.register("blots/text", CustomText.default);
+    }
+    const icons = QuillModule.import("ui/icons");
+    icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
   }
 
   componentWillUnmount() {
