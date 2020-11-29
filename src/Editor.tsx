@@ -548,17 +548,34 @@ class Editor extends Component<EditorProps> {
             margin-bottom: 0px;
             margin-top: 0px;
             border-left: 5px solid #e6e6e9;
+            margin-left: var(--text-padding, 10px);
+            margin-right: var(--text-padding, 10px);
+          }
+          .editor :global(.ql-editor) :global(h1) {
+            font-size: 32px;
+            line-height: 38px;
+          }
+          .editor :global(.ql-editor) :global(h2) {
+            font-size: 24px;
+            line-height: 30px;
+          }
+          .editor :global(.ql-editor) :global(h3) {
+            font-size: 19px;
+            line-height: 25px;
           }
           .editor :global(.ql-editor) :global(h1),
           .editor :global(.ql-editor) :global(h2),
           .editor :global(.ql-editor) :global(h3) {
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: normal;
+            padding-left: var(--text-padding, 10px);
+            padding-right: var(--text-padding, 10px);
           }
           .editor :global(ul),
           .editor :global(ol) {
             padding-left: 0;
             margin-bottom: 10px;
+            margin-left: calc(var(--text-padding, 10px) + 5px);
           }
           .editor :global(.ql-bubble .ql-editor pre.ql-syntax),
           .editor :global(.ql-bubble .ql-editor code) {
@@ -569,8 +586,24 @@ class Editor extends Component<EditorProps> {
               monospace;
             font-size: small;
           }
+          .editor :global(.ql-editor h1:first-child),
+          .editor :global(.ql-editor h2:first-child),
+          .editor :global(.ql-editor h3:first-child),
+          .editor :global(.ql-editor p:first-child) {
+            padding-top: var(--text-padding, 10px);
+          }
+          .editor :global(p) {
+            padding-left: var(--text-padding, 10px);
+            padding-right: var(--text-padding, 10px);
+          }
+          .editor :global(:not(p):not(h1):not(h2):not(h3) + p) {
+            padding-top: var(--text-padding, 5px);
+          }
           .editor :global(p.empty:not(:last-child)) {
             line-height: 10px;
+          }
+          .editor :global(p:last-child) {
+            padding-bottom: var(--text-padding, 10px);
           }
           .editor.view-only :global(p.empty:last-child) {
             display: none;

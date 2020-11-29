@@ -11,7 +11,6 @@ export default (props: {}) => {
           width: 100%;
           height: 50px;
           background-color: red;
-          border-radius: 5px;
           text-align: center;
           line-height: 50px;
           color: white;
@@ -21,7 +20,6 @@ export default (props: {}) => {
           width: 100%;
           height: 150px;
           background-color: black;
-          border-radius: 15px;
           text-align: center;
           line-height: 25px;
           color: white;
@@ -42,10 +40,14 @@ export default (props: {}) => {
           background-color: #1da1f2;
           margin: 10px 0;
           text-align: center;
-          border-radius: 15px;
           line-height: 50px;
           color: white;
           position: relative;
+        }
+        :global(.twitter-tweet-rendered) {
+          margin-top: 0px !important;
+          margin-bottom: 0px !important;
+          background-color: black;
         }
         :global(.ql-embed.tweet) {
           text-align: center;
@@ -63,7 +65,7 @@ export default (props: {}) => {
         }
         :global(.ql-block-image) {
           text-align: center;
-          margin: 10px 0;
+          margin: 2px 0;
         }
         :global(.ql-block-image img) {
           max-width: 100%;
@@ -101,7 +103,6 @@ export default (props: {}) => {
           text-align: center;
           margin: 10px 0;
           background-color: #ff0000;
-          border-radius: 15px;
         }
         :global(.ql-youtube-video iframe) {
           position: absolute;
@@ -145,6 +146,9 @@ export default (props: {}) => {
           /*
            * Figure out how to readd overflow hidden to this
            */
+        }
+        :global(.ql-tumblr-embed iframe) {
+          margin: 3px auto !important;
         }
         :global(.ql-tumblr-embed .loading-message) {
           position: relative;
@@ -191,6 +195,9 @@ export default (props: {}) => {
           padding: 1px;
           border: 1px dashed black;
           background-color: #e6dede;
+        }
+        :global(.view-only .inline-spoilers:not(.visible) code) {
+          background-color: black !important;
         }
         :global(.inline-spoilers:hover) {
           cursor: pointer;
@@ -287,7 +294,6 @@ export default (props: {}) => {
           height: 50px;
           margin: 10px 0;
           text-align: center;
-          border-radius: 15px;
           line-height: 50px;
           color: white;
           position: relative;
