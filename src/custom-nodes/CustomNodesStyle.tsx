@@ -148,6 +148,11 @@ export default (props: {}) => {
            */
         }
         :global(.ql-tumblr-embed iframe) {
+          // Do not add margins here or it will fuck up the height.
+          border: 0;
+          max-width: 100%;
+        }
+        :global(.ql-tumblr-embed) {
           margin: 3px auto !important;
         }
         :global(.ql-tumblr-embed .loading-message) {

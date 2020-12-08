@@ -7,7 +7,6 @@ const BlockEmbed = Quill.import("blots/block/embed");
 import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
-
 interface TumblrEmbedValue extends EmbedValue {
   href: string;
   did: string;
@@ -15,47 +14,17 @@ interface TumblrEmbedValue extends EmbedValue {
 
 // const logging = require("debug")("bobapost:embeds:tumblr");
 
-const attachObserver = (
-  domNode: HTMLDivElement,
+const onEmbedLoad = (
+  iframeNode: HTMLIFrameElement,
   destinationNode: HTMLDivElement
 ) => {
-  let newObserver = new MutationObserver((mutations, observer) => {
-    if (mutations[0]?.addedNodes[0]?.nodeName == "IFRAME") {
-      const tumblrFrame = mutations[0]?.addedNodes[0] as HTMLIFrameElement;
-      const currentHeight = tumblrFrame.getBoundingClientRect().height;
-      observer.disconnect();
-      const checkNewHeight = () => {
-        if (tumblrFrame.getBoundingClientRect().height != currentHeight) {
-          const loadingMessage = destinationNode.querySelector(
-            ".loading-message"
-          );
-          loadingMessage?.parentNode?.removeChild(loadingMessage);
-          destinationNode.classList.add("loaded");
-          destinationNode.classList.remove("loading");
-          domNode.parentNode?.removeChild(domNode);
-          destinationNode.appendChild(
-            domNode.querySelector("iframe") as HTMLIFrameElement
-          );
-          // Add an extra timeout so the size will have set
-          setTimeout(() => {
-            const embedSizes = tumblrFrame.getBoundingClientRect();
-            destinationNode.dataset.embedWidth = `${embedSizes.width}`;
-            destinationNode.dataset.embedHeight = `${embedSizes.height}`;
-            TumblrEmbed.onLoadCallback?.();
-          }, 200);
-          return;
-        }
-        setTimeout(checkNewHeight, 100);
-      };
-      setTimeout(checkNewHeight, 100);
-    }
-  });
-  newObserver.observe(domNode, {
-    subtree: true,
-    childList: true,
-  });
+  const loadingMessage = destinationNode.querySelector(".loading-message");
+  loadingMessage?.parentNode?.removeChild(loadingMessage);
+  destinationNode.classList.add("loaded");
+  destinationNode.classList.remove("loading");
+  TumblrEmbed.onLoadCallback?.();
+  return;
 };
-
 /**
  * TumblrEmbed represents a tumblr post embedded into the editor.
  */
@@ -68,7 +37,14 @@ class TumblrEmbed extends BlockEmbed {
     return "";
   }
 
-  static getTumblrEmbedFromUrl = (url: any): Promise<any> => {
+  static getTumblrEmbedFromUrl = (
+    url: any
+  ): Promise<{
+    href: string;
+    did: string;
+    url: string;
+    embedWidth?: string;
+  }> => {
     throw new Error("unimplemented");
   };
 
@@ -78,34 +54,51 @@ class TumblrEmbed extends BlockEmbed {
       href: string;
       did: string;
       url: string;
+      embedHeight?: string;
+      embedWidth?: string;
     }
   ) {
-    const tumblrNode = document.createElement("div");
-    const containerNode = document.createElement("div");
+    // Load this offscreen so there's no jarring re-size.
+    const tumblrNode = document.createElement("iframe");
+    const loadingNode = document.createElement("div");
     tumblrNode.classList.add("tumblr-post");
     // Add this to the post for rendering, but
     // also to the node for value retrieval
     tumblrNode.dataset.href = data.href;
     tumblrNode.dataset.did = data.did;
     tumblrNode.dataset.url = data.url;
+    tumblrNode.width = data.embedWidth || "100%";
+    // @ts-ignore
+    tumblrNode.loading = "lazy";
     node.dataset.href = data.href;
     node.dataset.did = data.did;
     node.dataset.url = data.url;
-    containerNode.appendChild(tumblrNode);
-    document.body.appendChild(containerNode);
-    containerNode.style.position = "absolute";
-    containerNode.style.left = `-10000px`;
+    const onload = (e: MessageEvent) => {
+      if (tumblrNode.contentWindow == e.source && e.data.height) {
+        tumblrNode.height = e.data.height;
+        node.dataset.embedWidth = `${tumblrNode.width}`;
+        node.dataset.embedHeight = `${tumblrNode.height}`;
+        loadingNode.removeChild(tumblrNode);
+        node.appendChild(tumblrNode);
+        document.body.removeChild(loadingNode);
+        window.removeEventListener("message", onload);
+        window.addEventListener("message", (e) => {
+          console.log(e);
+        });
+        onEmbedLoad(tumblrNode, node);
+      }
+    };
+    window.addEventListener("message", onload);
+    loadingNode.appendChild(tumblrNode);
+    document.body.appendChild(loadingNode);
+    loadingNode.style.position = "absolute";
+    loadingNode.style.left = `-10000px`;
+    tumblrNode.src = data.href;
     addEmbedOverlay(node, {
       onClose: () => {
         TumblrEmbed.onRemoveRequest?.(node);
       },
     });
-    attachObserver(containerNode, node);
-    let fileref = document.createElement("script");
-    fileref.setAttribute("type", "text/javascript");
-    fileref.setAttribute("async", "");
-    fileref.setAttribute("src", "https://assets.tumblr.com/post.js");
-    document.body.appendChild(fileref);
   }
 
   static renderFromUrl(node: HTMLDivElement, url: string) {

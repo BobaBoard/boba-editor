@@ -9,6 +9,7 @@ export default {
   component: Editor,
 };
 
+// TODO: only one of these should exist since it's global.
 setTumblrEmbedFetcher((url: string) => {
   logging(`""Fetching"" from ${url}`);
   return new Promise((resolve) => {
@@ -19,6 +20,7 @@ setTumblrEmbedFetcher((url: string) => {
         href:
           "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
         did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
+        embedWidth: "540",
       });
     }, 5000);
   });
