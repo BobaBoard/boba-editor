@@ -48,9 +48,16 @@ export default (props: {}) => {
           margin-top: 0px !important;
           margin-bottom: 0px !important;
           background-color: black;
+          border: 0;
+          max-width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
         }
         :global(.ql-embed.tweet) {
           text-align: center;
+          position: relative;
+          width: 100%;
         }
         :global(.ql-embed) {
           position: relative;
@@ -165,6 +172,7 @@ export default (props: {}) => {
           right: 0;
           left: 0;
           bottom: 0;
+          z-index: 1;
           pointer-events: none;
         }
         :global(.close-button) {

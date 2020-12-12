@@ -209,6 +209,10 @@ class Editor extends Component<EditorProps> {
       this.onEmbedChange();
     };
 
+    const getEditorReference = () => {
+      return this.editor.root;
+    };
+
     // TODO: context not existing (for typescript) has probably something to do with
     // nodes types missing
     require
@@ -220,6 +224,7 @@ class Editor extends Component<EditorProps> {
         importEmbedModule(moduleName, {
           onLoadCallback: embedsLoadedCallback,
           onRemoveRequestCallback: embedCloseCallback,
+          getEditorReference,
         });
       });
   }

@@ -4,6 +4,7 @@ import Quill from "quill";
 const logging = require("debug")("bobapost:embeds:tumblt");
 
 const BlockEmbed = Quill.import("blots/block/embed");
+import debounce from "debounce";
 import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
@@ -24,6 +25,41 @@ const onEmbedLoad = (
   destinationNode.classList.remove("loading");
   TumblrEmbed.onLoadCallback?.();
   return;
+};
+
+const loadTumblrEmbedOffscreen = (data: {
+  embedSrc: string;
+  embedWidth: string;
+  onLoad: (size: {
+    height: string;
+    width: string;
+    iframeNode: HTMLIFrameElement;
+  }) => void;
+}) => {
+  // Load this offscreen so there's no jarring re-size.
+  const iframeNode = document.createElement("iframe");
+  const loadingNode = document.createElement("div");
+  iframeNode.classList.add("tumblr-post");
+  iframeNode.width = data.embedWidth;
+  const onload = (e: MessageEvent) => {
+    if (iframeNode.contentWindow == e.source && e.data.height) {
+      logging(`Tumblr height callback received. Height: ${e.data.height}`);
+      loadingNode.removeChild(iframeNode);
+      window.removeEventListener("message", onload);
+      data.onLoad({
+        width: data.embedWidth,
+        height: e.data.height,
+        iframeNode: iframeNode,
+      });
+      document.body.removeChild(loadingNode);
+    }
+  };
+  window.addEventListener("message", onload);
+  loadingNode.appendChild(iframeNode);
+  document.body.appendChild(loadingNode);
+  loadingNode.style.position = "absolute";
+  loadingNode.style.left = `-10000px`;
+  iframeNode.src = data.embedSrc;
 };
 /**
  * TumblrEmbed represents a tumblr post embedded into the editor.
@@ -54,46 +90,75 @@ class TumblrEmbed extends BlockEmbed {
       href: string;
       did: string;
       url: string;
-      embedHeight?: string;
       embedWidth?: string;
+      embedHeight?: string;
+      fromServer: boolean;
     }
   ) {
-    // Load this offscreen so there's no jarring re-size.
-    const tumblrNode = document.createElement("iframe");
-    const loadingNode = document.createElement("div");
-    tumblrNode.classList.add("tumblr-post");
-    // Add this to the post for rendering, but
-    // also to the node for value retrieval
-    tumblrNode.dataset.href = data.href;
-    tumblrNode.dataset.did = data.did;
-    tumblrNode.dataset.url = data.url;
-    tumblrNode.width = data.embedWidth || "100%";
-    // @ts-ignore
-    tumblrNode.loading = "lazy";
     node.dataset.href = data.href;
     node.dataset.did = data.did;
     node.dataset.url = data.url;
-    const onload = (e: MessageEvent) => {
-      if (tumblrNode.contentWindow == e.source && e.data.height) {
-        tumblrNode.height = e.data.height;
-        node.dataset.embedWidth = `${tumblrNode.width}`;
-        node.dataset.embedHeight = `${tumblrNode.height}`;
-        loadingNode.removeChild(tumblrNode);
-        node.appendChild(tumblrNode);
-        document.body.removeChild(loadingNode);
-        window.removeEventListener("message", onload);
-        window.addEventListener("message", (e) => {
-          console.log(e);
+    if (data.fromServer) {
+      loadTumblrEmbedOffscreen({
+        embedSrc: data.href,
+        embedWidth: data.embedWidth || "800",
+        onLoad: ({ width, height }) => {
+          node.dataset.embedWidth = width;
+          node.dataset.embedHeight = height;
+        },
+      });
+    }
+    const containerWidth =
+      "" + this.getEditorReference().getBoundingClientRect().width;
+    let currentWidth = containerWidth;
+    loadTumblrEmbedOffscreen({
+      embedSrc: data.href,
+      embedWidth: containerWidth,
+      onLoad: ({ height, iframeNode }) => {
+        const iframeContainer = document.createElement("div");
+        iframeContainer.classList.add("tumblr-post");
+        iframeContainer.style.height = height + "px";
+        iframeContainer.appendChild(iframeNode);
+        iframeNode.style.position = "absolute";
+        iframeNode.style.overflow = "hidden";
+        iframeNode.height = height;
+        node.appendChild(iframeContainer);
+        onEmbedLoad(iframeNode, node);
+        const resizeObserver = new ResizeObserver(debounce(onResize, 300));
+        resizeObserver.observe(iframeContainer);
+      },
+    });
+    const onResize = (entries: ResizeObserverEntry[]) => {
+      const hasChangedWidth = currentWidth != "" + entries[0].contentRect.width;
+      logging(
+        `Tumblr width changed? ${hasChangedWidth} with width ${entries[0].contentRect.width} and height ${entries[0].contentRect.height}.`
+      );
+      if (hasChangedWidth) {
+        currentWidth = "" + entries[0].contentRect.width;
+        loadTumblrEmbedOffscreen({
+          embedSrc: data.href,
+          embedWidth: "" + entries[0].contentRect.width,
+          onLoad: ({ height }) => {
+            const hasScrollbarBeforeChange =
+              document.documentElement.scrollHeight >
+              document.documentElement.clientHeight;
+            // @ts-ignore
+            entries[0].target.style.height = height + "px";
+            // @ts-ignore
+            entries[0].target.querySelector("iframe").width = currentWidth;
+            // @ts-ignore
+            entries[0].target.querySelector("iframe").height = height;
+            const hasScrollbarAfterChange =
+              document.documentElement.scrollHeight >
+              document.documentElement.clientHeight;
+            if (hasScrollbarBeforeChange != hasScrollbarAfterChange) {
+              // Adding and removing scrollbars causes a problem with infinite looping.
+              logging("Change in scrollbars visibility!");
+            }
+          },
         });
-        onEmbedLoad(tumblrNode, node);
       }
     };
-    window.addEventListener("message", onload);
-    loadingNode.appendChild(tumblrNode);
-    document.body.appendChild(loadingNode);
-    loadingNode.style.position = "absolute";
-    loadingNode.style.left = `-10000px`;
-    tumblrNode.src = data.href;
     addEmbedOverlay(node, {
       onClose: () => {
         TumblrEmbed.onRemoveRequest?.(node);
@@ -112,7 +177,7 @@ class TumblrEmbed extends BlockEmbed {
 
     TumblrEmbed.getTumblrEmbedFromUrl(url)
       .then((data) => {
-        TumblrEmbed.loadPost(node, data);
+        TumblrEmbed.loadPost(node, { ...data, fromServer: true });
       })
       .catch((err) => {
         logging(err);
@@ -149,7 +214,7 @@ class TumblrEmbed extends BlockEmbed {
         this.sanitize(typeof value == "string" ? value : value.url)
       );
     }
-    TumblrEmbed.loadPost(node, value);
+    TumblrEmbed.loadPost(node, { ...value, fromServer: false });
     return node;
   }
 

@@ -195,6 +195,7 @@ export const importEmbedModule = (
   callbacks: {
     onLoadCallback: () => void;
     onRemoveRequestCallback: (root: HTMLElement) => void;
+    getEditorReference: () => HTMLDivElement;
   }
 ) => {
   logging(`Importing module ${moduleName}`);
@@ -205,6 +206,7 @@ export const importEmbedModule = (
   const moduleImport = QuillModule.import(`formats/${EmbedModule.blotName}`);
   moduleImport.setOnLoadCallback?.(callbacks.onLoadCallback);
   moduleImport.onRemoveRequest = callbacks.onRemoveRequestCallback;
+  moduleImport.getEditorReference = callbacks.getEditorReference;
 };
 
 export const pasteImageAsBlockEmbed = (

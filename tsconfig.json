@@ -22,7 +22,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "types": ["react", "react-dom", "styled-jsx", "node"]
+    "types": [
+      "react",
+      "react-dom",
+      "styled-jsx",
+      "node",
+      "resize-observer-browser"
+    ]
   },
   "include": ["/**/*"],
   "exclude": ["node_modules", "build", "scripts", "dist"]

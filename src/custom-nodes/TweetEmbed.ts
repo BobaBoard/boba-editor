@@ -1,6 +1,4 @@
 import Quill from "quill";
-import React from "react";
-import ReactDOM from "react-dom";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
@@ -21,6 +19,56 @@ interface TweetEmbed extends EmbedValue {
   thread?: boolean;
 }
 
+const getTweetEmbedUrl = (data: { hideThread: string; id: string }) =>
+  `https://platform.twitter.com/embed/index.html?dnt=true&frame=false&hideCard=false&hideThread=${data.hideThread}&id=${data.id}&theme=dark&widgetsVersion=ed20a2b%3A1601588405575&width=550px`;
+
+const loadTwitterEmbed = (tweetData: {
+  parent: HTMLElement;
+  embedSrc: string;
+  embedWidth: string;
+  onNotFound: () => void;
+  onLoad: (size: {
+    height: string;
+    width: string;
+    iframeNode: HTMLIFrameElement;
+  }) => void;
+}) => {
+  // We cannot load this offscreen cause Twitter will throw a fit.
+  const iframeNode = document.createElement("iframe");
+  const onload = (e: MessageEvent) => {
+    if (!parent.parent) {
+      window.removeEventListener("message", onload);
+    }
+    if (iframeNode.contentWindow == e.source) {
+      const data = e.data["twttr.embed"];
+      if (data?.method == "twttr.private.no_results") {
+        iframeNode.parentElement?.removeChild(iframeNode);
+        tweetData.onNotFound();
+      }
+      if (data?.method == "twttr.private.resize") {
+        logging(
+          `Twitter height callback received. Height: ${data.params[0]?.height}`
+        );
+        const height = data.params[0]?.height as string;
+        iframeNode.height = height;
+        iframeNode.style.opacity = "1";
+        if (tweetData.parent.style.height !== height + "px") {
+          tweetData.parent.style.height = height + "px";
+        }
+        tweetData.onLoad({
+          width: data.embedWidth,
+          height: e.data.height,
+          iframeNode: iframeNode,
+        });
+      }
+    }
+  };
+  window.addEventListener("message", onload);
+  tweetData.parent.appendChild(iframeNode);
+  iframeNode.style.opacity = "0";
+  iframeNode.width = "100%";
+  iframeNode.src = tweetData.embedSrc;
+};
 /**
  * TweetEmbed represents a tweet embedded into the editor.
  *
@@ -44,100 +92,54 @@ class TweetEmbed extends BlockEmbed {
     }
   }
 
-  static loadTweet(id: string, node: HTMLElement, attemptsRemaining = 5) {
-    // @ts-ignore
-    window?.twttr?.widgets
-      ?.createTweet(id, node, {
-        ...TweetEmbed.tweetOptions,
-        conversation: node.dataset.thread === "true" ? undefined : "none",
-      })
-      .then((el: HTMLDivElement) => {
-        // If there is more than one rendered tweet here, it means we're in a
-        // "option change" situation. Remove the older.
-        const renderedNode = node.querySelectorAll(".twitter-tweet");
-        if (renderedNode.length > 1) {
+  static loadTweet(id: string, node: HTMLElement) {
+    const embedUrl = getTweetEmbedUrl({
+      id,
+      hideThread: node.dataset.thread == "true" ? "false" : "true",
+    });
+    logging(`Loading tweet with id ${id}.`);
+    const containerWidth =
+      "" + this.getEditorReference().getBoundingClientRect().width;
+    logging(`Editor width is ${containerWidth}.`);
+    const renderedNode = node.querySelectorAll(".twitter-tweet-rendered");
+    loadTwitterEmbed({
+      parent: node,
+      embedSrc: embedUrl,
+      embedWidth: containerWidth,
+      onLoad: (data) => {
+        if (renderedNode.length > 0) {
           renderedNode[0].parentElement?.removeChild(renderedNode[0]);
         }
-        logging(`Tweet was loaded!`);
+        data.iframeNode.classList.add("twitter-tweet-rendered");
         node.dataset.rendered = "true";
+        node.dataset.embedWidth = `${containerWidth}`;
+        node.dataset.embedHeight = `${data.height}`;
         TweetEmbed.doneLoading(node);
-        if (!el) {
-          addErrorMessage(node, {
-            message: "This tweet.... it dead.",
-            url: TweetEmbed.value(node).url || "",
-          });
-          logging(`Ooops, there's no tweet there!`);
-          return;
-        }
-        if (el.getBoundingClientRect().height == 0) {
-          node.classList.add("ios-bug");
-          ReactDOM.render(React.createElement(TwitterIcon, {}, null), node);
-          addErrorMessage(node, {
-            message: `You've been hit by... <br />
-             You've been strucky by... <br />
-             A smooth iOS bug.<br />
-             (click to access tweet)`,
-            url: TweetEmbed.value(node).url || "",
-          });
-          logging(`That damn iOS bug!`);
-        } else {
-          const embedSizes = el.getBoundingClientRect();
-          node.dataset.embedWidth = `${embedSizes.width}`;
-          node.dataset.embedHeight = `${embedSizes.height}`;
-        }
         if (TweetEmbed.onLoadCallback) {
           // Add some time to remove the loading class or the
           // calculation of the new tooltip position will be
           // weird
           // TODO: figure out why rather than hack it.
-          setTimeout(() => TweetEmbed.onLoadCallback(el), 100);
+          setTimeout(() => TweetEmbed.onLoadCallback(node), 100);
         }
-      })
-      .catch((e: any) => {
-        logging(`There was a serious error  tweet creation!`);
-        logging(e);
+      },
+      onNotFound: () => {
         TweetEmbed.doneLoading(node);
         addErrorMessage(node, {
-          message: `This tweet.... it bad.<br />(${e.message})`,
+          message: "This tweet.... it dead.",
           url: TweetEmbed.value(node).url || "",
         });
-      });
-    // If the twitter library is not loaded yet, defer rendering
-    // TODO: https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/set-up-twitter-for-websites
-    // @ts-ignore
-    if (!window?.twttr?.widgets) {
-      logging(`Twitter main library is not loaded.`);
-      logging(`${attemptsRemaining} reload attempts remaining`);
-      if (!attemptsRemaining) {
-        logging(`We're out of attempts! Time to panic!`);
-        TweetEmbed.doneLoading(node);
-        addErrorMessage(node, {
-          message: "The Twitter Embeds library... it dead.",
-          url: TweetEmbed.value(node).url || "",
-        });
-        return;
-      }
-      setTimeout(
-        () => TweetEmbed.loadTweet(id, node, attemptsRemaining - 1),
-        50
-      );
-    }
+        if (TweetEmbed.onLoadCallback) {
+          // Add some time to remove the loading class or the
+          // calculation of the new tooltip position will be
+          // weird
+          // TODO: figure out why rather than hack it.
+          setTimeout(() => TweetEmbed.onLoadCallback(node), 100);
+        }
+        logging(`Ooops, there's no tweet there!`);
+      },
+    });
   }
-
-  static renderTweets() {
-    // This method needs to be called for any non-quill environments
-    // otherwise, tweets will not be rendered
-    const tweets = document.querySelectorAll("div.ql-tweet") as NodeListOf<
-      HTMLDivElement
-    >;
-    for (var i = 0; i < tweets.length; i++) {
-      while (tweets[i].firstChild) {
-        tweets[i].removeChild(tweets[i].firstChild as HTMLDivElement);
-      }
-      TweetEmbed.loadTweet(tweets[i].dataset.id || "", tweets[i]);
-    }
-  }
-
   static create(value: string | EmbedValue | TweetEmbed) {
     const node = super.create();
     logging(`Creating new tweet embed with value ${value}`);
@@ -157,12 +159,30 @@ class TweetEmbed extends BlockEmbed {
     logging(`Tweet id: ${id}`);
 
     node.classList.toggle("spoilers", !!value["spoilers"]);
-    addLoadingMessage(node, {
-      message: "Preparing to chirp...",
-      url: url.href,
-      width: value["embedWidth"],
-      height: value["embedHeight"],
-    });
+
+    if (id) {
+      addLoadingMessage(node, {
+        message: "Preparing to chirp...",
+        url: url.href,
+        width: value["embedWidth"],
+        height: value["embedHeight"],
+      });
+    } else {
+      TweetEmbed.doneLoading(node);
+      addErrorMessage(node, {
+        message: "This tweet.... it dead.",
+        url: TweetEmbed.value(node).url || "",
+      });
+      if (TweetEmbed.onLoadCallback) {
+        // Add some time to remove the loading class or the
+        // calculation of the new tooltip position will be
+        // weird
+        // TODO: figure out why rather than hack it.
+        setTimeout(() => TweetEmbed.onLoadCallback(node), 100);
+      }
+      logging(`Ooops, there's no tweet there!`);
+      return node;
+    }
 
     // TODO: this should be generalized rather than making everyone have access
     // to a method only twitter really needs
