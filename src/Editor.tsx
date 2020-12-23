@@ -576,6 +576,7 @@ class Editor extends Component<EditorProps> {
             padding-left: 0;
             margin-bottom: 10px;
             margin-left: calc(var(--text-padding, 10px) + 5px);
+            margin-right: calc(var(--text-padding, 10px) + 5px);
           }
           .editor :global(.ql-bubble .ql-editor pre.ql-syntax),
           .editor :global(.ql-bubble .ql-editor code) {
