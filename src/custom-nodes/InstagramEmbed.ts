@@ -6,6 +6,8 @@ class InstagramEmbed extends Oembed {
   static EMBED_SCRIPT_URL = "https://www.instagram.com/embed.js";
   static LOADING_BACKGROUND_COLOR = "#833AB4";
   static LOADING_TEXT = "Applying filters...";
+  static SKIP_EMBED_LOADING = false;
+  static FORCE_EMBED = true;
 
   static blotName = "instagram-embed";
   static tagName = "div";

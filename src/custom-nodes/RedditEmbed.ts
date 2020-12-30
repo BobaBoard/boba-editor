@@ -6,6 +6,8 @@ class RedditEmbed extends Oembed {
   static EMBED_SCRIPT_URL = "https://embed.redditmedia.com/widgets/platform.js";
   static LOADING_BACKGROUND_COLOR = "#FF5700";
   static LOADING_TEXT = "Thanks for the embed, kind stranger.";
+  static SKIP_EMBED_LOADING = false;
+  static FORCE_EMBED = true;
 
   static blotName = "reddit-embed";
   static tagName = "div";

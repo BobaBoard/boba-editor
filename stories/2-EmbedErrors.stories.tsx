@@ -9,29 +9,29 @@ export default {
   component: Editor,
 };
 
-setTumblrEmbedFetcher((url: string) => {
-  logging(`""Fetching"" from ${url}`);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        url:
-          "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
-        href:
-          "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
-        did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
-      });
-    }, 5000);
-  });
-});
+// setTumblrEmbedFetcher((url: string) => {
+//   logging(`""Fetching"" from ${url}`);
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve({
+//         url:
+//           "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
+//         href:
+//           "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
+//         did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
+//       });
+//     }, 5000);
+//   });
+// });
 
-const LOAD_DELAY = 1000;
-setOEmbedFetcher((url: string) => {
-  logging(`""Fetching"" from ${url}`);
-  const promise = new Promise((resolve) => {
-    resolve({});
-  });
-  return promise;
-});
+// const LOAD_DELAY = 1000;
+// setOEmbedFetcher((url: string) => {
+//   logging(`""Fetching"" from ${url}`);
+//   const promise = new Promise((resolve) => {
+//     resolve({});
+//   });
+//   return promise;
+// });
 
 export const TwitterEmbed = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>

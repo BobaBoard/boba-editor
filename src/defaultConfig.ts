@@ -8,6 +8,7 @@ let TumblrEmbed;
 let TikTokEmbed;
 let YouTubeEmbed;
 let VimeoEmbed;
+let OEmbedEmbed;
 
 if (typeof window !== "undefined") {
   RedditEmbed = require("./custom-nodes/RedditEmbed").default;
@@ -18,6 +19,7 @@ if (typeof window !== "undefined") {
   TikTokEmbed = require("./custom-nodes/TikTokEmbed").default;
   YouTubeEmbed = require("./custom-nodes/YouTubeEmbed").default;
   VimeoEmbed = require("./custom-nodes/VimeoEmbed").default;
+  OEmbedEmbed = require("./custom-nodes/OEmbedBase").default;
 }
 
 // @ts-ignore
@@ -36,6 +38,8 @@ import PixivIcon from "./img/pixiv.svg";
 import InstagramIcon from "./img/instagram.svg";
 // @ts-ignore
 import VimeoIcon from "./img/vimeo.svg";
+// @ts-ignore
+import ExternalEmbedIcon from "./img/external_embed.svg";
 
 export const defaultConfig: TooltipConfig = {
   enabledEmbeds: [
@@ -78,6 +82,11 @@ export const defaultConfig: TooltipConfig = {
       embedName: "youtube",
       embedClass: YouTubeEmbed,
       icon: YouTubeIcon,
+    },
+    {
+      embedName: "generic",
+      embedClass: OEmbedEmbed,
+      icon: ExternalEmbedIcon,
     },
   ],
 };

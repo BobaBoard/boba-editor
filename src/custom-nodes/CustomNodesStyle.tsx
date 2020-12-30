@@ -99,10 +99,12 @@ export default (props: {}) => {
           left: 0;
           transform: translateY(-50%);
         }
+        :global(.ql-youtube-video.loading) {
+          background-color: #ff0000;
+        }
         :global(.ql-youtube-video) {
           text-align: center;
           margin: 10px 0;
-          background-color: #ff0000;
         }
         :global(.ql-youtube-video iframe) {
           position: absolute;
@@ -306,6 +308,21 @@ export default (props: {}) => {
           left: 0;
           bottom: 0;
           right: 0;
+        }
+        :global(.ql-oembed-embed.best-effort) {
+          background-color: #e6e6e6;
+        }
+        :global(.ql-oembed-embed.best-effort h1) {
+          font-size: 25px;
+          text-decoration: underline;
+        }
+        :global(.ql-oembed-embed.best-effort h1, .ql-oembed-embed.best-effort
+            p) {
+          color: black;
+        }
+        :global(.ql-oembed-embed.best-effort a) {
+          display: block;
+          text-decoration: none;
         }
       `}</style>
     </>

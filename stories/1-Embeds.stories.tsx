@@ -28,6 +28,7 @@ const LOAD_DELAY = 1000;
 setOEmbedFetcher((url: string) => {
   logging(`""Fetching"" from ${url}`);
   const promise = new Promise((resolve) => {
+    logging(`Calling http://localhost:8061/iframely?uri=${url}`);
     fetch(`http://localhost:8061/iframely?uri=${url}`).then((response) => {
       setTimeout(() => {
         resolve(response.json());
@@ -287,4 +288,30 @@ export const PixivStory = () => (
 
 PixivStory.story = {
   name: "pixiv",
+};
+
+export const BestEffortStory = () => (
+  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+    <Editor
+      editable={true}
+      initialText={JSON.parse(
+        '[{"insert":"It\'s Try Hard time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"oembed-embed":{"embedHeight": "367.5", "embedWidth": "500","url":"https://www.delish.com/cooking/a20086127/how-to-cook-spaghetti-squash/"}}},{"insert":"\\n"}]'
+      )}
+      onTextChange={() => {
+        logging("changed!");
+      }}
+      focusOnMount={true}
+      onIsEmptyChange={() => {
+        logging("empty!");
+      }}
+      onSubmit={() => {
+        // This is for cmd + enter
+        logging("submit!");
+      }}
+    />
+  </div>
+);
+
+BestEffortStory.story = {
+  name: "best effort",
 };

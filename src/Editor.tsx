@@ -211,10 +211,16 @@ class Editor extends Component<EditorProps> {
 
     // TODO: context not existing (for typescript) has probably something to do with
     // nodes types missing
+    const FORBIDDEN_ENDINGS = [".ts", ".tsx", "Style", "utils"];
     require
       //@ts-ignore
-      .context("./custom-nodes/", true, /(Image|Embed)$/)
+      .context("./custom-nodes/", true)
       .keys()
+      // Doing this by filtering because regexes defeated me
+      .filter(
+        (moduleName: string) =>
+          !FORBIDDEN_ENDINGS.some((ending) => moduleName.endsWith(ending))
+      )
       .map((path: string) => path.substring(2))
       .forEach((moduleName: string) => {
         importEmbedModule(moduleName, {
