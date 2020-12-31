@@ -123,6 +123,9 @@ export default (props: {}) => {
            * Figure out how to readd overflow hidden to this
            */
         }
+        :global(blockquote.tiktok-embed) {
+          margin: 0 auto !important;
+        }
         :global(.ql-youtube-video .loading-message) {
           position: absolute;
           top: 50%;
