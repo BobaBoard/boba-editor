@@ -13,6 +13,7 @@ import {
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
 import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
+import { getSsrConverter } from "./ssrUtils";
 import { defaultConfig } from "./defaultConfig";
 
 import "quill/dist/quill.bubble.css";
@@ -36,6 +37,8 @@ import SpoilersIcon from "./img/spoilers.svg";
 //import type Quill from "quill";
 import Quill from "quill";
 let QuillModule: typeof Quill;
+// window = undefined;
+// document = undefined;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
@@ -56,6 +59,7 @@ class Editor extends Component<EditorProps> {
   editorContainer = createRef<HTMLDivElement>();
   tooltip = createRef<HTMLDivElement>();
   toolbarContainer = createRef<HTMLDivElement>();
+  ssrRef = createRef<HTMLDivElement>();
 
   skipTooltipUpdates = false;
 
@@ -325,6 +329,10 @@ class Editor extends Component<EditorProps> {
   }
 
   componentDidMount() {
+    if (this.isServer()) {
+      // We do this so we can test how this will work with server rendering.
+      return;
+    }
     this.addCustomEmbeds();
     logging("Installing Quill Editor");
     const quillConfig = {
@@ -366,6 +374,7 @@ class Editor extends Component<EditorProps> {
       quillConfig
     );
     this.props.onEditorCreated?.(this.editor);
+    this.ssrRef?.current?.parentElement?.removeChild(this.ssrRef.current);
 
     // Add handlers
     this.addCharactersTypedHandler();
@@ -426,6 +435,10 @@ class Editor extends Component<EditorProps> {
   }
 
   componentWillUnmount() {
+    if (this.isServer()) {
+      // We do this so we can test how this will work with server rendering.
+      return;
+    }
     logging("Unmounting editor");
     logging("Unmounted editor content:");
     logging(this.editor.getContents());
@@ -448,40 +461,67 @@ class Editor extends Component<EditorProps> {
     }
   }
 
+  isServer() {
+    return this.props.forceSSR || typeof window == "undefined";
+  }
+
   render() {
+    const ssrText =
+      this.isServer() && getSsrConverter().convert(this.props.initialText);
+
     return (
       <>
-        <div
-          className={classNames("editor", {
-            loaded: this.state.loaded,
-            "view-only": !this.props.editable,
-          })}
-        >
-          <div className="spinner">
-            <Spinner />
+        {ssrText && (
+          <div
+            className={classNames("editor", {
+              loaded: true,
+              "view-only": !this.props.editable,
+            })}
+          >
+            <div
+              className="editor-quill ql-container ql-bubble "
+              ref={this.ssrRef}
+            >
+              <div
+                className="ql-editor"
+                dangerouslySetInnerHTML={{ __html: ssrText }}
+              ></div>
+            </div>
           </div>
-          {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
-          <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
-          {this.props.editable && (
-            <Tooltip
-              config={defaultConfig}
-              top={this.state.tooltipPostion.top}
-              right={this.state.tooltipPostion.right}
-              onInsertEmbed={({ type, embed }) => {
-                this.addEmbed(type, embed);
-              }}
-              onSetFormat={(format: string) => {
-                this.setFormat(format);
-              }}
-              show={this.state.showTooltip && this.props.showTooltip != false}
-              preventUpdate={(shouldPrevent) => {
-                this.skipTooltipUpdates = shouldPrevent;
-              }}
-            />
-          )}
-          {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
-          <div className="editor-quill" ref={this.editorContainer}></div>
-        </div>
+        )}
+        {!ssrText && (
+          <div
+            className={classNames("editor", {
+              loaded: this.state.loaded,
+              "view-only": !this.props.editable,
+            })}
+          >
+            <div className="spinner">
+              <Spinner />
+            </div>
+            {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
+            <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
+            {this.props.editable && (
+              <Tooltip
+                config={defaultConfig}
+                top={this.state.tooltipPostion.top}
+                right={this.state.tooltipPostion.right}
+                onInsertEmbed={({ type, embed }) => {
+                  this.addEmbed(type, embed);
+                }}
+                onSetFormat={(format: string) => {
+                  this.setFormat(format);
+                }}
+                show={this.state.showTooltip && this.props.showTooltip != false}
+                preventUpdate={(shouldPrevent) => {
+                  this.skipTooltipUpdates = shouldPrevent;
+                }}
+              />
+            )}
+            {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
+            <div className="editor-quill" ref={this.editorContainer}></div>
+          </div>
+        )}
 
         <style jsx>{`
           .editor,
@@ -697,6 +737,7 @@ interface BaseProps {
   // the undelying Quill editor. Shouldn't be used unless in testing emergencies.
   // TODO: remove this.
   onEditorCreated?: (editor: Quill) => void;
+  forceSSR?: boolean;
 }
 
 interface EditableProps extends BaseProps {

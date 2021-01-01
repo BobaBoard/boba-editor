@@ -10345,6 +10345,13 @@ querystring@0.2.0, querystring@^0.2.0:
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
+quill-delta-to-html@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/quill-delta-to-html/-/quill-delta-to-html-0.12.0.tgz#ee572cfa208390d99d7646795358ddb81eaea17c"
+  integrity sha512-Yy6U2e7ov+ZlrFbj5/GbqOBCRjyNu+vuphy0Pk+7668zIMTVHJglZY2JNa++1/zkSiqptPBmP/CpsDzC4Wznsw==
+  dependencies:
+    lodash.isequal "^4.5.0"
+
 quill-delta@^3.6.2:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-3.6.3.tgz#b19fd2b89412301c60e1ff213d8d860eac0f1032"
