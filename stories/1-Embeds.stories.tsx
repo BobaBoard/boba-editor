@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import Editor, { setTumblrEmbedFetcher, setOEmbedFetcher } from "../src";
@@ -27,13 +28,17 @@ setTumblrEmbedFetcher((url: string) => {
 const LOAD_DELAY = 1000;
 setOEmbedFetcher((url: string) => {
   logging(`""Fetching"" from ${url}`);
-  const promise = new Promise((resolve) => {
-    logging(`Calling http://localhost:8061/iframely?uri=${url}`);
-    fetch(`http://localhost:8061/iframely?uri=${url}`).then((response) => {
-      setTimeout(() => {
-        resolve(response.json());
-      }, LOAD_DELAY);
-    });
+  const promise = new Promise((resolve, reject) => {
+    logging(`Calling http://${location.hostname}:8061/iframely?uri=${url}`);
+    fetch(`http://${location.hostname}:8061/iframely?uri=${url}`)
+      .then((response) => {
+        setTimeout(() => {
+          resolve(response.json());
+        }, LOAD_DELAY);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
   return promise;
 });
@@ -290,25 +295,42 @@ PixivStory.story = {
   name: "pixiv",
 };
 
+const TEST_EMBEDS = [
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://www.delish.com/cooking/a20086127/how-to-cook-spaghetti-squash/"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://thetwilightsad.bandcamp.com/album/oran-mor-2020"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://www.nytimes.com/2021/01/01/style/self-care/kambo-tree-frog-detox.html?action=click&module=Top%20Stories&pgtype=Homepage"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://www.ndtv.com/offbeat/happy-new-year-2021-wishes-greetings-messages-images-pics-to-share-2346091"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://knowyourmeme.com/memes/moons-haunted"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://archiveofourown.org/works/28349940/chapters/69459594"}',
+];
+
 export const BestEffortStory = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"It\'s Try Hard time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"oembed-embed":{"embedHeight": "367.5", "embedWidth": "500","url":"https://www.delish.com/cooking/a20086127/how-to-cook-spaghetti-squash/"}}},{"insert":"\\n"}]'
-      )}
-      onTextChange={() => {
-        logging("changed!");
-      }}
-      focusOnMount={true}
-      onIsEmptyChange={() => {
-        logging("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        logging("submit!");
-      }}
-    />
+  <div style={{ display: "flex", maxWidth: "100%", flexDirection: "column" }}>
+    {TEST_EMBEDS.map((embed) => {
+      return (
+        <div
+          style={{
+            margin: "5px",
+            flexShrink: 0,
+            maxWidth: "500px",
+            backgroundColor: "white",
+          }}
+        >
+          <Editor
+            editable={true}
+            initialText={JSON.parse(
+              `[{"insert":"It\'s Try Hard time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"oembed-embed":${embed}}},{"insert":"\\n"}]`
+            )}
+            onTextChange={action("changed!")}
+            focusOnMount={true}
+            onIsEmptyChange={() => {
+              logging("empty!");
+            }}
+            onSubmit={action("submit")}
+          />
+        </div>
+      );
+    })}
   </div>
 );
 

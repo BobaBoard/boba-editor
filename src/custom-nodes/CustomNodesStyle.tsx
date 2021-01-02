@@ -9,11 +9,11 @@ export default (props: {}) => {
         }
         :global(.ql-embed .error-message) {
           width: 100%;
-          height: 50px;
-          background-color: red;
+          background-color: rgb(255, 15, 75);
           text-align: center;
-          line-height: 50px;
+          line-height: 25px;
           color: white;
+          padding: 10px;
           margin: 10px 0;
         }
         :global(.ql-embed.ios-bug .error-message) {
@@ -313,7 +313,18 @@ export default (props: {}) => {
           right: 0;
         }
         :global(.ql-oembed-embed.best-effort) {
-          background-color: #e6e6e6;
+          background-color: #f5f5f5;
+          border-radius: 10px;
+          border: 1px solid #d0d0d0;
+        }
+        :global(.ql-oembed-embed.best-effort img) {
+          border-radius: 10px 10px 0px 0px;
+        }
+        :global(.ql-oembed-embed.best-effort .container.with-icon) {
+          background-repeat: no-repeat;
+          background-position-x: 100%;
+          background-position-y: 100%;
+          background-size: 20px;
         }
         :global(.ql-oembed-embed.best-effort h1) {
           font-size: 25px;

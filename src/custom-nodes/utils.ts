@@ -128,14 +128,18 @@ export const addErrorMessage = (
     url,
   }: {
     message: string;
-    url: string;
+    url?: string;
   }
 ) => {
   const loadingMessage = document.createElement("div");
-  const linkToOriginal = document.createElement("a");
-  linkToOriginal.innerHTML = message;
-  linkToOriginal.href = url;
-  loadingMessage.appendChild(linkToOriginal);
+  if (url) {
+    const linkToOriginal = document.createElement("a");
+    linkToOriginal.innerHTML = message;
+    linkToOriginal.href = url;
+    loadingMessage.appendChild(linkToOriginal);
+  } else {
+    loadingMessage.innerHTML = message;
+  }
   loadingMessage.classList.add("error-message");
 
   embedRoot.appendChild(loadingMessage);

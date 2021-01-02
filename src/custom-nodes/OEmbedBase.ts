@@ -118,16 +118,10 @@ class OEmbed extends BlockEmbed {
     link.appendChild(detachedImageNode);
     imageParent.appendChild(link);
     if (image.complete) {
-      this.onLoadEnd(node, link, {
-        embedWidth: `${image.naturalWidth}`,
-        embedHeight: `${image.naturalHeight}`,
-      });
+      this.onLoadEnd(node, imageParent);
     } else {
       image.onload = () => {
-        this.onLoadEnd(node, imageParent, {
-          embedWidth: `${image.naturalWidth}`,
-          embedHeight: `${image.naturalHeight}`,
-        });
+        this.onLoadEnd(node, imageParent);
       };
     }
     return;
@@ -143,10 +137,17 @@ class OEmbed extends BlockEmbed {
     const imageUrl = data.links?.thumbnail?.find((link: any) =>
       link.type.startsWith("image/")
     )?.href;
+    const iconUrl = data?.links?.icon?.find((link: any) =>
+      link.type.startsWith("image/")
+    )?.href;
     const description = data.meta?.description;
     const title = data.meta?.title;
 
     const container = document.createElement("div");
+    if (iconUrl) {
+      container.style.backgroundImage = `url(${iconUrl})`;
+      container.classList.add("container", "with-icon");
+    }
     const linkElement = document.createElement("a");
     linkElement.href = href;
     container.appendChild(linkElement);
@@ -158,7 +159,7 @@ class OEmbed extends BlockEmbed {
     }
     if (title) {
       const titleElement = document.createElement("h1");
-      titleElement.innerText = title;
+      titleElement.innerText = title.trim();
       linkElement.appendChild(titleElement);
     }
     if (description) {
@@ -220,7 +221,7 @@ class OEmbed extends BlockEmbed {
       );
     } else {
       logging(`Finished loading (no observer).`);
-      this.onLoadEnd(oEmbedNode, oEmbedNode);
+      this.onLoadEnd(node, oEmbedNode);
     }
   }
 
@@ -235,20 +236,19 @@ class OEmbed extends BlockEmbed {
   static renderFromUrl(node: HTMLDivElement, url: string) {
     if (!url) {
       addErrorMessage(node, {
-        message: "No valid url found in embed post!",
-        url: "#",
+        message: "No valid url found in embed post! è.é",
       });
       this.onLoadEnd(node, null);
       return node;
     }
 
+    node.dataset.url = url;
     OEmbed.getOEmbedFromUrl(url)
       .then((data) => {
         if (data.error) {
           this.renderError(node, url, data.error.message);
           // Add the url to the dataset anyway, in case the error
           // is transient.
-          node.dataset.url = url;
           return;
         }
         this.loadPost(
@@ -257,6 +257,11 @@ class OEmbed extends BlockEmbed {
         );
       })
       .catch((err) => {
+        this.renderError(
+          node,
+          url,
+          `Error when fetching data from embed endpoint: ${err}`
+        );
         logging(err);
       });
 
@@ -315,9 +320,6 @@ class OEmbed extends BlockEmbed {
   static sanitize(url: string) {
     if (!url) {
       return "";
-    }
-    if (url.indexOf("?") !== -1) {
-      url = url.substring(0, url.indexOf("?"));
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
   }
