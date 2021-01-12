@@ -135,10 +135,10 @@ class OEmbed extends BlockEmbed {
   ) {
     node.classList.add("best-effort");
     const imageUrl = data.links?.thumbnail?.find((link: any) =>
-      link.type.startsWith("image/")
+      link.type.startsWith("image")
     )?.href;
     const iconUrl = data?.links?.icon?.find((link: any) =>
-      link.type.startsWith("image/")
+      link.type.startsWith("image")
     )?.href;
     const description = data.meta?.description;
     const title = data.meta?.title;

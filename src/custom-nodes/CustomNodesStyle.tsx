@@ -319,6 +319,7 @@ export default (props: {}) => {
         }
         :global(.ql-oembed-embed.best-effort img) {
           border-radius: 10px 10px 0px 0px;
+          width: 100%;
         }
         :global(.ql-oembed-embed.best-effort .container.with-icon) {
           background-repeat: no-repeat;
