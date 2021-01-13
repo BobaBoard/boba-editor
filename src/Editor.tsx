@@ -9,8 +9,10 @@ import {
   importEmbedModule,
   pasteImageAsBlockEmbed,
   withBlockquotesKeyboardBehavior,
+  withContextAttempt,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
+import UiContext from "./UiContext";
 import Spinner from "./Spinner";
 import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
 import { getSsrConverter } from "./ssrUtils";
@@ -48,6 +50,7 @@ class Editor extends Component<EditorProps> {
     // QuillJS "empty state" still has one character.
     charactersTyped: 1,
     showTooltip: false,
+    iconSelectorSearchString: false,
     loaded: false,
     tooltipPostion: {
       top: 0,
@@ -60,6 +63,7 @@ class Editor extends Component<EditorProps> {
   tooltip = createRef<HTMLDivElement>();
   toolbarContainer = createRef<HTMLDivElement>();
   ssrRef = createRef<HTMLDivElement>();
+  static contextType = UiContext;
 
   skipTooltipUpdates = false;
 
@@ -311,6 +315,9 @@ class Editor extends Component<EditorProps> {
     update = update || newState.showTooltip != this.state.showTooltip;
     update = update || newState.tooltipPostion != this.state.tooltipPostion;
     update = update || newState.loaded != this.state.loaded;
+    update =
+      update ||
+      newState.iconSelectorSearchString != this.state.iconSelectorSearchString;
     loggingVerbose(update ? "...yes." : "...no.");
     return update;
   }
@@ -367,6 +374,30 @@ class Editor extends Component<EditorProps> {
       this.addRemoveLinebreaksOnPasteHandler();
     }
     withBlockquotesKeyboardBehavior(quillConfig.modules.keyboard);
+    const that = this;
+    withContextAttempt(quillConfig.modules.keyboard, (range, context) => {
+      const typingHandler = this.editor.on("text-change" as const, (delta) => {
+        const sel = this.editor.getSelection()?.index;
+        if (!sel) {
+          return;
+        }
+        const search = this.editor.getText(
+          range.index + 1,
+          sel - range.index - 1
+        );
+        console.log(range.index);
+        console.log(sel);
+        console.log(search);
+        that.setState({
+          ...that.state,
+          iconSelectorSearchString: search,
+        });
+      });
+      this.setState({
+        ...this.state,
+        iconSelectorSearchString: "",
+      });
+    });
 
     this.maybeRegisterModules();
     this.editor = new QuillModule(
@@ -469,6 +500,8 @@ class Editor extends Component<EditorProps> {
     const ssrText =
       this.isServer() && getSsrConverter().convert(this.props.initialText);
 
+    console.log(this.state.iconSelectorSearchString);
+
     return (
       <>
         {ssrText && (
@@ -521,6 +554,17 @@ class Editor extends Component<EditorProps> {
             {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
             <div className="editor-quill" ref={this.editorContainer}></div>
           </div>
+        )}
+        {this.state.iconSelectorSearchString !== false && (
+          <this.context.showIconSelector
+            currentSearchString={this.state.iconSelectorSearchString}
+            onClose={() => {
+              this.setState({
+                ...this.state,
+                iconSelectorSearchString: false,
+              });
+            }}
+          />
         )}
 
         <style jsx>{`

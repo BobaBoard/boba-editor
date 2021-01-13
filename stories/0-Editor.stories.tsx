@@ -9,6 +9,7 @@ import Editor, {
   setTumblrEmbedFetcher,
 } from "../src";
 import { action } from "@storybook/addon-actions";
+import UiContext from "../src/UiContext";
 
 setTumblrEmbedFetcher((url: string) => {
   return new Promise((resolve) => {
@@ -290,18 +291,72 @@ export const SSRTest = () => {
           marginRight: "15px",
         }}
       >
-        <Editor
-          initialText={JSON.parse(SimpleEditor.args.initialText)}
-          forceSSR={true}
-        />
+        <Editor initialText={JSON.parse(longText)} forceSSR={true} />
       </div>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-        <Editor initialText={JSON.parse(SimpleEditor.args.initialText)} />
+        <Editor initialText={JSON.parse(longText)} />
       </div>
     </div>
   );
 };
 
-EditorState.story = {
-  name: "state toggle",
+export const IconTest = () => {
+  return (
+    <UiContext.Provider
+      value={{
+        showIconSelector: (props: {
+          currentSearchString: string;
+          onSelectIcon: (currentIcon: any) => Promise<void>;
+          onClose: () => void;
+        }) => {
+          React.useEffect(() => {
+            window.addEventListener(
+              "keydown",
+              (e) => {
+                switch (e.key) {
+                  case "ArrowLeft":
+                  case "ArrowRight":
+                  case "ArrowUp":
+                  case "ArrowDown":
+                    console.log("moving around");
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    break;
+                  case "Escape":
+                    props.onClose();
+                }
+              },
+              true
+            );
+          }, []);
+          console.log("rerendering");
+          return (
+            <div>
+              This is a selector and the current searchString is:{" "}
+              {props.currentSearchString}
+            </div>
+          );
+        },
+      }}
+    >
+      <div style={{ display: "flex" }}>
+        <div
+          style={{
+            backgroundColor: "white",
+            width: "500px",
+            marginBottom: "15px",
+            marginRight: "15px",
+          }}
+        >
+          <Editor
+            initialText={[{ insert: "This is a very simple editor.\nHi!" }]}
+            editable
+            onTextChange={action("TextChange")}
+            onIsEmptyChange={action("EmptyChange")}
+            onSubmit={action("Submit")}
+          />
+        </div>
+      </div>
+    </UiContext.Provider>
+  );
 };

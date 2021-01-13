@@ -82,6 +82,24 @@ export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
   };
 };
 
+export const withContextAttempt = (
+  quillKeyboardConfig: any,
+  semicolonHandler: () => void
+) => {
+  const Keyboard = QuillModule.import("modules/keyboard") as any;
+  // TODO: at some point submit a PR to Quill to allow to
+  // bind this after configuration and clean this up.
+  quillKeyboardConfig.bindings["context"] = {
+    key: 186,
+    shiftKey: true,
+    handler: (range, context) => {
+      console.log("semicolon");
+      semicolonHandler(range, context);
+      return true;
+    },
+  };
+};
+
 export const withNoLinebreakHandler = (quillKeyboardConfig: any) => {
   const Keyboard = QuillModule.import("modules/keyboard") as any;
   // TODO: at some point submit a PR to Quill to allow to
