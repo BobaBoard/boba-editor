@@ -1,7 +1,7 @@
 import React, { Component, forwardRef } from "react";
 const TenorKeyboard = require("./TenorKeyboard").default;
 import classNames from "classnames";
-import { TooltipConfig, EmbedType } from "./config";
+import { TooltipConfig, EmbedType, TooltipModule } from "./config";
 
 // @ts-ignore
 import GifImage from "./img/gif.svg";
@@ -67,7 +67,11 @@ class Tooltip extends Component<{
             }}
           >
             <button
-              className="ql-image"
+              className={classNames("ql-image", {
+                hidden: !this.props.config.enabledModules.includes(
+                  TooltipModule.IMAGE
+                ),
+              })}
               onClick={() => {
                 this.imageInput.current?.click();
               }}
@@ -85,7 +89,11 @@ class Tooltip extends Component<{
               }}
             />
             <button
-              className="ql-image-gif ql-image"
+              className={classNames("ql-image-gif ql-image", {
+                hidden: !this.props.config.enabledModules.includes(
+                  TooltipModule.GIF
+                ),
+              })}
               ref={this.gifButton}
               onClick={(e) => {
                 this.props.preventUpdate(true);
@@ -96,7 +104,11 @@ class Tooltip extends Component<{
               <GifImage key="gif_image" />
             </button>
             <button
-              className="ql-blockquote"
+              className={classNames("ql-blockquote", {
+                hidden: !this.props.config.enabledModules.includes(
+                  TooltipModule.QUOTE
+                ),
+              })}
               onClick={() => {
                 this.props.onSetFormat("blockquote");
               }}
@@ -105,7 +117,11 @@ class Tooltip extends Component<{
               }}
             />
             <button
-              className="ql-code-block"
+              className={classNames("ql-code-block", {
+                hidden: !this.props.config.enabledModules.includes(
+                  TooltipModule.CODEBLOCK
+                ),
+              })}
               onClick={() => {
                 this.props.onSetFormat("code-block");
               }}
@@ -142,8 +158,8 @@ class Tooltip extends Component<{
             max-width: 70vw;
             transform: translateY(-5px);
           }
-          .tooltip.hidden {
-            display: none;
+          .hidden {
+            display: none !important;
           }
           :global(.ql-tumblr) {
             padding: 4px 7px;

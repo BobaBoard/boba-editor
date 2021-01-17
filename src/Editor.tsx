@@ -14,7 +14,7 @@ import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
 import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
 import { getSsrConverter } from "./ssrUtils";
-import { defaultConfig } from "./defaultConfig";
+import { defaultConfig, singleLineConfig } from "./tooltipConfig";
 
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
@@ -475,6 +475,7 @@ class Editor extends Component<EditorProps> {
           <div
             className={classNames("editor", {
               loaded: true,
+              "single-line": this.props.singleLine,
               "view-only": !this.props.editable,
             })}
           >
@@ -503,7 +504,9 @@ class Editor extends Component<EditorProps> {
             <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
             {this.props.editable && (
               <Tooltip
-                config={defaultConfig}
+                config={
+                  this.props.singleLine ? singleLineConfig : defaultConfig
+                }
                 top={this.state.tooltipPostion.top}
                 right={this.state.tooltipPostion.right}
                 onInsertEmbed={({ type, embed }) => {

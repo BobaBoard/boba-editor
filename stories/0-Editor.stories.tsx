@@ -89,7 +89,7 @@ MultiParagraph.story = {
 
 export const SingleLineEditor = EditableEditorTemplate.bind({});
 SingleLineEditor.args = {
-  initialText: '[{"insert":"This is a single line editor."}]',
+  initialText: '[{"insert":""}]',
   singleLine: true,
 };
 

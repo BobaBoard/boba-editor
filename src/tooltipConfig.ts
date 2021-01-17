@@ -1,4 +1,4 @@
-import { TooltipConfig } from "./config";
+import { TooltipConfig, TooltipModule } from "./config";
 
 let RedditEmbed;
 let TweetEmbed;
@@ -42,6 +42,12 @@ import VimeoIcon from "./img/vimeo.svg";
 import ExternalEmbedIcon from "./img/external_embed.svg";
 
 export const defaultConfig: TooltipConfig = {
+  enabledModules: [
+    TooltipModule.IMAGE,
+    TooltipModule.GIF,
+    TooltipModule.CODEBLOCK,
+    TooltipModule.QUOTE,
+  ],
   enabledEmbeds: [
     {
       embedName: "twitter",
@@ -89,4 +95,9 @@ export const defaultConfig: TooltipConfig = {
       icon: ExternalEmbedIcon,
     },
   ],
+};
+
+export const singleLineConfig: TooltipConfig = {
+  enabledModules: [TooltipModule.IMAGE, TooltipModule.GIF],
+  enabledEmbeds: [],
 };

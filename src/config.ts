@@ -2,6 +2,13 @@ interface EmbedBase {
   blotName: string;
 }
 
+export enum TooltipModule {
+  IMAGE,
+  GIF,
+  CODEBLOCK,
+  QUOTE,
+}
+
 export interface EmbedType {
   embedName: string;
   embedClass: EmbedBase;
@@ -16,4 +23,5 @@ export interface EmbedValue {
 
 export interface TooltipConfig {
   enabledEmbeds: EmbedType[];
+  enabledModules: TooltipModule[];
 }
