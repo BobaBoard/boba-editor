@@ -49,6 +49,7 @@ class Editor extends Component<EditorProps> {
     charactersTyped: 1,
     showTooltip: false,
     loaded: false,
+    hasImage: false,
     tooltipPostion: {
       top: 0,
       right: 0,
@@ -122,6 +123,14 @@ class Editor extends Component<EditorProps> {
         loggingVerbose(`Text change from ${source}!`);
         loggingVerbose(this.editor.getContents());
         this.props.onTextChange(this.editor.getContents());
+        this.setState({
+          ...this.state,
+          // TODO: this should be changed with the attribute exported by the
+          // BlockImage module.
+          hasImage: !!this.editor
+            .getContents()
+            .ops.find((op: any) => op.insert?.hasOwnProperty("block-image")),
+        });
       }
     );
 
@@ -243,13 +252,16 @@ class Editor extends Component<EditorProps> {
   }
 
   addImagesPasteHandler() {
+    this.imagePasteHandler = (e: ClipboardEvent) => {
+      pasteImageAsBlockEmbed(e, (img) => {
+        if (!this.props.singleLine || !this.state.hasImage) {
+          this.addEmbed("block-image", img);
+        }
+      });
+    };
     this.editorContainer.current?.addEventListener(
       "paste",
-      (e) => {
-        pasteImageAsBlockEmbed(e, (img) => {
-          this.addEmbed("block-image", img);
-        });
-      },
+      this.imagePasteHandler,
       true
     );
   }
@@ -468,17 +480,17 @@ class Editor extends Component<EditorProps> {
   render() {
     const ssrText =
       this.isServer() && getSsrConverter().convert(this.props.initialText);
+    const editorClasses = classNames("editor", {
+      loaded: this.state.loaded,
+      "single-line": this.props.singleLine,
+      "has-image": this.state.hasImage,
+      "view-only": !this.props.editable,
+    });
 
     return (
       <>
         {ssrText && (
-          <div
-            className={classNames("editor", {
-              loaded: true,
-              "single-line": this.props.singleLine,
-              "view-only": !this.props.editable,
-            })}
-          >
+          <div className={editorClasses}>
             <div
               className="editor-quill ql-container ql-bubble "
               ref={this.ssrRef}
@@ -491,36 +503,35 @@ class Editor extends Component<EditorProps> {
           </div>
         )}
         {!ssrText && (
-          <div
-            className={classNames("editor", {
-              loaded: this.state.loaded,
-              "view-only": !this.props.editable,
-            })}
-          >
+          <div className={editorClasses}>
             <div className="spinner">
               <Spinner />
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
             <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
-            {this.props.editable && (
-              <Tooltip
-                config={
-                  this.props.singleLine ? singleLineConfig : defaultConfig
-                }
-                top={this.state.tooltipPostion.top}
-                right={this.state.tooltipPostion.right}
-                onInsertEmbed={({ type, embed }) => {
-                  this.addEmbed(type, embed);
-                }}
-                onSetFormat={(format: string) => {
-                  this.setFormat(format);
-                }}
-                show={this.state.showTooltip && this.props.showTooltip != false}
-                preventUpdate={(shouldPrevent) => {
-                  this.skipTooltipUpdates = shouldPrevent;
-                }}
-              />
-            )}
+            {this.props.editable &&
+              // When it's single line, there can only be ONE image
+              (!this.props.singleLine || !this.state.hasImage) && (
+                <Tooltip
+                  config={
+                    this.props.singleLine ? singleLineConfig : defaultConfig
+                  }
+                  top={this.state.tooltipPostion.top}
+                  right={this.state.tooltipPostion.right}
+                  onInsertEmbed={({ type, embed }) => {
+                    this.addEmbed(type, embed);
+                  }}
+                  onSetFormat={(format: string) => {
+                    this.setFormat(format);
+                  }}
+                  show={
+                    this.state.showTooltip && this.props.showTooltip != false
+                  }
+                  preventUpdate={(shouldPrevent) => {
+                    this.skipTooltipUpdates = shouldPrevent;
+                  }}
+                />
+              )}
             {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
             <div className="editor-quill" ref={this.editorContainer}></div>
           </div>
@@ -657,6 +668,12 @@ class Editor extends Component<EditorProps> {
           }
           .editor.view-only :global(p.empty:last-child) {
             display: none;
+          }
+          .editor.single-line.has-image :global(p.empty) {
+            display: none;
+          }
+          .editor.single-line :global(img) {
+            max-height: 250px;
           }
         `}</style>
         {/* Add global styles for types*/}
