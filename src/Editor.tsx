@@ -43,6 +43,14 @@ if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
 
+interface EmbedsFetcherContextProps {
+  getOEmbedFromUrl: (url: string) => any;
+  getTumblrEmbedFromUrl: (url: string) => any;
+}
+export const EmbedsFetcherContext = React.createContext<EmbedsFetcherContextProps | null>(
+  null
+);
+
 class Editor extends Component<EditorProps> {
   state = {
     // QuillJS "empty state" still has one character.
@@ -55,6 +63,8 @@ class Editor extends Component<EditorProps> {
       right: 0,
     },
   };
+
+  static contextType = EmbedsFetcherContext;
 
   editor: Quill = null as any;
   editorContainer = createRef<HTMLDivElement>();
@@ -241,6 +251,16 @@ class Editor extends Component<EditorProps> {
           onRemoveRequestCallback: embedCloseCallback,
         });
       });
+
+    if (this.context?.getTumblrEmbedFromUrl) {
+      const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
+      TumblrEmbed.default.getTumblrEmbedFromUrl = this.context.getTumblrEmbedFromUrl;
+    }
+
+    if (this.context?.getOEmbedFromUrl) {
+      const OEmbed = require("./custom-nodes/OEmbedBase");
+      OEmbed.default.getOEmbedFromUrl = this.context.getOEmbedFromUrl;
+    }
   }
 
   addRemoveLinebreaksOnPasteHandler() {
@@ -674,6 +694,7 @@ class Editor extends Component<EditorProps> {
           }
           .editor.single-line :global(img) {
             max-height: 250px;
+            width: auto;
           }
         `}</style>
         {/* Add global styles for types*/}

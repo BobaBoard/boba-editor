@@ -2,39 +2,46 @@ import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import Editor, {
   EditorHandler,
+  EmbedsFetcherContext,
   getAllImages,
   removeTrailingWhitespace,
   replaceImages,
-  setOEmbedFetcher,
-  setTumblrEmbedFetcher,
 } from "../src";
 import { action } from "@storybook/addon-actions";
 
-setTumblrEmbedFetcher((url: string) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        url:
-          "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
-        href:
-          "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
-        did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
-      });
-    }, 25000);
-  });
-});
+const logging = require("debug")("bobapost:stories:editor");
 
-const LOAD_DELAY = 1000;
-setOEmbedFetcher((url: string) => {
-  const promise = new Promise((resolve) => {
-    fetch(`http://localhost:8061/iframely?uri=${url}`).then((response) => {
+const embedFetchers = {
+  getTumblrEmbedFromUrl: (url: string) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(response.json());
-      }, LOAD_DELAY);
+        resolve({
+          url:
+            "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
+          href:
+            "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
+          did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
+        });
+      }, 25000);
     });
-  });
-  return promise;
-});
+  },
+  getOEmbedFromUrl: (url: string) => {
+    const LOAD_DELAY = 1000;
+    const promise = new Promise((resolve, reject) => {
+      logging(`Calling http://${location.hostname}:8061/iframely?uri=${url}`);
+      fetch(`http://localhost:8061/iframely?uri=${url}`)
+        .then((response) => {
+          setTimeout(() => {
+            resolve(response.json());
+          }, LOAD_DELAY);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+    return promise;
+  },
+};
 
 export default {
   title: "Editor Preview",
@@ -43,25 +50,27 @@ export default {
 
 const EditableEditorTemplate = (args: any) => {
   return (
-    <div
-      style={{
-        backgroundColor: "white",
-        minHeight: "10px",
-        maxWidth: "500px",
-        marginTop: "100px",
-      }}
-    >
-      <Editor
-        editable={args.editable ?? true}
-        initialText={JSON.parse(args.initialText)}
-        focusOnMount={args.focusOnMount}
-        singleLine={args.singleLine}
-        onTextChange={action("TextChange")}
-        onIsEmptyChange={action("EmptyChange")}
-        onSubmit={action("Submit")}
-        forceSSR={args.forceSSR}
-      />
-    </div>
+    <EmbedsFetcherContext.Provider value={embedFetchers}>
+      <div
+        style={{
+          backgroundColor: "white",
+          minHeight: "10px",
+          maxWidth: "500px",
+          marginTop: "100px",
+        }}
+      >
+        <Editor
+          editable={args.editable ?? true}
+          initialText={JSON.parse(args.initialText)}
+          focusOnMount={args.focusOnMount}
+          singleLine={args.singleLine}
+          onTextChange={action("TextChange")}
+          onIsEmptyChange={action("EmptyChange")}
+          onSubmit={action("Submit")}
+          forceSSR={args.forceSSR}
+        />
+      </div>
+    </EmbedsFetcherContext.Provider>
   );
 };
 
