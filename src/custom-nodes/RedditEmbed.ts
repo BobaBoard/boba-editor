@@ -8,6 +8,7 @@ class RedditEmbed extends Oembed {
   static LOADING_TEXT = "Thanks for the embed, kind stranger.";
   static SKIP_EMBED_LOADING = false;
   static FORCE_EMBED = true;
+  static SKIP_CACHE = true;
 
   static blotName = "reddit-embed";
   static tagName = "div";

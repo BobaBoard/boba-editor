@@ -5,6 +5,7 @@ const logging = require("debug")("bobapost:embeds:tumblt");
 
 const BlockEmbed = Quill.import("blots/block/embed");
 import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
+import { EditorContextProps } from "../Editor";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
@@ -36,6 +37,10 @@ const attachObserver = (
           destinationNode.appendChild(
             domNode.querySelector("iframe") as HTMLIFrameElement
           );
+          TumblrEmbed.cache?.set(
+            destinationNode.dataset.href!,
+            destinationNode
+          );
           // Add an extra timeout so the size will have set
           setTimeout(() => {
             const embedSizes = tumblrFrame.getBoundingClientRect();
@@ -63,6 +68,7 @@ class TumblrEmbed extends BlockEmbed {
   static embedOptions = {
     align: "center",
   };
+  static cache: EditorContextProps["cache"] | undefined;
 
   static icon() {
     return "";
@@ -141,7 +147,13 @@ class TumblrEmbed extends BlockEmbed {
       });
       return node;
     }
-
+    if (
+      typeof value != "string" &&
+      "href" in value &&
+      TumblrEmbed.cache?.has(value.href)
+    ) {
+      return TumblrEmbed.cache.get(value.href);
+    }
     addLoadingMessage(node, {
       message: "Loading female-presenting nipples...",
       url,
@@ -162,6 +174,10 @@ class TumblrEmbed extends BlockEmbed {
 
   static setOnLoadCallback(callback: () => void) {
     TumblrEmbed.onLoadCallback = callback;
+  }
+
+  static setCache(cache: EditorContextProps["cache"]) {
+    TumblrEmbed.cache = cache;
   }
 
   static value(domNode: HTMLDivElement) {

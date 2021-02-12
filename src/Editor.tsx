@@ -43,11 +43,19 @@ if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
 
-interface EmbedsFetcherContextProps {
-  getOEmbedFromUrl: (url: string) => any;
-  getTumblrEmbedFromUrl: (url: string) => any;
+export interface EditorContextProps {
+  cache?: {
+    set: (url: string, node: HTMLElement) => void;
+    has: (url: string) => boolean;
+    get: (url: string) => HTMLElement | undefined;
+    clear: () => void;
+  };
+  fetchers?: {
+    getOEmbedFromUrl: (url: string) => any;
+    getTumblrEmbedFromUrl: (url: string) => any;
+  };
 }
-export const EmbedsFetcherContext = React.createContext<EmbedsFetcherContextProps | null>(
+export const EditorContext = React.createContext<EditorContextProps | null>(
   null
 );
 
@@ -64,7 +72,7 @@ class Editor extends Component<EditorProps> {
     },
   };
 
-  static contextType = EmbedsFetcherContext;
+  static contextType = EditorContext;
 
   editor: Quill = null as any;
   editorContainer = createRef<HTMLDivElement>();
@@ -246,20 +254,24 @@ class Editor extends Component<EditorProps> {
       )
       .map((path: string) => path.substring(2))
       .forEach((moduleName: string) => {
-        importEmbedModule(moduleName, {
-          onLoadCallback: embedsLoadedCallback,
-          onRemoveRequestCallback: embedCloseCallback,
-        });
+        importEmbedModule(
+          moduleName,
+          {
+            onLoadCallback: embedsLoadedCallback,
+            onRemoveRequestCallback: embedCloseCallback,
+          },
+          this.context.cache
+        );
       });
 
-    if (this.context?.getTumblrEmbedFromUrl) {
+    if (this.context?.fetchers?.getTumblrEmbedFromUrl) {
       const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
-      TumblrEmbed.default.getTumblrEmbedFromUrl = this.context.getTumblrEmbedFromUrl;
+      TumblrEmbed.default.getTumblrEmbedFromUrl = this.context.fetchers?.getTumblrEmbedFromUrl;
     }
 
-    if (this.context?.getOEmbedFromUrl) {
+    if (this.context?.fetchers?.getOEmbedFromUrl) {
       const OEmbed = require("./custom-nodes/OEmbedBase");
-      OEmbed.default.getOEmbedFromUrl = this.context.getOEmbedFromUrl;
+      OEmbed.default.getOEmbedFromUrl = this.context.fetchers?.getOEmbedFromUrl;
     }
   }
 
@@ -443,24 +455,28 @@ class Editor extends Component<EditorProps> {
     // @ts-ignore
     if (!QuillModule.imports["modules/magicUrl"]) {
       const MagicUrl = require("quill-magic-url");
-      QuillModule.register("modules/magicUrl", MagicUrl.default);
+      QuillModule.register("modules/magicUrl", MagicUrl.default, true);
     }
     // @ts-ignore
     if (!QuillModule.imports["formats/inline-spoilers"]) {
       const InlineSpoilers = require("./custom-nodes/InlineSpoilers");
-      QuillModule.register("formats/inline-spoilers", InlineSpoilers.default);
+      QuillModule.register(
+        "formats/inline-spoilers",
+        InlineSpoilers.default,
+        true
+      );
     }
-    if (QuillModule.import("blots/break")?.name != "CustomBreak") {
+    if ((QuillModule.import("blots/break")?.name != "CustomBreak", true)) {
       const CustomBreak = require("./custom-nodes/CustomBreak");
-      QuillModule.register("blots/break", CustomBreak.default);
+      QuillModule.register("blots/break", CustomBreak.default, true);
     }
     if (QuillModule.import("blots/text")?.name != "CustomText") {
       const CustomText = require("./custom-nodes/CustomText");
-      QuillModule.register("blots/text", CustomText.default);
+      QuillModule.register("blots/text", CustomText.default, true);
     }
     if (QuillModule.import("formats/image")?.name != "CustomImage") {
       const CustomImage = require("./custom-nodes/CustomImage");
-      QuillModule.register("formats/image", CustomImage.default);
+      QuillModule.register("formats/image", CustomImage.default, true);
     }
     const icons = QuillModule.import("ui/icons");
     icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);

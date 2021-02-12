@@ -2,6 +2,7 @@ import Quill from "quill";
 import axios from "axios";
 
 import { addEmbedOverlay, addLoadingMessage } from "./utils";
+import { EditorContextProps } from "../Editor";
 
 const logging = require("debug")("bobapost:embeds:tiktok");
 
@@ -39,6 +40,9 @@ const attachObserver = (
           domNode.dataset.embedWidth = `${embedSizes.width}`;
           domNode.dataset.embedHeight = `${embedSizes.height}`;
           TikTokEmbed.onLoadCallback();
+          // TODO: figure out why TikTok embed caching doesn't work
+          // (It briefly appears, then disappears immediately.)
+          // TikTokEmbed.cache?.set(domNode.dataset.url!, domNode);
           return;
         }
         tries++;
@@ -67,6 +71,7 @@ class TikTokEmbed extends BlockEmbed {
   static icon() {
     return "";
   }
+  static cache: EditorContextProps["cache"] | undefined;
 
   static onLoadCallback = () => {};
 
@@ -132,7 +137,14 @@ class TikTokEmbed extends BlockEmbed {
     return node;
   }
 
-  static create(value: string) {
+  static create(
+    value:
+      | string
+      | {
+          url: string;
+          id: string;
+        }
+  ) {
     let node = super.create();
 
     node.contentEditable = false;
@@ -146,12 +158,19 @@ class TikTokEmbed extends BlockEmbed {
       });
       return TikTokEmbed.renderFromUrl(node, this.sanitize(value));
     }
+
+    if (TikTokEmbed.cache?.has(value.url)) {
+      return TikTokEmbed.cache.get(value.url);
+    }
     TikTokEmbed.loadVideo(node, value);
     return node;
   }
 
   static setOnLoadCallback(callback: () => void) {
     TikTokEmbed.onLoadCallback = callback;
+  }
+  static setCache(cache: EditorContextProps["cache"]) {
+    TikTokEmbed.cache = cache;
   }
 
   static value(domNode: HTMLDivElement) {

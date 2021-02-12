@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import React from "react";
 //import { linkTo } from "@storybook/addon-links";
-import Editor, { EmbedsFetcherContext } from "../src";
+import Editor, { EditorContext } from "../src";
 
 const logging = require("debug")("bobapost:stories:embeds");
 
@@ -11,36 +11,55 @@ export default {
 };
 
 const embedFetchers = {
-  getTumblrEmbedFromUrl: (url: string) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          url:
-            "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
-          href:
-            "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
-          did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
-        });
-      }, 25000);
-    });
-  },
-  getOEmbedFromUrl: (url: string) => {
-    const LOAD_DELAY = 1000;
-    const promise = new Promise((resolve, reject) => {
-      logging(`Calling http://${location.hostname}:8061/iframely?uri=${url}`);
-      fetch(`http://localhost:8061/iframely?uri=${url}`)
-        .then((response) => {
-          setTimeout(() => {
-            resolve(response.json());
-          }, LOAD_DELAY);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-    return promise;
+  fetchers: {
+    getTumblrEmbedFromUrl: (url: string) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            url:
+              "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
+            href:
+              "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
+            did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
+          });
+        }, 25000);
+      });
+    },
+    getOEmbedFromUrl: (url: string) => {
+      const LOAD_DELAY = 1000;
+      const promise = new Promise((resolve, reject) => {
+        logging(`Calling http://${location.hostname}:8061/iframely?uri=${url}`);
+        fetch(`http://localhost:8061/iframely?uri=${url}`)
+          .then((response) => {
+            setTimeout(() => {
+              resolve(response.json());
+            }, LOAD_DELAY);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+      return promise;
+    },
   },
 };
+
+const embedCache = {
+  cache: new Map(),
+};
+
+const TWITTER =
+  '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"embedHeight": "596", "embedWidth": "500", "url": "https://twitter.com/BobaBoard/status/1263913643650908160"}}},{"insert":"\\n"}]}';
+const TUMBLR =
+  '[{"insert":"NOTE: Tumblr Posts"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Tumblr posts are a bit weird. Unless you provide an endpoint that allows fetching the oEmbed data given the Tumblr URL, they won\'t work. It sucks, and I accept solutions.\\n"},{"insert":{"tumblr-embed":{"embedHeight": "840", "embedWidth": "500", "href":"https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720","did":"22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa","url":"https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a"}}},{"insert":"\\n"}]';
+const YOUTUBE =
+  '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"youtube-video":"https://www.youtube.com/embed/ROPpn-QcLZM"}},{"insert":"\\n"}]';
+const REDDIT =
+  '[{"insert":"It\'s Reddit time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"reddit-embed":{"embedHeight": "629", "embedWidth": "500","url":"https://www.reddit.com/r/nextfuckinglevel/comments/ibikdr/50_year_old_firefighter_deadlifts_600_lbs_of/"}}},{"insert":"\\n"}]';
+const TIKTOK =
+  '[{"insert":"It\'s TikTok time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tiktok-embed":{"id":"6718335390845095173","url":"https://www.tiktok.com/@scout2015/video/6718335390845095173"}}},{"insert":"\\n"}]';
+const PIXIV =
+  '[{"insert":"It\'s Pixiv time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"pixiv-embed":{"embedHeight": "540.875", "embedWidth": "500","url":"https://www.pixiv.net/en/artworks/83682624"}}},{"insert":"\\n"}]';
 
 export const ImageEmbed = () => (
   <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
@@ -71,13 +90,11 @@ ImageEmbed.story = {
 export const TwitterEmbed = () => {
   const [loading, setLoading] = React.useState(true);
   return (
-    <EmbedsFetcherContext.Provider value={embedFetchers}>
+    <EditorContext.Provider value={embedFetchers}>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
         <Editor
           editable={true}
-          initialText={JSON.parse(
-            '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"embedHeight": "596", "embedWidth": "500", "url": "https://twitter.com/BobaBoard/status/1263913643650908160"}}},{"insert":"\\n"}]}'
-          )}
+          initialText={JSON.parse(TWITTER)}
           onTextChange={() => {
             logging("changed!");
           }}
@@ -95,7 +112,7 @@ export const TwitterEmbed = () => {
         />
       </div>
       Embed Status: {loading ? "loading" : "loaded"}.
-    </EmbedsFetcherContext.Provider>
+    </EditorContext.Provider>
   );
 };
 
@@ -106,7 +123,7 @@ TwitterEmbed.story = {
 export const TwitterThreadEmbed = () => {
   const [loading, setLoading] = React.useState(true);
   return (
-    <EmbedsFetcherContext.Provider value={embedFetchers}>
+    <EditorContext.Provider value={embedFetchers}>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
         <Editor
           editable={true}
@@ -130,7 +147,7 @@ export const TwitterThreadEmbed = () => {
         />
       </div>
       Embed Status: {loading ? "loading" : "loaded"}.
-    </EmbedsFetcherContext.Provider>
+    </EditorContext.Provider>
   );
 };
 
@@ -138,14 +155,12 @@ TwitterThreadEmbed.story = {
   name: "twitter thread",
 };
 
-export const EmbedStories = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+export const YoutubeStory = () => (
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
       <Editor
         editable={true}
-        initialText={JSON.parse(
-          '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"youtube-video":"https://www.youtube.com/embed/ROPpn-QcLZM"}},{"insert":"\\n"}]'
-        )}
+        initialText={JSON.parse(YOUTUBE)}
         onTextChange={() => {
           logging("changed!");
         }}
@@ -159,21 +174,19 @@ export const EmbedStories = () => (
         }}
       />
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
-EmbedStories.story = {
+YoutubeStory.story = {
   name: "youtube",
 };
 
 export const TumblrStory = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
       <Editor
         editable={true}
-        initialText={JSON.parse(
-          '[{"insert":"NOTE: Tumblr Posts"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Tumblr posts are a bit weird. Unless you provide an endpoint that allows fetching the oEmbed data given the Tumblr URL, they won\'t work. It sucks, and I accept solutions.\\n"},{"insert":{"tumblr-embed":{"embedHeight": "840", "embedWidth": "500", "href":"https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720","did":"22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa","url":"https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a"}}},{"insert":"\\n"}]'
-        )}
+        initialText={JSON.parse(TUMBLR)}
         onTextChange={() => {
           logging("changed!");
         }}
@@ -187,7 +200,7 @@ export const TumblrStory = () => (
         }}
       />
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
 TumblrStory.story = {
@@ -195,13 +208,11 @@ TumblrStory.story = {
 };
 
 export const TikTokStory = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
       <Editor
         editable={true}
-        initialText={JSON.parse(
-          '[{"insert":"It\'s TikTok time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tiktok-embed":{"id":"6718335390845095173","url":"https://www.tiktok.com/@scout2015/video/6718335390845095173"}}},{"insert":"\\n"}]'
-        )}
+        initialText={JSON.parse(TIKTOK)}
         onTextChange={() => {
           logging("changed!");
         }}
@@ -215,7 +226,7 @@ export const TikTokStory = () => (
         }}
       />
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
 TikTokStory.story = {
@@ -223,7 +234,7 @@ TikTokStory.story = {
 };
 
 export const InstagramStory = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
       <Editor
         editable={true}
@@ -243,7 +254,7 @@ export const InstagramStory = () => (
         }}
       />
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
 InstagramStory.story = {
@@ -251,13 +262,11 @@ InstagramStory.story = {
 };
 
 export const RedditStory = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
       <Editor
         editable={true}
-        initialText={JSON.parse(
-          '[{"insert":"It\'s Reddit time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"reddit-embed":{"embedHeight": "629", "embedWidth": "500","url":"https://www.reddit.com/r/nextfuckinglevel/comments/ibikdr/50_year_old_firefighter_deadlifts_600_lbs_of/"}}},{"insert":"\\n"}]'
-        )}
+        initialText={JSON.parse(REDDIT)}
         onTextChange={() => {
           logging("changed!");
         }}
@@ -271,7 +280,7 @@ export const RedditStory = () => (
         }}
       />
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
 RedditStory.story = {
@@ -279,13 +288,11 @@ RedditStory.story = {
 };
 
 export const PixivStory = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
       <Editor
         editable={true}
-        initialText={JSON.parse(
-          '[{"insert":"It\'s Pixiv time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"pixiv-embed":{"embedHeight": "540.875", "embedWidth": "500","url":"https://www.pixiv.net/en/artworks/83682624"}}},{"insert":"\\n"}]'
-        )}
+        initialText={JSON.parse(PIXIV)}
         onTextChange={() => {
           logging("changed!");
         }}
@@ -299,7 +306,7 @@ export const PixivStory = () => (
         }}
       />
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
 PixivStory.story = {
@@ -316,7 +323,7 @@ const TEST_EMBEDS = [
 ];
 
 export const BestEffortStory = () => (
-  <EmbedsFetcherContext.Provider value={embedFetchers}>
+  <EditorContext.Provider value={embedFetchers}>
     <div style={{ display: "flex", maxWidth: "100%", flexDirection: "column" }}>
       {TEST_EMBEDS.map((embed) => {
         return (
@@ -344,9 +351,65 @@ export const BestEffortStory = () => (
         );
       })}
     </div>
-  </EmbedsFetcherContext.Provider>
+  </EditorContext.Provider>
 );
 
 BestEffortStory.story = {
   name: "best effort",
+};
+
+export const EmbedCaching = () => {
+  const [showEmbed, setShowEmbed] = React.useState(true);
+  const [editable, setEditable] = React.useState(true);
+  const [embedString, setEmbedString] = React.useState(TWITTER);
+  return (
+    <EditorContext.Provider value={{ ...embedFetchers, ...embedCache }}>
+      <div>
+        <button onClick={() => setShowEmbed(!showEmbed)}>ToggleEmbed</button>
+        <div>
+          <button onClick={() => embedCache.cache.clear()}>ClearCache</button>
+          <button onClick={() => setEditable(!editable)}>
+            Change Edit State
+          </button>
+        </div>
+        <div>
+          <button onClick={() => setEmbedString(TWITTER)}>TWITTER</button>
+          <button onClick={() => setEmbedString(TUMBLR)}>TUMBLR</button>
+          <button onClick={() => setEmbedString(YOUTUBE)}>YOUTUBE</button>
+          <button onClick={() => setEmbedString(REDDIT)}>REDDIT</button>
+          <button onClick={() => setEmbedString(TIKTOK)}>TIKTOK</button>
+          <button onClick={() => setEmbedString(PIXIV)}>PIXIV</button>
+          <button
+            onClick={() =>
+              setEmbedString(
+                `[{"insert":"It\'s Try Hard time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"oembed-embed":${TEST_EMBEDS[2]}}},{"insert":"\\n"}]`
+              )
+            }
+          >
+            BEST EFFORT
+          </button>
+        </div>
+        {showEmbed && (
+          <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+            <Editor
+              key={embedString}
+              editable={editable}
+              initialText={JSON.parse(embedString)}
+              onTextChange={() => {
+                logging("changed!");
+              }}
+              focusOnMount={true}
+              onIsEmptyChange={() => {
+                logging("empty!");
+              }}
+              onSubmit={() => {
+                // This is for cmd + enter
+                logging("submit!");
+              }}
+            />
+          </div>
+        )}
+      </div>
+    </EditorContext.Provider>
+  );
 };

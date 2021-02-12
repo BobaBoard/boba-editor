@@ -1,4 +1,4 @@
-import Editor, { EditorHandler, EmbedsFetcherContext } from "./Editor";
+import Editor, { EditorHandler, EditorContext } from "./Editor";
 import {
   getAllImages,
   replaceImages,
@@ -10,6 +10,6 @@ export {
   replaceImages,
   removeTrailingWhitespace,
   EditorHandler,
-  EmbedsFetcherContext,
+  EditorContext,
 };
 export default Editor;

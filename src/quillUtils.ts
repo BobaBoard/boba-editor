@@ -1,3 +1,4 @@
+import { EditorContextProps } from "./Editor";
 import Quill, { BoundsStatic, DeltaOperation, RangeStatic } from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
@@ -195,7 +196,8 @@ export const importEmbedModule = (
   callbacks: {
     onLoadCallback: () => void;
     onRemoveRequestCallback: (root: HTMLElement) => void;
-  }
+  },
+  cache: EditorContextProps["cache"]
 ) => {
   logging(`Importing module ${moduleName}`);
   const EmbedModule = require(`./custom-nodes/${moduleName}`).default;
@@ -204,6 +206,7 @@ export const importEmbedModule = (
 
   const moduleImport = QuillModule.import(`formats/${EmbedModule.blotName}`);
   moduleImport.setOnLoadCallback?.(callbacks.onLoadCallback);
+  moduleImport.setCache?.(cache);
   moduleImport.onRemoveRequest = callbacks.onRemoveRequestCallback;
 };
 

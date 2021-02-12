@@ -5,6 +5,7 @@ const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
 import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
+import { EditorContextProps } from "../Editor";
 
 const logging = require("debug")("bobapost:embeds:youtube");
 
@@ -33,6 +34,8 @@ class YouTubeEmbed extends BlockEmbed {
     align: "center",
   };
 
+  static cache: EditorContextProps["cache"] | undefined;
+
   static create(value: string | EmbedValue) {
     let node = super.create();
     const url = new URL(typeof value === "string" ? value : value.url);
@@ -46,6 +49,10 @@ class YouTubeEmbed extends BlockEmbed {
     }
     let videoUrl = extractYouTubeUrl(url);
     // TODO: figure out why timestamp doesn't work
+
+    if (YouTubeEmbed.cache?.has(videoUrl)) {
+      return YouTubeEmbed.cache.get(videoUrl);
+    }
 
     logging(`Embed url ${videoUrl}`);
     const embedFrame = document.createElement("iframe");
@@ -80,9 +87,13 @@ class YouTubeEmbed extends BlockEmbed {
     embedFrame.onload = () => {
       node.classList.remove("loading");
       YouTubeEmbed.onLoadCallback?.();
-      node.removeChild(
-        node.querySelector(".loading-message") as HTMLDivElement
+      const loadingNode: HTMLDivElement = node.querySelector(
+        ".loading-message"
       );
+      if (loadingNode) {
+        node.removeChild(loadingNode);
+      }
+      YouTubeEmbed.cache?.set(videoUrl, node);
     };
 
     return node;
@@ -91,6 +102,10 @@ class YouTubeEmbed extends BlockEmbed {
   static setOnLoadCallback(callback: () => void) {
     // TODO: implement this
     YouTubeEmbed.onLoadCallback = callback;
+  }
+
+  static setCache(cache: EditorContextProps["cache"]) {
+    YouTubeEmbed.cache = cache;
   }
 
   static value(domNode: HTMLDivElement) {

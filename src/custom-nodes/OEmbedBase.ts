@@ -1,3 +1,4 @@
+import { EditorContextProps } from "../Editor";
 import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -56,6 +57,7 @@ class OEmbed extends BlockEmbed {
   }
   static SKIP_EMBED_LOADING = true;
   static FORCE_EMBED = false;
+  static cache: EditorContextProps["cache"] | undefined;
 
   static onLoadEnd(
     domNode: HTMLElement,
@@ -83,6 +85,10 @@ class OEmbed extends BlockEmbed {
     if (sizes) {
       domNode.dataset.embedWidth = `${sizes.embedWidth}`;
       domNode.dataset.embedHeight = `${sizes.embedHeight}`;
+      this.onLoadCallback?.();
+      if (!this.SKIP_CACHE) {
+        OEmbed.cache?.set(domNode.dataset.url!, domNode);
+      }
     } else {
       // Approximate sizes from BoundingClientRect.
       // Add an extra timeout so the size will have set
@@ -92,10 +98,13 @@ class OEmbed extends BlockEmbed {
         domNode.dataset.embedWidth = `${embedSizes.width}`;
         domNode.dataset.embedHeight = `${embedSizes.height}`;
         logging(domNode);
+
         this.onLoadCallback?.();
+        if (!this.SKIP_CACHE) {
+          OEmbed.cache?.set(domNode.dataset.url!, domNode);
+        }
       }, 200);
     }
-    this.onLoadCallback?.();
   }
 
   static getOEmbedFromUrl = (url: any): Promise<any> => {
@@ -281,6 +290,12 @@ class OEmbed extends BlockEmbed {
     node.contentEditable = false;
     node.dataset.rendered = false;
 
+    const url = this.sanitize(value.url);
+
+    if (this.cache?.has(url) && !this.SKIP_CACHE) {
+      return this.cache.get(url);
+    }
+
     addLoadingMessage(node, {
       color: this.LOADING_BACKGROUND_COLOR,
       message: this.LOADING_TEXT,
@@ -302,11 +317,15 @@ class OEmbed extends BlockEmbed {
 
       node.style.setProperty("--ratio-padding", `${ratio}%`);
     }
-    return this.renderFromUrl(node, this.sanitize(value.url));
+    return this.renderFromUrl(node, url);
   }
 
   static setOnLoadCallback(callback: () => void) {
     OEmbed.onLoadCallback = callback;
+  }
+
+  static setCache(cache: EditorContextProps["cache"]) {
+    OEmbed.cache = cache;
   }
 
   static value(domNode: HTMLDivElement) {

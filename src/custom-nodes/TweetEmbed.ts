@@ -13,6 +13,7 @@ const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 // @ts-ignore
 import TwitterIcon from "../img/twitter.svg";
 import { EmbedValue } from "../config";
+import { EditorContextProps } from "../Editor";
 
 interface TweetEmbed extends EmbedValue {
   href: string;
@@ -33,6 +34,8 @@ class TweetEmbed extends BlockEmbed {
     width: 550,
     align: "center",
   };
+
+  static cache: EditorContextProps["cache"] | undefined;
 
   static doneLoading(node: HTMLElement) {
     logging(`Removing loading message!`);
@@ -61,6 +64,7 @@ class TweetEmbed extends BlockEmbed {
         logging(`Tweet was loaded!`);
         node.dataset.rendered = "true";
         TweetEmbed.doneLoading(node);
+        TweetEmbed.cache?.set(id, node);
         if (!el) {
           addErrorMessage(node, {
             message: "This tweet.... it dead.",
@@ -127,9 +131,9 @@ class TweetEmbed extends BlockEmbed {
   static renderTweets() {
     // This method needs to be called for any non-quill environments
     // otherwise, tweets will not be rendered
-    const tweets = document.querySelectorAll("div.ql-tweet") as NodeListOf<
-      HTMLDivElement
-    >;
+    const tweets = document.querySelectorAll(
+      "div.ql-tweet"
+    ) as NodeListOf<HTMLDivElement>;
     for (var i = 0; i < tweets.length; i++) {
       while (tweets[i].firstChild) {
         tweets[i].removeChild(tweets[i].firstChild as HTMLDivElement);
@@ -155,6 +159,15 @@ class TweetEmbed extends BlockEmbed {
 
     logging(`Tweet url: ${url}`);
     logging(`Tweet id: ${id}`);
+
+    if (TweetEmbed.cache?.has(id)) {
+      // When refetching from cache, readd spoilers status
+      const cachedNode = TweetEmbed.cache?.get(id);
+      if (!!value["spoilers"]) {
+        cachedNode?.classList.toggle("show-spoilers", false);
+      }
+      return cachedNode;
+    }
 
     node.classList.toggle("spoilers", !!value["spoilers"]);
     addLoadingMessage(node, {
@@ -203,6 +216,10 @@ class TweetEmbed extends BlockEmbed {
 
   static setOnLoadCallback(callback: (root: HTMLDivElement) => void) {
     TweetEmbed.onLoadCallback = callback;
+  }
+
+  static setCache(cache: EditorContextProps["cache"]) {
+    TweetEmbed.cache = cache;
   }
 
   static value(domNode: HTMLElement) {
