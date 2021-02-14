@@ -339,6 +339,9 @@ export default (props: {}) => {
           display: block;
           text-decoration: none;
         }
+        :global(.reddit-card a) {
+          color: black !important;
+        }
       `}</style>
     </>
   );

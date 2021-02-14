@@ -260,7 +260,7 @@ class Editor extends Component<EditorProps> {
             onLoadCallback: embedsLoadedCallback,
             onRemoveRequestCallback: embedCloseCallback,
           },
-          this.context.cache
+          this.context?.cache
         );
       });
 
@@ -489,7 +489,7 @@ class Editor extends Component<EditorProps> {
     }
     logging("Unmounting editor");
     logging("Unmounted editor content:");
-    logging(this.editor.getContents());
+    logging(this.editor?.getContents());
     this.eventHandlers.forEach((handler) => {
       logging("Removing handler", handler);
       this.editor.off(handler.type as any, handler.handler);
