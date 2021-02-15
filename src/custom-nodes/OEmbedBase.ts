@@ -49,7 +49,9 @@ const isImageEmbed = (domNode: HTMLElement) => {
 };
 
 /**
- * TumblrEmbed represents a tumblr post embedded into the editor.
+ * This is the base class to load embeds from iFramely.
+ * It does the best it can to display the data returned.
+ * Sometimes, that is enough.
  */
 class OEmbed extends BlockEmbed {
   static icon() {
@@ -67,9 +69,12 @@ class OEmbed extends BlockEmbed {
       embedHeight: string;
     }
   ) {
+    // Remove the loading message
     const loadingMessage = domNode.querySelector(".loading-message");
     logging(loadingMessage);
     loadingMessage?.parentNode?.removeChild(loadingMessage);
+    // If the embed was loaded from an offscreen node, move the embed node
+    // within the screen again.
     if (embedLoadingNode) {
       embedLoadingNode.style.position = "relative";
       embedLoadingNode.style.left = "0";
@@ -79,19 +84,23 @@ class OEmbed extends BlockEmbed {
     const oEmbedNode = domNode.querySelector(".embed-node");
     oEmbedNode?.classList.add("loaded");
     oEmbedNode?.classList.remove("loading");
-    // Add an extra timeout so the size will have set
-    // TODO: yes, I know, this whole thing is brittle.
     logging(domNode);
+    // If we already know the size of the embed (i.e. this is not the first time
+    // this embed has been loaded), then simply display the embed with the given sizes.
     if (sizes) {
       domNode.dataset.embedWidth = `${sizes.embedWidth}`;
       domNode.dataset.embedHeight = `${sizes.embedHeight}`;
       this.onLoadCallback?.();
       if (!this.SKIP_CACHE) {
+        // We set the embed in the cache, unless this type of embed has been marked
+        // for "no caching". This usually happens when iframe clear their content once
+        // the embed is removed from the DOM (e.g. Reddit does this).
         OEmbed.cache?.set(domNode.dataset.url!, domNode);
       }
     } else {
       // Approximate sizes from BoundingClientRect.
-      // Add an extra timeout so the size will have set
+      // Add an extra timeout so the size will have set. Sometimes the size
+      // will be wrong without an extra delay.
       // TODO: yes, I know, this whole thing is brittle.
       setTimeout(() => {
         const embedSizes = domNode.getBoundingClientRect();
@@ -116,6 +125,7 @@ class OEmbed extends BlockEmbed {
     image: HTMLImageElement,
     href: string
   ) {
+    // Wrap the image with the URL of the embed.
     const imageParent = image.parentElement;
     if (!imageParent) {
       // TODO: add error here
@@ -126,6 +136,8 @@ class OEmbed extends BlockEmbed {
     link.href = href;
     link.appendChild(detachedImageNode);
     imageParent.appendChild(link);
+    // Wait for image load to be complete before signaling that loading
+    // has finished.
     if (image.complete) {
       this.onLoadEnd(node, imageParent);
     } else {
@@ -143,6 +155,7 @@ class OEmbed extends BlockEmbed {
     href: string
   ) {
     node.classList.add("best-effort");
+    // Look for as much information as we can get in the data.
     const imageUrl = data.links?.thumbnail?.find((link: any) =>
       link.type.startsWith("image")
     )?.href;
@@ -153,30 +166,37 @@ class OEmbed extends BlockEmbed {
     const title = data.meta?.title;
 
     const container = document.createElement("div");
+    // Add the favicon as a background element.
     if (iconUrl) {
       container.style.backgroundImage = `url(${iconUrl})`;
       container.classList.add("container", "with-icon");
     }
+    // Wrap the whole embed in a link to the embed URL.
     const linkElement = document.createElement("a");
     linkElement.href = href;
     container.appendChild(linkElement);
     let image: HTMLImageElement | null = null;
+    // If there is an image, add it.
     if (imageUrl) {
       image = document.createElement("img");
       image.src = imageUrl;
       linkElement.appendChild(image);
     }
+    // Use the title of the page as the embed title.
     if (title) {
       const titleElement = document.createElement("h1");
       titleElement.innerText = title.trim();
       linkElement.appendChild(titleElement);
     }
+    // Use the description of the page as the embed body.
     if (description) {
       const descriptionElement = document.createElement("p");
       descriptionElement.innerText = description;
       linkElement.appendChild(descriptionElement);
     }
     loadingDiv.appendChild(container);
+    // Wait for the image to load (if present) to signal that the embed has
+    // finished loading.
     if (image) {
       if (image.complete) {
         this.onLoadEnd(node, loadingDiv);
@@ -207,10 +227,15 @@ class OEmbed extends BlockEmbed {
     oEmbedNode.classList.add("loading");
     node.dataset.url = data.url;
     node.appendChild(oEmbedNode);
+    // While the embed is loading, we move it way to the side of the screen, so it won't
+    // be visible to the user. Some embeds don't load correctly when they have display:none,
+    // or visibility:hidden, so we have to make do.
     oEmbedNode.style.position = "absolute";
     oEmbedNode.style.left = "-1000000px";
     oEmbedNode.style.top = "0";
     if (!("html" in data)) {
+      // There is no html within data, so we don't have an easy way of displaying the result.
+      // We will then have to take the data we have and see what we can do with it.
       return this.tryBestEffortLoad(node, oEmbedNode, data.data, data.url);
     }
     oEmbedNode.innerHTML = data.html;
@@ -219,16 +244,24 @@ class OEmbed extends BlockEmbed {
       !this.SKIP_EMBED_LOADING
     ) {
       logging(`Attaching loading observer.`);
+      // With iframes (and some other embed types that swap regular HTML for iframes), it usually
+      // takes a while before the embed content is loaded. We listen to changes to the embed with
+      // an observer to determine when the content loading has finished.
       attachObserver(oEmbedNode, () => {
         this.onLoadEnd(node, oEmbedNode);
       });
     } else if (isImageEmbed(oEmbedNode)) {
+      logging(`Waiting for image load.`);
+      // Some embeds contain an image. Wait for the image to have finished loading so that
+      // the size has settled.
+      // TODO: how do we deal with more than one image?
       this.loadImagePost(
         node,
         oEmbedNode.querySelector("img") as HTMLImageElement,
         data.url
       );
     } else {
+      // This is the simplest form of embed possible. Immediately call load end.
       logging(`Finished loading (no observer).`);
       this.onLoadEnd(node, oEmbedNode);
     }
@@ -292,6 +325,9 @@ class OEmbed extends BlockEmbed {
 
     const url = this.sanitize(value.url);
 
+    // If you can already find an embed with this url in the cache (or this
+    // particular embed type is not cache-friendly), just retrieve the node
+    // from the cache, and stop the rendering.
     if (this.cache?.has(url) && !this.SKIP_CACHE) {
       return this.cache.get(url);
     }
@@ -310,6 +346,9 @@ class OEmbed extends BlockEmbed {
     });
 
     node.classList.add("ql-embed", "loading");
+    // If we already have a saved width and height for the embed, we can add
+    // it to the loading node. This allows us to (somewhat) avoid layout shifting
+    // once the embed is loaded.
     if (value.embedHeight && value.embedWidth) {
       const ratio =
         (parseInt(value.embedHeight) / parseInt(value.embedWidth)) * 100;
