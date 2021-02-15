@@ -10,6 +10,14 @@ export default {
   component: Editor,
 };
 
+const REMOTE_EMBEDS_URL = `https://boba-embeds.herokuapp.com/iframely`;
+const LOCAL_EMBEDS_URL = `http://localhost:8061/iframely`;
+
+const embedsUrl =
+  process.env.STORYBOOK_LOCAL_EMBEDS === "true"
+    ? LOCAL_EMBEDS_URL
+    : REMOTE_EMBEDS_URL;
+
 const embedFetchers = {
   fetchers: {
     getTumblrEmbedFromUrl: (url: string) => {
@@ -28,8 +36,8 @@ const embedFetchers = {
     getOEmbedFromUrl: (url: string) => {
       const LOAD_DELAY = 1000;
       const promise = new Promise((resolve, reject) => {
-        logging(`Calling http://${location.hostname}:8061/iframely?uri=${url}`);
-        fetch(`http://localhost:8061/iframely?uri=${url}`)
+        logging(`Calling ${embedsUrl}?iframe=0&uri=${url}`);
+        fetch(`${embedsUrl}?iframe=0&uri=${url}`)
           .then((response) => {
             setTimeout(() => {
               resolve(response.json());

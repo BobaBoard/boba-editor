@@ -11,6 +11,7 @@
     "build:force-dev": "rm -rf dist && ./node_modules/.bin/webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "cross-env DEBUG=bobapost:* start-storybook -p 6006",
+    "storybook:local-embeds": "cross-env STORYBOOK_LOCAL_EMBEDS=true yarn run storybook",
     "build-storybook": "build-storybook",
     "visual-testing": "backstop test",
     "approve-visuals": "backstop approve"
