@@ -771,12 +771,17 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
 );
 
 export interface EditorHandler {
+  // Focus the embed.
   focus: () => void;
+  // TODO: remove this. I forget why this is here, but this should *not* be used.
+  // Likely it was an attempt to do some performance optimization, but this is not
+  // the right way of doing things and the optimization failed anyway.
   getEditorContents(): () => any;
 }
 
 interface BaseProps {
-  // A QuillJS delta. Changes won't be reflected here.
+  // A QuillJS delta. Changes to initial text won't be honored after first
+  // load.
   initialText: any;
   // If singleLine is true, the formatting options allowed are limited,
   // and new line characters are ignored.
@@ -784,16 +789,20 @@ interface BaseProps {
   singleLine?: boolean;
   // Enables tooltip on empty line.
   showTooltip?: boolean;
+  // Returns a ref to the EditorHandler object. While this might seem like a bad
+  // React practice, it's actually suggested for
   handler?: React.RefObject<EditorHandler>;
   // Called when any embed has finished loading and has assumed the
   // final width and height. Might trigger multiple times if multiple
   // embeds are present.
-  // TODO: allow knowing when everything is every embed is done loading.
+  // TODO: allow subscribing to a callback for when every embed is done loading.
   onEmbedLoaded?: () => void;
   // A callback for when the editor is created, returning a reference to
   // the undelying Quill editor. Shouldn't be used unless in testing emergencies.
   // TODO: remove this.
   onEditorCreated?: (editor: Quill) => void;
+  // Makes the editor content renderable in a server-side environment. While we do our best
+  // to make things work, this is highly experimental for now.
   forceSSR?: boolean;
 }
 
@@ -806,9 +815,14 @@ interface EditableProps extends BaseProps {
   onTextChange: (newText: any) => void;
   // Called every time the "empty" status of the editor changes.
   // This is not the same as counting the characters on the "text" parameter in
-  // onTextChange, because that contains additional QuillJS
+  // onTextChange, because that contains additional QuillJS delta "noise".
   onIsEmptyChange?: (empty: boolean) => void;
+  // Called every time the number of type characters changes.
   onCharactersChange?: (_: number) => void;
+  // Called when the user submits the content of the editor by hitting ctrl+enter while
+  // focused within.
+  // TODO: this can likely be handled by editor consumers by having a keyboard handler
+  // listener there and using preventDefault() to avoid this editor intercepting it.
   onSubmit: () => void;
 }
 

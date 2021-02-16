@@ -6,44 +6,9 @@ An advanced text editor based on [QuillJS](https://quilljs.com/), vaguely inspir
 
 [Demo on Netlify!](https://bobaeditor.netlify.app/)
 
-## Try on Storybook
+## Documentation
 
-Requires nodejs 12.9.1.
-
-`yarn run storybook`
-
-To enable all embed types you can run your own [Iframely instance](https://github.com/itteco/iframely) on your localhost (or server).
-
-## How to Use
-
-```
-import { Editor } from "BobaEditor";
-
-<div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]'
-      )}
-      onTextChange={() => {
-        console.log("changed!");
-      }}
-      focus={true}
-      onIsEmptyChange={() => {
-        console.log("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter pressed while in the editor
-        console.log("submit!");
-      }}
-    />
-  </div>
-```
-
-#### Props
-
-- **initialText:** A [QuillJS Delta](https://quilljs.com/docs/delta/).
-- **focus:** Whether to focus on first render.
+Documentation is available on [BobaBoard's engineering guide](https://www.notion.so/BobaEditor-Codebase-Guide-b23ff925c2d743b3901cf204fb2a054c).
 
 ## Contributions
 
