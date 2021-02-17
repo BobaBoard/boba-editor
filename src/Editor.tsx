@@ -670,6 +670,7 @@ class Editor extends Component<EditorProps> {
           .editor :global(ul),
           .editor :global(ol) {
             padding-left: 0;
+            margin-top: 5px;
             margin-bottom: 10px;
             margin-left: calc(var(--text-padding, 10px) + 5px);
             margin-right: calc(var(--text-padding, 10px) + 5px);
@@ -711,6 +712,12 @@ class Editor extends Component<EditorProps> {
           .editor.single-line :global(img) {
             max-height: 250px;
             width: auto;
+          }
+          .editor :global(.ql-editor blockquote:first-child) {
+            margin-top: 5px;
+          }
+          .editor :global(.ql-editor blockquote:last-child) {
+            margin-bottom: 5px;
           }
         `}</style>
         {/* Add global styles for types*/}

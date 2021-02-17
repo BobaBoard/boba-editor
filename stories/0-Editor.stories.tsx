@@ -288,8 +288,30 @@ OutputTest.story = {
   name: "outputTest",
 };
 
-const longText =
-  '[{"insert":"This is a H1 Header"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"This is a H2 Header"},{"attributes":{"header":2},"insert":"\\n"},{"insert":"This is a H3 Header"},{"attributes":{"header":3},"insert":"\\n"},{"insert":"You have my sword..."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"this is a long paragraph which is used to test the right m (argin) on this type of list."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"asdasd"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"adsdasdas"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"italic":true},"insert":"This is a blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},{"attributes":{"italic":true},"insert":"A beautiful blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},{"insert":"Hello look at this blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},{"insert":"This is code block"},{"attributes":{"code-block":true},"insert":"\\n"},{"insert":"And this has some "},{"attributes":{"code":true},"insert":"inline code"},{"insert":"\\n"},{"insert":"Also this one above is a single line break, while the one below is two:\\n\\nAnd here we are!\\n"},{"insert":"Image? No "},{"attributes":{"link":"www.goojdkajdslaksdjaklsdjaklsdjaskldjaskldjaslkdjaskldjaskl…kdjalskdjaksldjaslkdjalksdjalksdjaslkdjalskdjaslkdjlkgle.com"},"insert":"problem"},{"insert":"! Just pay attention to the extra empty line at the end!"},{"insert":{"block-image":{"src":"https://steamuserimages-a.akamaihd.net/ugc/793133917200500601/21BF0F2F4E7FB0BE517EAACCFF837FA1F3D113DC/?imw=1024&imh=576&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true","spoilers":false,"width":1024,"height":576}}}]';
+const longText = `[
+    {"insert":"This is a H1 Header"},{"attributes":{"header":1},"insert":"\\n"},
+    {"insert":"This is a H2 Header"},{"attributes":{"header":2},"insert":"\\n"},
+    {"insert":"This is a H3 Header"},{"attributes":{"header":3},"insert":"\\n"},
+    {"insert":"Some lists now: \\n"},
+    {"insert":"You have my sword..."},{"attributes":{"list":"bullet"},"insert":"\\n"},
+    {"insert":"this is a long paragraph which is used to test the right m (argin) on this type of list."},{"attributes":{"list":"bullet"},"insert":"\\n"},
+    {"insert":"More lists now: \\n"},
+    {"insert":"asdasd"},{"attributes":{"list":"ordered"},"insert":"\\n"},
+    {"insert":"adsdasdas"},{"attributes":{"list":"ordered"},"insert":"\\n"},
+    {"insert":"Blockquote: \\n"},
+    {"attributes":{"italic":true},"insert":"This is a blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},
+    {"attributes":{"italic":true},"insert":"A beautiful blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},
+    {"insert":"Hello look at this blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"},
+    {"insert":"Codeblock: \\n"},
+    {"insert":"This is code block"},{"attributes":{"code-block":true},"insert":"\\n"},
+    {"insert":"And this has some "},{"attributes":{"code":true},"insert":"inline code"},{"insert":"\\n"},
+    {"insert":"Also this one above is a single line break, while the one below is two:\\n\\nAnd here we are!\\n"},
+    {"insert":"Image? No "},
+    {"attributes":{"link":"www.goojdkajdslaksdjaklsdjaklsdjaskldjaskldjaslkdjaskldjaskl…kdjalskdjaksldjaslkdjalksdjalksdjaslkdjalskdjaslkdjlkgle.com"},"insert":"problem"},
+    {"insert":"! Just pay attention to the extra empty line at the end!"},
+    {"insert":{"block-image":{"src":"https://media.tenor.com/images/74905779610f0b24e5a4443f564398e6/tenor.gif","spoilers":false,"width":100,"height":100}}},
+    {"attributes":{"italic":true},"insert":"This is a blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"}
+  ]`;
 export const SSRTest = () => {
   return (
     <div style={{ display: "flex" }}>
@@ -301,13 +323,16 @@ export const SSRTest = () => {
           marginRight: "15px",
         }}
       >
-        <Editor
-          initialText={JSON.parse(SimpleEditor.args.initialText)}
-          forceSSR={true}
-        />
+        <Editor initialText={JSON.parse(longText)} forceSSR={true} />
       </div>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-        <Editor initialText={JSON.parse(SimpleEditor.args.initialText)} />
+        <Editor
+          initialText={JSON.parse(longText)}
+          editable
+          onTextChange={(d) => {
+            console.log(d);
+          }}
+        />
       </div>
     </div>
   );
