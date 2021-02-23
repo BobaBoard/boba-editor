@@ -712,6 +712,11 @@ class Editor extends Component<EditorProps> {
           .editor.single-line :global(img) {
             max-height: 250px;
             width: auto;
+            display: block;
+            margin: 0 auto;
+          }
+          .editor.single-line :global(.ql-block-image) {
+            margin: 0;
           }
           .editor :global(.ql-editor blockquote:first-child) {
             margin-top: 5px;
