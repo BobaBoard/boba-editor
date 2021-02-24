@@ -3,7 +3,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import classNames from "classnames";
 import {
   detectNewLine,
-  withKeyboardSubmitHandler,
   withNoLinebreakHandler,
   removeLineBreaksFromPaste,
   importEmbedModule,
@@ -30,6 +29,7 @@ import SpoilersIcon from "./img/spoilers.svg";
 // Only import Quill if there is a "window".
 // This allows the editor to be imported even in a SSR environment.
 import type Quill from "quill";
+import type { Delta } from "quill";
 let QuillModule: typeof Quill;
 // window = undefined;
 // document = undefined;
@@ -394,14 +394,6 @@ class Editor extends Component<EditorProps> {
       theme: "bubble",
     };
 
-    withKeyboardSubmitHandler(quillConfig.modules.keyboard, () => {
-      logging("submitting via keyboard...");
-      if (this.props.editable) {
-        this.props.onTextChange(this.editor.getContents());
-        this.props.onSubmit();
-      }
-    });
-
     if (this.props.singleLine) {
       logging("adding no linebreak handler...");
       withNoLinebreakHandler(quillConfig.modules.keyboard);
@@ -446,7 +438,7 @@ class Editor extends Component<EditorProps> {
 
     this.setState({
       loaded: true,
-      empty: isEmptyDelta(this.props.initialText),
+      empty: !this.props.initialText || isEmptyDelta(this.props.initialText),
     });
     this.maybeInitializeEditableEditor();
   }
@@ -515,6 +507,7 @@ class Editor extends Component<EditorProps> {
 
   render() {
     const ssrText =
+      // @ts-ignore
       this.isServer() && getSsrConverter().convert(this.props.initialText);
     const editorClasses = classNames("editor", {
       loaded: this.state.loaded,
@@ -788,13 +781,13 @@ export interface EditorHandler {
   // TODO: remove this. I forget why this is here, but this should *not* be used.
   // Likely it was an attempt to do some performance optimization, but this is not
   // the right way of doing things and the optimization failed anyway.
-  getEditorContents(): () => any;
+  getEditorContents(): () => Delta;
 }
 
 interface BaseProps {
   // A QuillJS delta. Changes to initial text won't be honored after first
   // load.
-  initialText: any;
+  initialText?: Delta;
   // If singleLine is true, the formatting options allowed are limited,
   // and new line characters are ignored.
   // Note: this prop cannot be changed after initialization.
@@ -834,11 +827,6 @@ interface EditableProps extends BaseProps {
   onIsEmptyChange?: (empty: boolean) => void;
   // Called every time the number of type characters changes.
   onCharactersChange?: (_: number) => void;
-  // Called when the user submits the content of the editor by hitting ctrl+enter while
-  // focused within.
-  // TODO: this can likely be handled by editor consumers by having a keyboard handler
-  // listener there and using preventDefault() to avoid this editor intercepting it.
-  onSubmit: () => void;
 }
 
 interface NonEditableProps extends BaseProps {

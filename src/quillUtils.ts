@@ -26,21 +26,6 @@ export const detectNewLine = (editor: Quill): BoundsStatic | null => {
   return null;
 };
 
-export const withKeyboardSubmitHandler = (
-  quillKeyboardConfig: any,
-  handler: () => void
-) => {
-  const Keyboard = QuillModule.import("modules/keyboard") as any;
-  // TODO: at some point submit a PR to Quill to allow to
-  // bind this after configuration and clean this up.
-  quillKeyboardConfig.bindings["submit"] = {
-    key: Keyboard.keys.ENTER,
-    shortKey: true,
-    shiftKey: false,
-    handler,
-  };
-};
-
 export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
   const Keyboard = QuillModule.import("modules/keyboard") as any;
   // TODO: at some point submit a PR to Quill to allow to
