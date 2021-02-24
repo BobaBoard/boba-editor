@@ -1,11 +1,12 @@
 import { EditorContextProps } from "./Editor";
-import Quill, { BoundsStatic, DeltaOperation, RangeStatic } from "quill";
+import type { BoundsStatic, DeltaOperation, RangeStatic, Delta } from "quill";
+import type Quill from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
 }
 
-const logging = require("debug")("bobapost:quillUtils");
+const log = require("debug")("bobapost:quillUtils");
 
 // Checks whether the editor selection is currently on an empty
 // line and returns the line boundaries in the affermative case.
@@ -99,10 +100,10 @@ export const withNoLinebreakHandler = (quillKeyboardConfig: any) => {
 };
 
 export const removeLineBreaksFromPaste = (pasteEvent: React.ClipboardEvent) => {
-  logging("Past event detected!");
+  log("Past event detected!");
   const paste = pasteEvent.clipboardData?.getData("text/plain");
-  logging("Pasted data:");
-  logging(paste);
+  log("Pasted data:");
+  log(paste);
   const targetParent = (pasteEvent.target as HTMLElement)?.parentElement;
   // TODO: this should likely be checking whether the final target itself is the
   // editor, rather than making a special case for the tooltip.
@@ -199,7 +200,7 @@ export const importEmbedModule = (
   },
   cache: EditorContextProps["cache"]
 ) => {
-  logging(`Importing module ${moduleName}`);
+  log(`Importing module ${moduleName}`);
   const EmbedModule = require(`./custom-nodes/${moduleName}`).default;
 
   QuillModule.register(`formats/${EmbedModule.blotName}`, EmbedModule, true);
@@ -214,16 +215,16 @@ export const pasteImageAsBlockEmbed = (
   pasteEvent: ClipboardEvent,
   embedMethod: (img: string | ArrayBuffer) => void
 ) => {
-  logging("Paste event detected! Processing images...");
+  log("Paste event detected! Processing images...");
   let found = false;
   // @ts-ignore
-  logging(pasteEvent.clipboardData?.items?.length);
+  log(pasteEvent.clipboardData?.items?.length);
   for (let i = 0; i < (pasteEvent.clipboardData?.items?.length || -1); i++) {
     const item = pasteEvent.clipboardData?.items[i] as DataTransferItem;
     if (item.type.startsWith("image/")) {
       found = true;
-      logging(item.kind);
-      logging(item.getAsFile());
+      log(item.kind);
+      log(item.getAsFile());
       const reader = new FileReader();
       reader.onload = (e) => {
         if (!e.target?.result) {
@@ -241,4 +242,17 @@ export const pasteImageAsBlockEmbed = (
     pasteEvent.preventDefault();
     pasteEvent.stopPropagation();
   }
+};
+
+export const isEmptyDelta = (delta: Delta) => {
+  let isEmpty = true;
+  log(delta);
+  delta.map((op) => {
+    if (typeof op.insert === "string") {
+      isEmpty = isEmpty && op.insert.trim().length === 0;
+    } else {
+      isEmpty = false;
+    }
+  });
+  return isEmpty;
 };

@@ -157,12 +157,8 @@ class OEmbed extends BlockEmbed {
     node.classList.add("best-effort");
     // Look for as much information as we can get in the data.
     const imageUrls = (data.links?.thumbnail || [])
-      .filter((link: any) =>
-        link.type.startsWith("image")
-      )
-      .map((link: any) =>
-        link.href
-      );
+      .filter((link: any) => link.type.startsWith("image"))
+      .map((link: any) => link.href);
     const iconUrl = data?.links?.icon?.find((link: any) =>
       link.type.startsWith("image")
     )?.href;
@@ -180,11 +176,13 @@ class OEmbed extends BlockEmbed {
     linkElement.href = href;
     container.appendChild(linkElement);
     // If there are any images, add them.
-    const images: Array<HTMLImageElement> = imageUrls.map((imageUrl: string) => {
-      let image = document.createElement("img");
-      image.src = imageUrl;
-      return image;
-    });
+    const images: Array<HTMLImageElement> = imageUrls.map(
+      (imageUrl: string) => {
+        let image = document.createElement("img");
+        image.src = imageUrl;
+        return image;
+      }
+    );
     images.forEach((image: HTMLImageElement) => {
       linkElement.appendChild(image);
     });
@@ -203,20 +201,22 @@ class OEmbed extends BlockEmbed {
     loadingDiv.appendChild(container);
     // Wait for the images to load (if present) to signal that the embed has
     // finished loading.
-    Promise.all(images.map((image: any) =>
-      new Promise((resolve, reject) => {
-        if (image.complete) {
-          resolve();
-        } else {
-          image.onload = () => {
-            resolve();
-          };
-        }
-      })
-    ))
-      .then(() => {
-        this.onLoadEnd(node, loadingDiv);
-      });
+    Promise.all<void>(
+      images.map(
+        (image: any) =>
+          new Promise((resolve, reject) => {
+            if (image.complete) {
+              resolve();
+            } else {
+              image.onload = () => {
+                resolve();
+              };
+            }
+          })
+      )
+    ).then(() => {
+      this.onLoadEnd(node, loadingDiv);
+    });
   }
 
   static loadPost(

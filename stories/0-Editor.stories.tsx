@@ -67,7 +67,7 @@ const EditableEditorTemplate = (args: any) => {
           focusOnMount={args.focusOnMount}
           singleLine={args.singleLine}
           onTextChange={action("TextChange")}
-          onIsEmptyChange={action("EmptyChange")}
+          onIsEmptyChange={args.onIsEmptyChange || action("EmptyChange")}
           onSubmit={action("Submit")}
           forceSSR={args.forceSSR}
         />
@@ -81,13 +81,28 @@ SimpleEditor.args = {
   initialText:
     '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":{"src":"http://www.deelay.me/1000/https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png","width":3840,"height":2160}}}, {"attributes":{"italic":true},"insert":"You have my sword..."}]',
   focusOnMount: true,
-  forceSSR: true,
 };
 
 SimpleEditor.story = {
   name: "simple",
 };
 
+export const EmptyCheck = () => {
+  const [empty, setEmpty] = React.useState();
+  EmptyCheck.args.onIsEmptyChange = setEmpty;
+  return (
+    <div>
+      <EditableEditorTemplate {...EmptyCheck.args} />
+      <div style={{ backgroundColor: "aquamarine" }}>
+        Empty? {empty ? "YES" : "NO"}
+      </div>
+    </div>
+  );
+};
+EmptyCheck.args = {
+  ...SimpleEditor.args,
+  initialText: '[{"insert":""}]',
+};
 export const MultiParagraph = EditableEditorTemplate.bind({});
 MultiParagraph.args = {
   initialText:

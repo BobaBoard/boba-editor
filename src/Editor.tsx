@@ -9,6 +9,7 @@ import {
   importEmbedModule,
   pasteImageAsBlockEmbed,
   withBlockquotesKeyboardBehavior,
+  isEmptyDelta,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
@@ -28,14 +29,7 @@ import SpoilersIcon from "./img/spoilers.svg";
 
 // Only import Quill if there is a "window".
 // This allows the editor to be imported even in a SSR environment.
-// But also, let's add the type declaration regardless so TS won't
-// complain.
-// (This won't work without typescript 3.8.
-// See: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#-type-only-imports-and-export
-// And so we wait...)
-// Also follow: https://github.com/zeit/next.js/issues/11196
-//import type Quill from "quill";
-import Quill from "quill";
+import type Quill from "quill";
 let QuillModule: typeof Quill;
 // window = undefined;
 // document = undefined;
@@ -63,6 +57,7 @@ class Editor extends Component<EditorProps> {
   state = {
     // QuillJS "empty state" still has one character.
     charactersTyped: 1,
+    empty: true,
     showTooltip: false,
     loaded: false,
     hasImage: false,
@@ -97,6 +92,7 @@ class Editor extends Component<EditorProps> {
     const typingHandler = this.editor.on("text-change" as const, (delta) => {
       const currentCharacters = this.editor.getLength();
       const stateCharacters = this.state.charactersTyped;
+      const stateEmpty = this.state.empty;
       logging(
         `Text changed: ${currentCharacters}(current) ${stateCharacters}(previous)`
       );
@@ -108,12 +104,13 @@ class Editor extends Component<EditorProps> {
         // as it's possible for "text formatting" changes to also trigger
         // this callback and we don't want to continuously do so.
         if (this.props.onIsEmptyChange) {
-          if (stateCharacters == 1 && currentCharacters > 1) {
-            loggingVerbose("Marking not empty");
-            this.props.onIsEmptyChange(false);
-          } else if (stateCharacters > 1 && currentCharacters == 1) {
-            loggingVerbose("Marking empty");
-            this.props.onIsEmptyChange(true);
+          const currentlyEmpty = isEmptyDelta(this.editor.getContents());
+          const onIsEmptyChange = this.props.onIsEmptyChange;
+          if (stateEmpty != currentlyEmpty) {
+            loggingVerbose(`Marking${currentlyEmpty ? "" : "not"} empty`);
+            this.setState({ empty: currentlyEmpty }, () => {
+              onIsEmptyChange(currentlyEmpty);
+            });
           }
         }
         if (this.props.onCharactersChange) {
@@ -147,7 +144,7 @@ class Editor extends Component<EditorProps> {
           // BlockImage module.
           hasImage: !!this.editor
             .getContents()
-            .ops.find((op: any) => op.insert?.hasOwnProperty("block-image")),
+            .ops?.find((op: any) => op.insert?.hasOwnProperty("block-image")),
         });
       }
     );
@@ -202,7 +199,7 @@ class Editor extends Component<EditorProps> {
     });
 
     // Initialize characters counts (if handlers attached)
-    this.props.onIsEmptyChange?.(this.editor.getLength() == 1);
+    this.props.onIsEmptyChange?.(isEmptyDelta(this.editor.getContents()));
     this.props.onCharactersChange?.(this.editor.getLength());
   }
 
@@ -315,7 +312,7 @@ class Editor extends Component<EditorProps> {
     this.editor.insertEmbed(range.index, type, embed, "user");
     let nextRange = range.index + 1;
     while (
-      typeof this.editor.getContents(nextRange, 1).ops[0].insert != "string"
+      typeof this.editor.getContents(nextRange, 1).ops?.[0].insert != "string"
     ) {
       nextRange++;
     }
@@ -447,7 +444,10 @@ class Editor extends Component<EditorProps> {
       window["editor"] = this.editor;
     }
 
-    this.setState({ loaded: true });
+    this.setState({
+      loaded: true,
+      empty: isEmptyDelta(this.props.initialText),
+    });
     this.maybeInitializeEditableEditor();
   }
 
@@ -825,9 +825,12 @@ interface EditableProps extends BaseProps {
   // Every time the text is changed, this method will be called with
   // the new QuillJS delta.
   onTextChange: (newText: any) => void;
-  // Called every time the "empty" status of the editor changes.
+  // Called every time the "empty" status of the editor changes (and the first time
+  // the editor is mounted).
   // This is not the same as counting the characters on the "text" parameter in
-  // onTextChange, because that contains additional QuillJS delta "noise".
+  // onTextChange, because that contains additional QuillJS delta "noise". In addition,
+  // this also checks for "fundamentally empty" deltas, e.g. those only containing spaces
+  // or line breaks.
   onIsEmptyChange?: (empty: boolean) => void;
   // Called every time the number of type characters changes.
   onCharactersChange?: (_: number) => void;
