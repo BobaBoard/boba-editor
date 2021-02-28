@@ -715,6 +715,9 @@ class Editor extends Component<EditorProps> {
             margin-top: 5px;
           }
           .editor :global(.ql-editor blockquote:last-child) {
+            // Without this, the margin collapses and leaves a blank
+            // space on backgrounds wrapping the editor.
+            display: inline-block;
             margin-bottom: 5px;
           }
         `}</style>

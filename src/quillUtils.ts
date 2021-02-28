@@ -232,7 +232,9 @@ export const pasteImageAsBlockEmbed = (
 export const isEmptyDelta = (delta: Delta) => {
   let isEmpty = true;
   log(delta);
-  delta.map((op) => {
+  // TODO: figure out why map is not a function for this thread
+  // https://v0.boba.social/!bobaland/thread/92a96953-9d97-4ad2-a4f1-1ec122dc34c3?thread
+  delta.map?.((op) => {
     if (typeof op.insert === "string") {
       isEmpty = isEmpty && op.insert.trim().length === 0;
     } else {
