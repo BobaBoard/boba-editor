@@ -324,7 +324,7 @@ const longText = `[
     {"insert":"Image? No "},
     {"attributes":{"link":"www.goojdkajdslaksdjaklsdjaklsdjaskldjaskldjaslkdjaskldjaskl…kdjalskdjaksldjaslkdjalksdjalksdjaslkdjalskdjaslkdjlkgle.com"},"insert":"problem"},
     {"insert":"! Just pay attention to the extra empty line at the end!"},
-    {"insert":{"block-image":{"src":"https://media.tenor.com/images/74905779610f0b24e5a4443f564398e6/tenor.gif","spoilers":false,"width":100,"height":100}}},
+    {"insert":{"block-image":{"src":"https://media.tenor.com/images/74905779610f0b24e5a4443f564398e6/tenor.gif","spoilers":true,"width":100,"height":100}}},
     {"attributes":{"italic":true},"insert":"This is a blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"}
   ]`;
 export const SSRTest = () => {
@@ -341,13 +341,7 @@ export const SSRTest = () => {
         <Editor initialText={JSON.parse(longText)} forceSSR={true} />
       </div>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-        <Editor
-          initialText={JSON.parse(longText)}
-          editable
-          onTextChange={(d) => {
-            console.log(d);
-          }}
-        />
+        <Editor initialText={JSON.parse(longText)} />
       </div>
     </div>
   );
