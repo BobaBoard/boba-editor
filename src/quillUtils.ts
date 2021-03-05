@@ -229,17 +229,23 @@ export const pasteImageAsBlockEmbed = (
   }
 };
 
-export const isEmptyDelta = (delta: Delta) => {
+export const isEmptyDelta = (delta: DeltaOperation[] | Delta) => {
+  const actualDelta = "ops" in delta ? delta.ops : (delta as DeltaOperation[]);
+  if (!actualDelta) {
+    return true;
+  }
   let isEmpty = true;
-  log(delta);
-  // TODO: figure out why map is not a function for this thread
+  // Apparently some
   // https://v0.boba.social/!bobaland/thread/92a96953-9d97-4ad2-a4f1-1ec122dc34c3?thread
-  delta.map?.((op) => {
+  actualDelta.map?.((op) => {
     if (typeof op.insert === "string") {
       isEmpty = isEmpty && op.insert.trim().length === 0;
     } else {
       isEmpty = false;
     }
   });
+
+  log(`The following delta was found ${isEmpty || "not "}empty:`);
+  log(delta);
   return isEmpty;
 };
