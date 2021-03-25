@@ -148,6 +148,26 @@ class OEmbed extends BlockEmbed {
     return;
   }
 
+  static chooseThumbnailImageLinks(
+    thumbnailLinks: any
+  ) {
+    const imageLinks = thumbnailLinks
+      .filter((link: any) => link.type.startsWith("image"));
+
+    if (imageLinks.length === 0) {
+      // If there are no images, don't display any images.
+      return [];
+    } else if (imageLinks[0].rel.includes("og")) {
+      // Otherwise, display the first image link. 
+      // If that's an Open Graph link, display all Open Graph links.
+      return imageLinks
+        .filter((link: any) => link.rel.includes("og"));
+    } else {
+      // If the first link isn't an Open Graph link, display only one preview image.
+      return [ imageLinks[0] ];
+    }
+  }
+
   static tryBestEffortLoad(
     node: HTMLDivElement,
     loadingDiv: HTMLElement,
@@ -156,13 +176,8 @@ class OEmbed extends BlockEmbed {
   ) {
     node.classList.add("best-effort");
     // Look for as much information as we can get in the data.
-    const imageUrls = (data.links?.thumbnail || [])
-      .filter((link: any) =>
-        link.type.startsWith("image")
-      )
-      .map((link: any) =>
-        link.href
-      );
+    const imageUrls = this.chooseThumbnailImageLinks(data.links?.thumbnail || [])
+      .map((link: any) => link.href);
     const iconUrl = data?.links?.icon?.find((link: any) =>
       link.type.startsWith("image")
     )?.href;
