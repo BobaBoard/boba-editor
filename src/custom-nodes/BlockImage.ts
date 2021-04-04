@@ -15,12 +15,16 @@ const log = require("debug")("bobapost:styles:block-image");
  * single image. Unlike the classic image type, the block image
  * will take the whole line by default.
  */
+type SavedValue = {
+  src: string;
+  spoilers?: boolean;
+  width: number;
+  height: number;
+};
+type Value = { loadPromise: Promise<string | ArrayBuffer> } | SavedValue;
+
 class BlockImage extends BlockEmbed {
-  static create(
-    value:
-      | { loadPromise: Promise<string | ArrayBuffer> }
-      | { src: string; spoilers?: boolean; width: number; height: number }
-  ) {
+  static create(value: Value) {
     const node = super.create();
     const img = document.createElement("IMG");
     img.onload = () => {
@@ -98,18 +102,22 @@ class BlockImage extends BlockEmbed {
     BlockImage.onLoadCallback = callback;
   }
 
-  static value(domNode: HTMLDivElement) {
+  static value(domNode: HTMLDivElement): SavedValue | null {
     const img = domNode.querySelector("img");
     if (!img) {
       return null;
     }
     const spoilers = domNode.getAttribute("spoilers");
     return {
-      src: img.getAttribute("src"),
+      src: img.getAttribute("src")!,
       spoilers: !!spoilers,
       width: img.naturalWidth,
       height: img.naturalHeight,
     };
+  }
+
+  static renderForSsr(value: SavedValue) {
+    return this.create(value).outerHTML;
   }
 }
 

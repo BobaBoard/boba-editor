@@ -1,3 +1,4 @@
+import BlockImage from "./custom-nodes/BlockImage";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 
 export const getSsrConverter = () => {
@@ -28,12 +29,7 @@ export const getSsrConverter = () => {
       converter.renderCustomWith(function (customOp, contextOp) {
         if (customOp.insert.type === "block-image") {
           const value = customOp.insert.value;
-          // TODO: try moving this closer to the BlockImage class.
-          const spoilersBlock = `<div class="embed-overlay spoilers" style="width:100%;height:${value.height}px;"></div>`;
-          const imageBlock = `<img src="${value.src}" width="${value.width}px" height="${value.height}px" />`;
-          return `<div class="block-image-class ql-block-image ql-embed" contenteditable="false" style="height:min(auto,${
-            value.height
-          }px)"> ${value.spoilers ? spoilersBlock : imageBlock}</div>`;
+          return BlockImage.renderForSsr(value);
         } else {
           // We try to be neutral with other custom blots.
           return "<div />";
