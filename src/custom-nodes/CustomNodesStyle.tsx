@@ -66,10 +66,13 @@ export default (props: {}) => {
         :global(.ql-block-image) {
           text-align: center;
           margin: 2px 0;
+          obejct-fit: contain;
+          height: auto;
         }
         :global(.ql-block-image img) {
           max-width: 100%;
           height: auto;
+          obejct-fit: contain;
         }
         :global(.ql-block-image.loading) {
           width: 100%;
