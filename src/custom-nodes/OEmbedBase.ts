@@ -2,7 +2,11 @@ import { EditorContextProps } from "../Editor";
 import Quill from "quill";
 
 const BlockEmbed = Quill.import("blots/block/embed");
-import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
+import {
+  addEmbedEditOverlay,
+  addErrorMessage,
+  addLoadingMessage,
+} from "./utils";
 const Link = Quill.import("formats/link");
 
 const logging = require("debug")("bobapost:embeds:oembeds");
@@ -366,7 +370,7 @@ class OEmbed extends BlockEmbed {
       width: value.embedWidth,
       height: value.embedHeight,
     });
-    addEmbedOverlay(node, {
+    addEmbedEditOverlay(node, {
       onClose: () => {
         this.onRemoveRequest?.(node);
       },

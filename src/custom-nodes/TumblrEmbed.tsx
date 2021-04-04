@@ -4,7 +4,11 @@ import Quill from "quill";
 const logging = require("debug")("bobapost:embeds:tumblt");
 
 const BlockEmbed = Quill.import("blots/block/embed");
-import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
+import {
+  addEmbedEditOverlay,
+  addErrorMessage,
+  addLoadingMessage,
+} from "./utils";
 import { EditorContextProps } from "../Editor";
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
@@ -101,7 +105,7 @@ class TumblrEmbed extends BlockEmbed {
     document.body.appendChild(containerNode);
     containerNode.style.position = "absolute";
     containerNode.style.left = `-10000px`;
-    addEmbedOverlay(node, {
+    addEmbedEditOverlay(node, {
       onClose: () => {
         TumblrEmbed.onRemoveRequest?.(node);
       },

@@ -1,7 +1,7 @@
 import Quill from "quill";
 import axios from "axios";
 
-import { addEmbedOverlay, addLoadingMessage } from "./utils";
+import { addEmbedEditOverlay, addLoadingMessage } from "./utils";
 import { EditorContextProps } from "../Editor";
 
 const logging = require("debug")("bobapost:embeds:tiktok");
@@ -99,7 +99,7 @@ class TikTokEmbed extends BlockEmbed {
     node.dataset.url = data.url;
     node.dataset.id = data.id;
     node.appendChild(
-      addEmbedOverlay(tikTokNode, {
+      addEmbedEditOverlay(tikTokNode, {
         onClose: () => {
           TikTokEmbed.onRemoveRequest?.(node);
         },

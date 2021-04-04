@@ -9,7 +9,7 @@ import ThreadIcon from "../img/thread.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
-export const addEmbedOverlay = (
+export const addEmbedEditOverlay = (
   embedRoot: HTMLElement,
   callbacks: {
     onClose: (root: HTMLElement) => void;

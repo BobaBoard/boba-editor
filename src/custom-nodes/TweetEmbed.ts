@@ -5,7 +5,11 @@ import ReactDOM from "react-dom";
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import { addEmbedOverlay, addLoadingMessage, addErrorMessage } from "./utils";
+import {
+  addEmbedEditOverlay,
+  addLoadingMessage,
+  addErrorMessage,
+} from "./utils";
 
 const logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
@@ -179,7 +183,7 @@ class TweetEmbed extends BlockEmbed {
 
     // TODO: this should be generalized rather than making everyone have access
     // to a method only twitter really needs
-    addEmbedOverlay(
+    addEmbedEditOverlay(
       node,
       {
         onClose: () => {

@@ -4,7 +4,11 @@ import Quill from "quill";
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import { addEmbedOverlay, addErrorMessage, addLoadingMessage } from "./utils";
+import {
+  addEmbedEditOverlay,
+  addErrorMessage,
+  addLoadingMessage,
+} from "./utils";
 import { EditorContextProps } from "../Editor";
 
 const logging = require("debug")("bobapost:embeds:youtube");
@@ -66,7 +70,7 @@ class YouTubeEmbed extends BlockEmbed {
       message: "Loading Influencers-birthing Machine...",
       url: url.toString(),
     });
-    addEmbedOverlay(node, {
+    addEmbedEditOverlay(node, {
       onClose: () => {
         YouTubeEmbed.onRemoveRequest?.(node);
       },

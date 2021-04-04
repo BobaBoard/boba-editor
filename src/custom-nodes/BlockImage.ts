@@ -1,5 +1,5 @@
 import Quill from "quill";
-import { addEmbedOverlay } from "./utils";
+import { addEmbedEditOverlay as addEmbedEditOverlay } from "./utils";
 import React from "react";
 import ReactDOM from "react-dom";
 import Spinner from "../Spinner";
@@ -47,7 +47,7 @@ class BlockImage extends BlockEmbed {
     node.setAttribute("contenteditable", false);
     node.classList.add("ql-block-image", "ql-embed", "loading");
     img.classList.toggle("spoilers", !!value["spoilers"]);
-    addEmbedOverlay(
+    addEmbedEditOverlay(
       node,
       {
         onClose: () => {
