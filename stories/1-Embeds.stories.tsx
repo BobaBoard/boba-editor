@@ -328,6 +328,9 @@ const TEST_EMBEDS = [
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://www.ndtv.com/offbeat/happy-new-year-2021-wishes-greetings-messages-images-pics-to-share-2346091"}',
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://knowyourmeme.com/memes/moons-haunted"}',
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://archiveofourown.org/works/28349940/chapters/69459594"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://anarchism.space/@ExperimentV/105713537503551493"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://tanoshimi.xyz/2016/11/29/yes-sadpanda-is-one-of-my-sources/"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://www.traeume-aus-edelstahl.de/details.html?_filterartnr=hr007&_random=1120875411"}',
 ];
 
 export const BestEffortStory = () => (
