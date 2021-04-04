@@ -12,7 +12,7 @@ import {
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
-import CustomNodesStyle from "./custom-nodes/CustomNodesStyle";
+import { globalStyles } from "./custom-nodes/css/global";
 import { getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
 
@@ -239,16 +239,20 @@ class Editor extends Component<EditorProps> {
 
     // TODO: context not existing (for typescript) has probably something to do with
     // nodes types missing
-    const FORBIDDEN_ENDINGS = [".ts", ".tsx", "Style", "utils"];
+    const FORBIDDEN_ENDINGS = [".ts", ".tsx", "Style", "utils", ".css"];
+    const FORBIDDEN_REGEXES = [/\/css\/.*/];
     require
       //@ts-ignore
       .context("./custom-nodes/", true)
       .keys()
       // Doing this by filtering because regexes defeated me
-      .filter(
-        (moduleName: string) =>
-          !FORBIDDEN_ENDINGS.some((ending) => moduleName.endsWith(ending))
-      )
+      .filter((moduleName: string) => {
+        console.log(moduleName);
+        return (
+          !FORBIDDEN_ENDINGS.some((ending) => moduleName.endsWith(ending)) &&
+          !FORBIDDEN_REGEXES.some((regex) => moduleName.match(regex))
+        );
+      })
       .map((path: string) => path.substring(2))
       .forEach((moduleName: string) => {
         importEmbedModule(
@@ -722,7 +726,7 @@ class Editor extends Component<EditorProps> {
           }
         `}</style>
         {/* Add global styles for types*/}
-        <CustomNodesStyle />
+        <style jsx>{globalStyles}</style>
       </>
     );
   }
