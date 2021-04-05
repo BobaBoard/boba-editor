@@ -4,8 +4,6 @@ import ReactDOM from "react-dom";
 import CloseButton from "../img/close.svg";
 // @ts-ignore
 import SpoilersIcon from "../img/spoilers.svg";
-// @ts-ignore
-import ThreadIcon from "../img/thread.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
@@ -50,13 +48,11 @@ export const makeSpoilerable = (
 export const addEmbedEditOverlay = (
   embedType: any,
   embedRoot: HTMLElement,
-  callbacks?: {
-    onChangeThread?: (root: HTMLElement, thread: boolean) => void;
-  },
-  initialSettings?: {
-    // TODO: make this configurable
-    isThread?: boolean;
-  }
+  extraSettings?: {
+    icon: any;
+    initialValue: boolean;
+    onToggle: (root: HTMLElement, value: boolean) => void;
+  }[]
 ) => {
   const containerDiv = document.createElement("div");
   containerDiv.classList.add("embed-overlay");
@@ -69,8 +65,8 @@ export const addEmbedEditOverlay = (
     embedType.onRemoveRequest(embedRoot);
   });
 
-  // TODO: generalize this code
-  if (embedType.onMarkSpoilers || callbacks?.onChangeThread) {
+  const hasOption = embedType.onMarkSpoilers || extraSettings?.length;
+  if (hasOption) {
     const optionsOverlay = document.createElement("div");
     optionsOverlay.classList.add("options-overlay");
     if (embedType.onMarkSpoilers) {
@@ -103,22 +99,22 @@ export const addEmbedEditOverlay = (
         e.preventDefault();
       });
     }
-    if (callbacks?.onChangeThread) {
+    extraSettings?.forEach((setting) => {
       const threadButton = document.createElement("div");
       threadButton.classList.add("thread-button", "embed-options-button");
-      ReactDOM.render(React.createElement(ThreadIcon, {}, null), threadButton);
+      ReactDOM.render(
+        React.createElement(setting.icon, {}, null),
+        threadButton
+      );
       optionsOverlay.appendChild(threadButton);
-      threadButton.classList.toggle("active", !!initialSettings?.isThread);
+      threadButton.classList.toggle("active", !!setting.initialValue);
       threadButton.addEventListener("click", (e) => {
         threadButton.classList.toggle("active");
-        callbacks?.onChangeThread?.(
-          embedRoot,
-          threadButton.classList.contains("active")
-        );
+        setting.onToggle(embedRoot, threadButton.classList.contains("active"));
         e.stopPropagation();
         e.preventDefault();
       });
-    }
+    });
 
     containerDiv.appendChild(optionsOverlay);
   }

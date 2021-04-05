@@ -1,6 +1,8 @@
 import Quill from "quill";
 import React from "react";
 import ReactDOM from "react-dom";
+// @ts-ignore
+import ThreadIcon from "../img/thread.svg";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
@@ -182,19 +184,16 @@ class TweetEmbed extends BlockEmbed {
     // TODO: this should be generalized rather than making everyone have access
     // to a method only twitter really needs
     makeSpoilerable(this, node, value);
-    addEmbedEditOverlay(
-      this,
-      node,
+    addEmbedEditOverlay(this, node, [
       {
-        onChangeThread: (node, thread) => {
+        icon: ThreadIcon,
+        initialValue: node.dataset.thread === "true",
+        onToggle: (node, thread) => {
           node.dataset.thread = thread ? "true" : "";
           TweetEmbed.loadTweet(id, node);
         },
       },
-      {
-        isThread: node.dataset.thread === "true",
-      }
-    );
+    ]);
 
     node.classList.add("ql-embed", "tweet", "loading");
     TweetEmbed.loadTweet(id, node);
