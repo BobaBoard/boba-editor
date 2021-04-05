@@ -10,6 +10,7 @@ class TikTokEmbed extends Oembed {
   static LOADING_TEXT = "Hello fellow kids, it's TikTok time™";
   static LOADING_BACKGROUND_COLOR = "aquamarine";
   static SKIP_EMBED_LOADING = false;
+  static FORCE_EMBED = true;
   static SKIP_CACHE = true;
 
   static ATTEMPTS = 10;
@@ -23,29 +24,24 @@ class TikTokEmbed extends Oembed {
     return mutations[0].addedNodes[0] as HTMLElement;
   }
 
-  static onLoadEnd = (node: HTMLElement) => {
-    // if (window["tiktokEmbed"]) {
-    //   window["tiktokEmbed"].lib.render([node?.querySelector("blockquote")]);
-    // } else {
-    //   setTimeout(() => {
-    //     TikTokEmbed.ATTEMPTS -= 1;
-    //     if (TikTokEmbed.ATTEMPTS > 0) {
-    //       TikTokEmbed.onLoadEnd(node);
-    //     }
-    //   }, 200);
-    // }
-
-    let fileref = document.createElement("script");
-    fileref.setAttribute("type", "text/javascript");
-    fileref.setAttribute("async", "");
-    fileref.setAttribute("src", "https://www.tiktok.com/embed.js");
-    document.body.appendChild(fileref);
+  static onAfterAttach = (node: HTMLElement, oEmbedNode: HTMLElement) => {
+    const scriptNode = oEmbedNode.querySelector("script");
+    scriptNode?.parentElement?.removeChild(scriptNode);
+    if (window["tiktokEmbed"]) {
+      window["tiktokEmbed"].lib.render([node?.querySelector("blockquote")]);
+    } else {
+      setTimeout(() => {
+        TikTokEmbed.ATTEMPTS -= 1;
+        if (TikTokEmbed.ATTEMPTS > 0) {
+          TikTokEmbed.onLoadEnd(node, oEmbedNode);
+        }
+      }, 200);
+    }
   };
 
   static create(value: { url: string }) {
     logging(value);
     const node = super.create(value);
-
     return node;
   }
 }

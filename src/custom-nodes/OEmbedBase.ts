@@ -12,14 +12,31 @@ const Link = Quill.import("formats/link");
 
 const logging = require("debug")("bobapost:embeds:oembeds");
 
+const getIframeInMutations = (mutationRecords: MutationRecord[]) => {
+  const withAddedNodes = mutationRecords.filter(
+    (mutation) => mutation.addedNodes.length > 0
+  );
+  for (let mutation of withAddedNodes) {
+    for (let addedNode of Array.from<HTMLElement>(mutation.addedNodes as any)) {
+      if (addedNode.nodeName == "IFRAME") {
+        return addedNode;
+      }
+      const iframeChild = addedNode.querySelector("iframe");
+      if (iframeChild) {
+        return iframeChild;
+      }
+    }
+  }
+  return null;
+};
+
 const attachObserver = function (
   domNode: HTMLDivElement,
   onLoadEnd: () => void
 ) {
   let newObserver = new MutationObserver((mutations, observer) => {
     logging(`Mutation occurred in embedded node.`);
-    const potentialIframe = (mutations[0]
-      ?.addedNodes[0] as HTMLElement)?.querySelector("iframe");
+    const potentialIframe = getIframeInMutations(mutations);
     if (potentialIframe) {
       const currentHeight = potentialIframe.getBoundingClientRect().height;
       logging(`Current height of observed node: ${currentHeight}`);
@@ -295,8 +312,10 @@ class OEmbed extends BlockEmbed {
     } else {
       // This is the simplest form of embed possible. Immediately call load end.
       logging(`Finished loading (no observer).`);
+      this.onAfterAttach?.(node, oEmbedNode);
       this.onLoadEnd(node, oEmbedNode);
     }
+    this.onAfterAttach?.(node, oEmbedNode);
   }
 
   static renderError(node: HTMLDivElement, url: string, error: string) {
