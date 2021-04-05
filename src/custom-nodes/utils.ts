@@ -9,15 +9,47 @@ import ThreadIcon from "../img/thread.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
-export const addEmbedEditOverlay = (
+export const makeSpoilerable = (
+  embedType: any,
   embedRoot: HTMLElement,
-  callbacks: {
-    onClose: (root: HTMLElement) => void;
-    onMarkSpoilers?: (root: HTMLElement, spoilers: boolean) => void;
+  embedValue: { spoilers?: boolean } | any
+) => {
+  const previousValue = embedType.value;
+  embedType.value = (domNode: HTMLElement) => {
+    const value = previousValue(domNode);
+    const spoilers = domNode.getAttribute("spoilers");
+    return {
+      ...value,
+      spoilers: !!spoilers,
+    };
+  };
+
+  const isSpoilered =
+    embedType.value(embedRoot)?.["spoilers"] || embedValue.spoilers;
+  if (isSpoilered) {
+    embedRoot?.classList.toggle("spoilers", isSpoilered);
+    embedRoot.addEventListener("click", () => {
+      embedRoot.classList.toggle("show-spoilers");
+    });
+  }
+  if (!embedType.onMarkSpoilers) {
+    embedType.onMarkSpoilers = (node: HTMLDivElement, spoilers: boolean) => {
+      if (spoilers) {
+        node.setAttribute("spoilers", "true");
+      } else {
+        node.removeAttribute("spoilers");
+      }
+    };
+  }
+};
+
+export const addEmbedEditOverlay = (
+  embedType: any,
+  embedRoot: HTMLElement,
+  callbacks?: {
     onChangeThread?: (root: HTMLElement, thread: boolean) => void;
   },
   initialSettings?: {
-    isSpoilers?: boolean;
     // TODO: make this configurable
     isThread?: boolean;
   }
@@ -30,14 +62,14 @@ export const addEmbedEditOverlay = (
   ReactDOM.render(React.createElement(CloseButton, {}, null), closeButton);
   containerDiv.appendChild(closeButton);
   closeButton.addEventListener("click", () => {
-    callbacks.onClose(embedRoot);
+    embedType.onRemoveRequest(embedRoot);
   });
 
   // TODO: generalize this code
-  if (callbacks.onMarkSpoilers || callbacks.onChangeThread) {
+  if (embedType.onMarkSpoilers || callbacks?.onChangeThread) {
     const optionsOverlay = document.createElement("div");
     optionsOverlay.classList.add("options-overlay");
-    if (callbacks.onMarkSpoilers) {
+    if (embedType.onMarkSpoilers) {
       const spoilersButton = document.createElement("div");
       spoilersButton.classList.add("spoilers-button", "embed-options-button");
       ReactDOM.render(
@@ -45,11 +77,17 @@ export const addEmbedEditOverlay = (
         spoilersButton
       );
       optionsOverlay.appendChild(spoilersButton);
-      spoilersButton.classList.toggle("active", !!initialSettings?.isSpoilers);
-      containerDiv.classList.toggle("spoilers", !!initialSettings?.isSpoilers);
+      spoilersButton.classList.toggle(
+        "active",
+        !!embedType.value(embedRoot).spoilers
+      );
+      containerDiv.classList.toggle(
+        "spoilers",
+        !!embedType.value(embedRoot).spoilers
+      );
       spoilersButton.addEventListener("click", (e) => {
         spoilersButton.classList.toggle("active");
-        callbacks.onMarkSpoilers?.(
+        embedType.onMarkSpoilers?.(
           embedRoot,
           spoilersButton.classList.contains("active")
         );
@@ -61,7 +99,7 @@ export const addEmbedEditOverlay = (
         e.preventDefault();
       });
     }
-    if (callbacks.onChangeThread) {
+    if (callbacks?.onChangeThread) {
       const threadButton = document.createElement("div");
       threadButton.classList.add("thread-button", "embed-options-button");
       ReactDOM.render(React.createElement(ThreadIcon, {}, null), threadButton);
@@ -69,7 +107,7 @@ export const addEmbedEditOverlay = (
       threadButton.classList.toggle("active", !!initialSettings?.isThread);
       threadButton.addEventListener("click", (e) => {
         threadButton.classList.toggle("active");
-        callbacks.onChangeThread?.(
+        callbacks?.onChangeThread?.(
           embedRoot,
           threadButton.classList.contains("active")
         );

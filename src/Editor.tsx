@@ -247,7 +247,6 @@ class Editor extends Component<EditorProps> {
       .keys()
       // Doing this by filtering because regexes defeated me
       .filter((moduleName: string) => {
-        console.log(moduleName);
         return (
           !FORBIDDEN_ENDINGS.some((ending) => moduleName.endsWith(ending)) &&
           !FORBIDDEN_REGEXES.some((regex) => moduleName.match(regex))

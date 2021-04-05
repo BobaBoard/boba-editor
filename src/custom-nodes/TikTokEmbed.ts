@@ -98,13 +98,7 @@ class TikTokEmbed extends BlockEmbed {
         </blockquote>`;
     node.dataset.url = data.url;
     node.dataset.id = data.id;
-    node.appendChild(
-      addEmbedEditOverlay(tikTokNode, {
-        onClose: () => {
-          TikTokEmbed.onRemoveRequest?.(node);
-        },
-      })
-    );
+    addEmbedEditOverlay(this, node);
     tikTokNode.style.position = "absolute";
     tikTokNode.style.left = `-10000px`;
     node.appendChild(tikTokNode);

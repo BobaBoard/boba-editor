@@ -1,5 +1,5 @@
 import Quill from "quill";
-import { addEmbedEditOverlay as addEmbedEditOverlay } from "./utils";
+import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
 import React from "react";
 import ReactDOM from "react-dom";
 import Spinner from "../Spinner";
@@ -46,34 +46,9 @@ class BlockImage extends BlockEmbed {
     }
     node.setAttribute("contenteditable", false);
     node.classList.add("ql-block-image", "ql-embed", "loading");
-    img.classList.toggle("spoilers", !!value["spoilers"]);
-    addEmbedEditOverlay(
-      node,
-      {
-        onClose: () => {
-          BlockImage.onRemoveRequest?.(node);
-        },
-        onMarkSpoilers: (node, spoilers) => {
-          if (spoilers) {
-            node.setAttribute("spoilers", "true");
-            img.classList.add("spoilers");
-          } else {
-            node.removeAttribute("spoilers");
-            img.classList.remove("spoilers");
-          }
-        },
-      },
-      {
-        isSpoilers: !!value["spoilers"],
-      }
-    );
+    makeSpoilerable(this, node, value);
+    addEmbedEditOverlay(this, node);
     node.appendChild(img);
-
-    if (!!value["spoilers"]) {
-      node.addEventListener("click", () => {
-        node.classList.toggle("show-spoilers");
-      });
-    }
 
     const spinnerNode = document.createElement("div");
     spinnerNode.classList.add("spinner");
@@ -107,10 +82,8 @@ class BlockImage extends BlockEmbed {
     if (!img) {
       return null;
     }
-    const spoilers = domNode.getAttribute("spoilers");
     return {
       src: img.getAttribute("src")!,
-      spoilers: !!spoilers,
       width: img.naturalWidth,
       height: img.naturalHeight,
     };

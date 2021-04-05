@@ -70,11 +70,7 @@ class YouTubeEmbed extends BlockEmbed {
       message: "Loading Influencers-birthing Machine...",
       url: url.toString(),
     });
-    addEmbedEditOverlay(node, {
-      onClose: () => {
-        YouTubeEmbed.onRemoveRequest?.(node);
-      },
-    });
+    addEmbedEditOverlay(this, node);
     /*
      * Be gay, do CSS crimes:
      * https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed?fbclid=IwAR3CtIZZNP7Kx8ID-l1eoZAlIZ9eUxPRLmQ1yDsU7N0OAAotBAp4w7XHqps

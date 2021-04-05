@@ -9,6 +9,7 @@ import {
   addEmbedEditOverlay,
   addLoadingMessage,
   addErrorMessage,
+  makeSpoilerable,
 } from "./utils";
 
 const logging = require("debug")("bobapost:embeds:tweet");
@@ -166,14 +167,11 @@ class TweetEmbed extends BlockEmbed {
 
     if (TweetEmbed.cache?.has(id)) {
       // When refetching from cache, readd spoilers status
-      const cachedNode = TweetEmbed.cache?.get(id);
-      if (!!value["spoilers"]) {
-        cachedNode?.classList.toggle("show-spoilers", false);
-      }
+      const cachedNode = TweetEmbed.cache?.get(id)!;
+      makeSpoilerable(this, cachedNode, value);
       return cachedNode;
     }
 
-    node.classList.toggle("spoilers", !!value["spoilers"]);
     addLoadingMessage(node, {
       message: "Preparing to chirp...",
       url: url.href,
@@ -183,19 +181,11 @@ class TweetEmbed extends BlockEmbed {
 
     // TODO: this should be generalized rather than making everyone have access
     // to a method only twitter really needs
+    makeSpoilerable(this, node, value);
     addEmbedEditOverlay(
+      this,
       node,
       {
-        onClose: () => {
-          TweetEmbed.onRemoveRequest?.(node);
-        },
-        onMarkSpoilers: (node, spoilers) => {
-          if (spoilers) {
-            node.setAttribute("spoilers", "true");
-          } else {
-            node.removeAttribute("spoilers");
-          }
-        },
         onChangeThread: (node, thread) => {
           node.dataset.thread = thread ? "true" : "";
           TweetEmbed.loadTweet(id, node);
@@ -203,18 +193,12 @@ class TweetEmbed extends BlockEmbed {
       },
       {
         isThread: node.dataset.thread === "true",
-        isSpoilers: !!value["spoilers"],
       }
     );
 
     node.classList.add("ql-embed", "tweet", "loading");
     TweetEmbed.loadTweet(id, node);
 
-    if (!!value["spoilers"]) {
-      node.addEventListener("click", () => {
-        node.classList.toggle("show-spoilers");
-      });
-    }
     return node;
   }
 
@@ -229,12 +213,10 @@ class TweetEmbed extends BlockEmbed {
   static value(domNode: HTMLElement) {
     loggingVerbose(`Getting value of embed from data:`);
     loggingVerbose(domNode.dataset);
-    const spoilers = domNode.getAttribute("spoilers");
     return {
       url: domNode.dataset.url,
       embedWidth: domNode.dataset.embedWidth,
       embedHeight: domNode.dataset.embedHeight,
-      spoilers: !!spoilers,
       thread: !!domNode.dataset.thread,
     };
   }

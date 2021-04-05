@@ -105,11 +105,7 @@ class TumblrEmbed extends BlockEmbed {
     document.body.appendChild(containerNode);
     containerNode.style.position = "absolute";
     containerNode.style.left = `-10000px`;
-    addEmbedEditOverlay(node, {
-      onClose: () => {
-        TumblrEmbed.onRemoveRequest?.(node);
-      },
-    });
+    addEmbedEditOverlay(this, node);
     attachObserver(containerNode, node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");

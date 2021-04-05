@@ -370,11 +370,8 @@ class OEmbed extends BlockEmbed {
       width: value.embedWidth,
       height: value.embedHeight,
     });
-    addEmbedEditOverlay(node, {
-      onClose: () => {
-        this.onRemoveRequest?.(node);
-      },
-    });
+
+    addEmbedEditOverlay(this, node);
 
     node.classList.add("ql-embed", "loading");
     // If we already have a saved width and height for the embed, we can add

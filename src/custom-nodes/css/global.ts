@@ -211,9 +211,8 @@ export const globalStyles = css.global`
   .view-only .inline-spoilers {
     background-color: black;
   }
-  .view-only .inline-spoilers:not(.visible, .view-only
-      .inline-spoilers:not(.visible)
-      *) {
+  .view-only .inline-spoilers:not(.visible), 
+  .view-only .inline-spoilers:not(.visible) * {
     color: transparent !important;
     text-decoration-color: transparent !important;
   }
@@ -250,15 +249,19 @@ export const globalStyles = css.global`
     height: 20px;
     width: 20px;
   }
+  .view-only .spoilers .embed-overlay::after,
   .view-only .embed-overlay.spoilers::after {
     opacity: 1;
   }
+  .view-only .spoilers .embed-overlay,
   .view-only .embed-overlay.spoilers {
     pointer-events: all;
   }
+  .view-only .spoilers .embed-overlay:hover,
   .view-only .embed-overlay.spoilers:hover {
     cursor: pointer;
   }
+  .spoilers .embed-overlay::after,
   .embed-overlay.spoilers::after {
     content: "";
     background-image: url(https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fadmin%2Fspoilers.png?alt=media&token=a343aee0-e90f-4379-8d41-1cac1f65f7ee);
@@ -277,9 +280,11 @@ export const globalStyles = css.global`
   .view-only .show-spoilers img.spoilers {
     visibility: visible;
   }
+  .spoilers.show-spoilers .embed-overlay::after,
   .show-spoilers .embed-overlay.spoilers::after {
     visibility: hidden;
   }
+  .spoilers.show-spoilers .embed-overlay,
   .show-spoilers .embed-overlay.spoilers {
     display: none;
   }
@@ -292,8 +297,8 @@ export const globalStyles = css.global`
   .ql-oembed-embed .embed-node.loading {
     visibility: hidden;
   }
-  .ql-oembed-embed .loading-message, .ql-tumblr-embed
-      .loading-message {
+  .ql-oembed-embed .loading-message,
+  .ql-tumblr-embed .loading-message {
     width: 100%;
     height: 50px;
     margin: 10px 0;
@@ -302,9 +307,9 @@ export const globalStyles = css.global`
     color: white;
     position: relative;
   }
-  .ql-oembed-embed .loading-message a, .ql-tumblr-embed
-      .loading-message
-      a, .tweet .loading-message a {
+  .ql-oembed-embed .loading-message a,
+  .ql-tumblr-embed .loading-message a,
+  .tweet .loading-message a {
     position: absolute !important;
     top: 0;
     left: 0;
@@ -330,7 +335,8 @@ export const globalStyles = css.global`
     font-size: 25px;
     text-decoration: underline;
   }
-  .ql-oembed-embed.best-effort h1, .ql-oembed-embed.best-effort p {
+  .ql-oembed-embed.best-effort h1,
+  .ql-oembed-embed.best-effort p {
     color: black;
   }
   .ql-oembed-embed.best-effort a {
