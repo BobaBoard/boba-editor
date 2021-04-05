@@ -24,16 +24,22 @@ class TikTokEmbed extends Oembed {
   }
 
   static onLoadEnd = (node: HTMLElement) => {
-    if (window["tiktokEmbed"]) {
-      window["tiktokEmbed"].lib.render([node?.querySelector("blockquote")]);
-    } else {
-      setTimeout(() => {
-        TikTokEmbed.ATTEMPTS -= 1;
-        if (TikTokEmbed.ATTEMPTS > 0) {
-          TikTokEmbed.onLoadEnd(node);
-        }
-      }, 200);
-    }
+    // if (window["tiktokEmbed"]) {
+    //   window["tiktokEmbed"].lib.render([node?.querySelector("blockquote")]);
+    // } else {
+    //   setTimeout(() => {
+    //     TikTokEmbed.ATTEMPTS -= 1;
+    //     if (TikTokEmbed.ATTEMPTS > 0) {
+    //       TikTokEmbed.onLoadEnd(node);
+    //     }
+    //   }, 200);
+    // }
+
+    let fileref = document.createElement("script");
+    fileref.setAttribute("type", "text/javascript");
+    fileref.setAttribute("async", "");
+    fileref.setAttribute("src", "https://www.tiktok.com/embed.js");
+    document.body.appendChild(fileref);
   };
 
   static create(value: { url: string }) {
