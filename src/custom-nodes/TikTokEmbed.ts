@@ -26,6 +26,7 @@ class TikTokEmbed extends Oembed {
 
   static onAfterAttach = (node: HTMLElement, oEmbedNode: HTMLElement) => {
     const scriptNode = oEmbedNode.querySelector("script");
+    // Remove script node since we don't need it anyway, and simply use what's already in window.
     scriptNode?.parentElement?.removeChild(scriptNode);
     if (window["tiktokEmbed"]) {
       window["tiktokEmbed"].lib.render([node?.querySelector("blockquote")]);

@@ -8,6 +8,7 @@ import {
   addEmbedEditOverlay,
   addErrorMessage,
   addLoadingMessage,
+  makeSpoilerable,
 } from "./utils";
 import { EditorContextProps } from "../Editor";
 
@@ -70,6 +71,7 @@ class YouTubeEmbed extends BlockEmbed {
       message: "Loading Influencers-birthing Machine...",
       url: url.toString(),
     });
+    makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node);
     /*
      * Be gay, do CSS crimes:

@@ -12,6 +12,9 @@ export const globalStyles = css.global`
     padding: 10px;
     margin: 10px 0;
   }
+  .ql-embed .error-message a {
+    color: white !important;
+  }
   .ql-embed.ios-bug .error-message {
     width: 100%;
     height: 150px;
@@ -231,15 +234,17 @@ export const globalStyles = css.global`
     display: none;
   }
   .options-overlay {
-    display: inline-flex;
+    display: flex;
     background-color: #444;
     max-width: 300px;
     border-radius: 15px;
     padding: 5px 15px;
     margin-top: 5px;
     pointer-events: all;
-    position: relative;
-    z-index: 2;
+    z-index: 2;    
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .embed-options-button {
     height: 20px;
