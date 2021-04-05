@@ -9,6 +9,10 @@ import ThreadIcon from "../img/thread.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
+// NOTE/TODO
+// Spoilers won't work when switching from editable to non-editable without unmounting
+// the embed, and when editing something already marked as a spoiler.
+// This is not a problem for now but will need to be addressed in the future.
 export const makeSpoilerable = (
   embedType: any,
   embedRoot: HTMLElement,
