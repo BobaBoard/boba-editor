@@ -102,8 +102,28 @@ export const TwitterThreadEmbed = () => {
   );
 };
 
-TwitterThreadEmbed.story = {
-  name: "twitter thread",
+export const TumblrThreadEmbed = () => {
+  const [loading, setLoading] = React.useState(true);
+  return (
+    <div>
+      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+        <Editor
+          editable={false}
+          initialText={JSON.parse(
+            '[{"insert":"NOTE: Tumblr Posts"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Tumblr posts are a bit weird. Unless you provide an endpoint that allows fetching the oEmbed data given the Tumblr URL, they won\'t work. It sucks, and I accept solutions.\\n"},{"insert":{"tumblr-embed":{"embedHeight": "840", "embedWidth": "500", "href":"https://embed.tumblr.com/embed/post/1DU3s2LW_74-QOcKbxGMsw/647298900927053824","did":"211b71f5c49a42458fc23a95335d65c4331e91b4","url":"https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its","spoilers":true}}},{"insert":"\\n"}]'
+          )}
+          onEmbedLoaded={() => {
+            setLoading(false);
+          }}
+        />
+      </div>
+      Embed Status: {loading ? "loading" : "loaded"}.
+    </div>
+  );
+};
+
+TumblrThreadEmbed.story = {
+  name: "tumblr thread",
 };
 
 export const LinkAndMultipleFormattingEditable = () => (

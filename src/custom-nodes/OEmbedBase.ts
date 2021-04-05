@@ -6,6 +6,7 @@ import {
   addEmbedEditOverlay,
   addErrorMessage,
   addLoadingMessage,
+  makeSpoilerable,
 } from "./utils";
 const Link = Quill.import("formats/link");
 
@@ -371,6 +372,7 @@ class OEmbed extends BlockEmbed {
       height: value.embedHeight,
     });
 
+    makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node);
 
     node.classList.add("ql-embed", "loading");

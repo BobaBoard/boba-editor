@@ -18,10 +18,10 @@ const embedFetchers = {
         setTimeout(() => {
           resolve({
             url:
-              "https://turquoisemagpie.tumblr.com/post/618042321716510720/eternity-stuck-in-white-noise-can-drive-you-a",
+              "https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its",
             href:
               "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
-            did: "22a0a2f8b7a33dc50bbf5f49fb53f92b181a88aa",
+            did: "211b71f5c49a42458fc23a95335d65c4331e91b4",
           });
         }, 25000);
       });

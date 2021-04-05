@@ -8,6 +8,7 @@ import {
   addEmbedEditOverlay,
   addErrorMessage,
   addLoadingMessage,
+  makeSpoilerable,
 } from "./utils";
 import { EditorContextProps } from "../Editor";
 const Link = Quill.import("formats/link");
@@ -105,6 +106,7 @@ class TumblrEmbed extends BlockEmbed {
     document.body.appendChild(containerNode);
     containerNode.style.position = "absolute";
     containerNode.style.left = `-10000px`;
+    makeSpoilerable(this, node, data);
     addEmbedEditOverlay(this, node);
     attachObserver(containerNode, node);
     let fileref = document.createElement("script");

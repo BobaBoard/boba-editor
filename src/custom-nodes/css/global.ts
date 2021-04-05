@@ -1,6 +1,6 @@
 import css from "styled-jsx/css";
 export const globalStyles = css.global`
-  .ql-embed a {
+  .ql-embed.loading a {
     color: white !important;
   }
   .ql-embed .error-message {
@@ -45,17 +45,22 @@ export const globalStyles = css.global`
     margin-bottom: 0px !important;
     background-color: black;
   }
-  .ql-embed.tweet {
-    text-align: center;
-  }
   .ql-embed {
+    text-align: center;
     position: relative;
   }
-  .ql-embed a {
+  .ql-tiktok-embed {
+    color: black;
+    text-align: left;
+  }
+  .ql-tiktok-embed *:not(p) > a[title] {
+    font-weight: bold;
+  }
+  .ql-embed:not(.ql-tiktok-embed) a {
     color: white;
     cursor: pointer;
   }
-  .ql-embed a:hover {
+  .ql-embed:not(.ql-tiktok-embed) a:hover {
     color: white;
     cursor: pointer;
   }
@@ -124,6 +129,8 @@ export const globalStyles = css.global`
   }
   blockquote.tiktok-embed {
     margin: 0 auto !important;
+    padding: 0 !important;
+    border: none!important;
   }
   .ql-youtube-video .loading-message {
     position: absolute;
@@ -273,6 +280,7 @@ export const globalStyles = css.global`
     left: 0;
     bottom: 0;
     opacity: 0.1;
+    z-index: 3;
   }
   .view-only img.spoilers {
     visibility: hidden;
