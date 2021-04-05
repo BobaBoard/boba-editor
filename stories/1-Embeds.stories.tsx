@@ -56,8 +56,12 @@ const embedCache = {
   cache: new Map(),
 };
 
+const IMAGE =
+  '[{"insert":"Image Embed"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://pbs.twimg.com/media/EY-RqiyUwAAfgzd?format=png&name=small"}}]';
 const TWITTER =
   '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"embedHeight": "596", "embedWidth": "500", "url": "https://twitter.com/BobaBoard/status/1263913643650908160"}}},{"insert":"\\n"}]}';
+const TWITTER_THREAD =
+  '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"thread": true, "embedHeight": "197", "embedWidth": "500", "url": "https://twitter.com/hasenschneck/status/1311215026506784768"}}},{"insert":"\\n"}]}';
 const TUMBLR =
   '[{"insert":"NOTE: Tumblr Posts"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Tumblr posts are a bit weird. Unless you provide an endpoint that allows fetching the oEmbed data given the Tumblr URL, they won\'t work. It sucks, and I accept solutions.\\n"},{"insert":{"tumblr-embed":{"embedHeight": "840", "embedWidth": "500", "href":"https://embed.tumblr.com/embed/post/1DU3s2LW_74-QOcKbxGMsw/647298900927053824","did":"211b71f5c49a42458fc23a95335d65c4331e91b4","url":"https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its"}}},{"insert":"\\n"}]';
 const YOUTUBE =
@@ -68,41 +72,16 @@ const TIKTOK =
   '[{"insert":"It\'s TikTok time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tiktok-embed":{"id":"6718335390845095173","url":"https://www.tiktok.com/@scout2015/video/6718335390845095173"}}},{"insert":"\\n"}]';
 const PIXIV =
   '[{"insert":"It\'s Pixiv time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"pixiv-embed":{"embedHeight": "540.875", "embedWidth": "500","url":"https://www.pixiv.net/en/artworks/83682624"}}},{"insert":"\\n"}]';
-
-export const ImageEmbed = () => (
-  <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-    <Editor
-      editable={true}
-      initialText={JSON.parse(
-        '[{"insert":"Image Embed"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"block-image":"https://pbs.twimg.com/media/EY-RqiyUwAAfgzd?format=png&name=small"}}]'
-      )}
-      onTextChange={() => {
-        logging("changed!");
-      }}
-      focusOnMount={true}
-      onIsEmptyChange={() => {
-        logging("empty!");
-      }}
-      onSubmit={() => {
-        // This is for cmd + enter
-        logging("submit!");
-      }}
-    />
-  </div>
-);
-
-ImageEmbed.story = {
-  name: "image",
-};
-
-export const TwitterEmbed = () => {
+const INSTAGRAM =
+  '[{"insert":"It\'s Instagram time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"instagram-embed":{ "embedWidth": "500", "embedHeight": "898","url":"https://instagram.com/p/89CUyVoVY9/"}}},{"insert":"\\n"}]';
+const EmbedsTemplate = (args: { content: string; editable?: boolean }) => {
   const [loading, setLoading] = React.useState(true);
   return (
     <EditorContext.Provider value={embedFetchers}>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
         <Editor
-          editable={true}
-          initialText={JSON.parse(TWITTER)}
+          editable={args.editable === undefined ? true : args.editable}
+          initialText={JSON.parse(args.content)}
           onTextChange={() => {
             logging("changed!");
           }}
@@ -124,201 +103,58 @@ export const TwitterEmbed = () => {
   );
 };
 
-TwitterEmbed.story = {
-  name: "twitter",
+export const ImageEmbed = EmbedsTemplate.bind({});
+ImageEmbed.args = {
+  content: IMAGE,
+  editable: true,
 };
 
-export const TwitterThreadEmbed = () => {
-  const [loading, setLoading] = React.useState(true);
-  return (
-    <EditorContext.Provider value={embedFetchers}>
-      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-        <Editor
-          editable={true}
-          initialText={JSON.parse(
-            '{"ops":[{"insert":"Twitter Embed!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"tweet":{"thread": true, "embedHeight": "197", "embedWidth": "500", "url": "https://twitter.com/hasenschneck/status/1311215026506784768"}}},{"insert":"\\n"}]}'
-          )}
-          onTextChange={() => {
-            logging("changed!");
-          }}
-          focusOnMount={true}
-          onIsEmptyChange={() => {
-            logging("empty!");
-          }}
-          onSubmit={() => {
-            // This is for cmd + enter
-            logging("submit!");
-          }}
-          onEmbedLoaded={() => {
-            setLoading(false);
-          }}
-        />
-      </div>
-      Embed Status: {loading ? "loading" : "loaded"}.
-    </EditorContext.Provider>
-  );
+export const TwitterEmbed = EmbedsTemplate.bind({});
+TwitterEmbed.args = {
+  content: TWITTER,
+  editable: true,
 };
 
-TwitterThreadEmbed.story = {
-  name: "twitter thread",
+export const TwitterThreadEmbed = EmbedsTemplate.bind({});
+TwitterThreadEmbed.args = {
+  content: TWITTER_THREAD,
+  editable: true,
 };
 
-export const YoutubeStory = () => (
-  <EditorContext.Provider value={embedFetchers}>
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-      <Editor
-        editable={true}
-        initialText={JSON.parse(YOUTUBE)}
-        onTextChange={() => {
-          logging("changed!");
-        }}
-        focusOnMount={true}
-        onIsEmptyChange={() => {
-          logging("empty!");
-        }}
-        onSubmit={() => {
-          // This is for cmd + enter
-          logging("submit!");
-        }}
-      />
-    </div>
-  </EditorContext.Provider>
-);
-
-YoutubeStory.story = {
-  name: "youtube",
+export const YouTubeEmbed = EmbedsTemplate.bind({});
+YouTubeEmbed.args = {
+  content: YOUTUBE,
+  editable: true,
 };
 
-export const TumblrStory = () => (
-  <EditorContext.Provider value={embedFetchers}>
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-      <Editor
-        editable={true}
-        initialText={JSON.parse(TUMBLR)}
-        onTextChange={() => {
-          logging("changed!");
-        }}
-        focusOnMount={true}
-        onIsEmptyChange={() => {
-          logging("empty!");
-        }}
-        onSubmit={() => {
-          // This is for cmd + enter
-          logging("submit!");
-        }}
-      />
-    </div>
-  </EditorContext.Provider>
-);
-
-TumblrStory.story = {
-  name: "tumblr",
+export const TumblrEmbed = EmbedsTemplate.bind({});
+TumblrEmbed.args = {
+  content: TUMBLR,
+  editable: true,
 };
 
-export const TikTokStory = () => (
-  <EditorContext.Provider value={embedFetchers}>
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-      <Editor
-        editable={true}
-        initialText={JSON.parse(TIKTOK)}
-        onTextChange={() => {
-          logging("changed!");
-        }}
-        focusOnMount={true}
-        onIsEmptyChange={() => {
-          logging("empty!");
-        }}
-        onSubmit={() => {
-          // This is for cmd + enter
-          logging("submit!");
-        }}
-      />
-    </div>
-  </EditorContext.Provider>
-);
-
-TikTokStory.story = {
-  name: "tiktok",
+export const TikTokEmbed = EmbedsTemplate.bind({});
+TikTokEmbed.args = {
+  content: TIKTOK,
+  editable: true,
 };
 
-export const InstagramStory = () => (
-  <EditorContext.Provider value={embedFetchers}>
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-      <Editor
-        editable={true}
-        initialText={JSON.parse(
-          '[{"insert":"It\'s Instagram time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"instagram-embed":{ "embedWidth": "500", "embedHeight": "898","url":"https://instagram.com/p/89CUyVoVY9/"}}},{"insert":"\\n"}]'
-        )}
-        onTextChange={() => {
-          logging("changed!");
-        }}
-        focusOnMount={true}
-        onIsEmptyChange={() => {
-          logging("empty!");
-        }}
-        onSubmit={() => {
-          // This is for cmd + enter
-          logging("submit!");
-        }}
-      />
-    </div>
-  </EditorContext.Provider>
-);
-
-InstagramStory.story = {
-  name: "instagram",
+export const InstagramEmbed = EmbedsTemplate.bind({});
+InstagramEmbed.args = {
+  content: INSTAGRAM,
+  editable: true,
 };
 
-export const RedditStory = () => (
-  <EditorContext.Provider value={embedFetchers}>
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-      <Editor
-        editable={true}
-        initialText={JSON.parse(REDDIT)}
-        onTextChange={() => {
-          logging("changed!");
-        }}
-        focusOnMount={true}
-        onIsEmptyChange={() => {
-          logging("empty!");
-        }}
-        onSubmit={() => {
-          // This is for cmd + enter
-          logging("submit!");
-        }}
-      />
-    </div>
-  </EditorContext.Provider>
-);
-
-RedditStory.story = {
-  name: "reddit",
+export const RedditEmbed = EmbedsTemplate.bind({});
+RedditEmbed.args = {
+  content: REDDIT,
+  editable: true,
 };
 
-export const PixivStory = () => (
-  <EditorContext.Provider value={embedFetchers}>
-    <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-      <Editor
-        editable={true}
-        initialText={JSON.parse(PIXIV)}
-        onTextChange={() => {
-          logging("changed!");
-        }}
-        focusOnMount={true}
-        onIsEmptyChange={() => {
-          logging("empty!");
-        }}
-        onSubmit={() => {
-          // This is for cmd + enter
-          logging("submit!");
-        }}
-      />
-    </div>
-  </EditorContext.Provider>
-);
-
-PixivStory.story = {
-  name: "pixiv",
+export const PixivEmbed = EmbedsTemplate.bind({});
+PixivEmbed.args = {
+  content: PIXIV,
+  editable: true,
 };
 
 const TEST_EMBEDS = [
