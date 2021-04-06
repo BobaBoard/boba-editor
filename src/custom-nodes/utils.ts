@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 import CloseButton from "../img/close.svg";
 // @ts-ignore
 import SpoilersIcon from "../img/spoilers.svg";
+// @ts-ignore
+import ArrowIcon from "../img/dots.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
@@ -43,6 +45,20 @@ export const makeSpoilerable = (
       }
     };
   }
+};
+
+export const addEmbedOptions = (embedType: any, embedRoot: HTMLElement) => {
+  const containerDiv = document.createElement("div");
+  containerDiv.classList.add("embed-overlay", "view");
+  const closeButton = document.createElement("div");
+  closeButton.classList.add("options-button");
+  ReactDOM.render(React.createElement(ArrowIcon, {}, null), closeButton);
+  containerDiv.appendChild(closeButton);
+  closeButton.addEventListener("click", () => {
+    embedType.onRemoveRequest(embedRoot);
+  });
+  embedRoot.appendChild(containerDiv);
+  return embedRoot;
 };
 
 export const addEmbedEditOverlay = (

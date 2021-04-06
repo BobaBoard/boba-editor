@@ -1,5 +1,5 @@
 import Quill from "quill";
-import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
+import { addEmbedEditOverlay, addEmbedOptions, makeSpoilerable } from "./utils";
 import React from "react";
 import ReactDOM from "react-dom";
 import Spinner from "../Spinner";
@@ -48,6 +48,7 @@ class BlockImage extends BlockEmbed {
     node.classList.add("ql-block-image", "ql-embed", "loading");
     makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node);
+    addEmbedOptions(this, node);
     node.appendChild(img);
 
     const spinnerNode = document.createElement("div");

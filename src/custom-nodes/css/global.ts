@@ -202,6 +202,41 @@ export const globalStyles = css.global`
     border-color: white;
     cursor: pointer;
   }
+  .options-button {
+    width: 20px;
+    height: 12px;
+    background-color: #444;
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    pointer-events: all;
+    z-index: 2;
+  }
+  .options-button svg {
+    fill: #ccc;
+    top: 50%;
+    left: 50%;
+    display: block;
+    position: absolute;
+    transform: translate(calc(-50% + 1px),calc(-50% - 1px));
+    width: 26px;
+    height: 20px;
+  }
+  .options-button:hover svg, .options-button:hover {
+    fill: white;
+    border-color: white;
+    cursor: pointer;
+  }
+  .ql-block-image {
+    background-color: #444;
+  }
+  .caption {
+    color: white;
+    font-size: small;
+    padding-bottom: 2px;
+  }
   .editor.view-only .close-button {
     display: none;
   }
