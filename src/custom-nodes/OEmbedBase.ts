@@ -70,6 +70,11 @@ const isImageEmbed = (domNode: HTMLElement) => {
   return !!domNode.querySelector("img");
 };
 
+export type SavedValue = {
+  url: string;
+  embedHeight?: string;
+  embedWidth?: string;
+};
 /**
  * This is the base class to load embeds from iFramely.
  * It does the best it can to display the data returned.
@@ -83,8 +88,12 @@ class OEmbed extends BlockEmbed {
   static FORCE_EMBED = false;
   static cache: EditorContextProps["cache"] | undefined;
 
+  static getHashForCache(value: SavedValue) {
+    return value.url;
+  }
+
   static onLoadEnd(
-    domNode: HTMLElement,
+    domNode: HTMLDivElement,
     embedLoadingNode: HTMLElement | null,
     sizes?: {
       embedWidth: string;
@@ -117,7 +126,7 @@ class OEmbed extends BlockEmbed {
         // We set the embed in the cache, unless this type of embed has been marked
         // for "no caching". This usually happens when iframe clear their content once
         // the embed is removed from the DOM (e.g. Reddit does this).
-        OEmbed.cache?.set(domNode.dataset.url!, domNode);
+        OEmbed.cache?.set(this.getHashForCache(this.value(domNode)), domNode);
       }
     } else {
       // Approximate sizes from BoundingClientRect.
@@ -132,7 +141,7 @@ class OEmbed extends BlockEmbed {
 
         this.onLoadCallback?.();
         if (!this.SKIP_CACHE) {
-          OEmbed.cache?.set(domNode.dataset.url!, domNode);
+          OEmbed.cache?.set(this.getHashForCache(this.value(domNode)), domNode);
         }
       }, 200);
     }
@@ -363,11 +372,7 @@ class OEmbed extends BlockEmbed {
 
   static LOADING_BACKGROUND_COLOR = "#e6e6e6";
   static LOADING_TEXT = "Doing my best!";
-  static create(value: {
-    url: string;
-    embedHeight?: string;
-    embedWidth?: string;
-  }) {
+  static create(value: SavedValue) {
     logging(`Creating oEmbed object with value:`);
     logging(value);
     let node = super.create();
@@ -375,6 +380,7 @@ class OEmbed extends BlockEmbed {
     node.dataset.rendered = false;
 
     const url = this.sanitize(value.url);
+    makeSpoilerable(this, node, value);
 
     // If you can already find an embed with this url in the cache (or this
     // particular embed type is not cache-friendly), just retrieve the node
@@ -391,7 +397,6 @@ class OEmbed extends BlockEmbed {
       height: value.embedHeight,
     });
 
-    makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node);
 
     node.classList.add("ql-embed", "loading");
@@ -418,7 +423,7 @@ class OEmbed extends BlockEmbed {
 
   static value(domNode: HTMLDivElement) {
     return {
-      url: domNode.dataset.url,
+      url: domNode.dataset.url!,
       embedWidth: domNode.dataset.embedWidth,
       embedHeight: domNode.dataset.embedHeight,
     };

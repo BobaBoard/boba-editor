@@ -16,22 +16,13 @@ export const makeSpoilerable = (
   embedRoot: HTMLElement,
   embedValue: { spoilers?: boolean } | any
 ) => {
-  const previousValue = embedType.value;
-  embedType.value = (domNode: HTMLElement) => {
-    const value = previousValue(domNode);
-    const spoilers = domNode.getAttribute("spoilers");
-    return {
-      ...value,
-      spoilers: !!spoilers,
-    };
-  };
   const isSpoilered =
     embedType.value(embedRoot)?.["spoilers"] || embedValue.spoilers;
+  embedRoot.addEventListener("click", () => {
+    embedRoot.classList.toggle("show-spoilers");
+  });
   if (isSpoilered) {
     embedRoot?.classList.toggle("spoilers", isSpoilered);
-    embedRoot.addEventListener("click", () => {
-      embedRoot.classList.toggle("show-spoilers");
-    });
   }
   if (!embedType.onMarkSpoilers) {
     embedType.onMarkSpoilers = (node: HTMLDivElement, spoilers: boolean) => {
@@ -41,6 +32,24 @@ export const makeSpoilerable = (
         node.removeAttribute("spoilers");
       }
     };
+  }
+  if (!embedType.spoilersAugmented) {
+    const previousValue = embedType.value;
+    embedType.value = (domNode: HTMLElement) => {
+      const value = previousValue(domNode);
+      const spoilers = domNode.getAttribute("spoilers");
+      return {
+        ...value,
+        spoilers: !!spoilers,
+      };
+    };
+
+    const previousHash = embedType.getHashForCache;
+    embedType.getHashForCache = (value: { spoilers?: boolean } | any) => {
+      const hash = previousHash(value);
+      return hash + (value?.spoilers ? "_spoilers" : "");
+    };
+    embedType.spoilersAugmented = true;
   }
 };
 

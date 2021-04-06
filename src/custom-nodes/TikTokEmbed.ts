@@ -24,7 +24,7 @@ class TikTokEmbed extends Oembed {
     return mutations[0].addedNodes[0] as HTMLElement;
   }
 
-  static onAfterAttach = (node: HTMLElement, oEmbedNode: HTMLElement) => {
+  static onAfterAttach = (node: HTMLDivElement, oEmbedNode: HTMLElement) => {
     const scriptNode = oEmbedNode.querySelector("script");
     // Remove script node since we don't need it anyway, and simply use what's already in window.
     scriptNode?.parentElement?.removeChild(scriptNode);

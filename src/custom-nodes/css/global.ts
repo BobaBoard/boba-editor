@@ -310,7 +310,7 @@ export const globalStyles = css.global`
   .show-spoilers .embed-overlay.spoilers {
     display: none;
   }
-  .show-spoilers img:hover {
+  .spoilers img:hover {
     cursor: pointer;
   }
   .ql-oembed-embed {

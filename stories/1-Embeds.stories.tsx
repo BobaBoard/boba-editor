@@ -257,6 +257,7 @@ export const EmbedCaching = () => {
           </div>
         )}
       </div>
+      <div>{Array.from(embedCache.cache.keys()).join(",")}</div>
     </EditorContext.Provider>
   );
 };
