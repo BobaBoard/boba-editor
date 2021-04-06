@@ -15,7 +15,7 @@ const log = require("debug")("bobapost:styles:block-image");
  * single image. Unlike the classic image type, the block image
  * will take the whole line by default.
  */
-type SavedValue = {
+export type SavedValue = {
   src: string;
   spoilers?: boolean;
   width: number;
@@ -87,10 +87,6 @@ class BlockImage extends BlockEmbed {
       width: img.naturalWidth,
       height: img.naturalHeight,
     };
-  }
-
-  static renderForSsr(value: SavedValue) {
-    return this.create(value).outerHTML;
   }
 }
 

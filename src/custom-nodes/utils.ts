@@ -25,7 +25,6 @@ export const makeSpoilerable = (
       spoilers: !!spoilers,
     };
   };
-
   const isSpoilered =
     embedType.value(embedRoot)?.["spoilers"] || embedValue.spoilers;
   if (isSpoilered) {

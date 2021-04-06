@@ -52,6 +52,9 @@ export const globalStyles = css.global`
     text-align: center;
     position: relative;
   }
+  .best-effort {
+    text-align: left;
+  }
   .ql-tiktok-embed {
     color: black;
     text-align: left;
@@ -241,7 +244,7 @@ export const globalStyles = css.global`
     padding: 5px 15px;
     margin-top: 5px;
     pointer-events: all;
-    z-index: 2;    
+    z-index: 5;    
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -290,7 +293,13 @@ export const globalStyles = css.global`
   .view-only img.spoilers {
     visibility: hidden;
   }
+  .view-only .spoilers > img {
+    visibility: hidden;
+  }
   .view-only .show-spoilers img.spoilers {
+    visibility: visible;
+  }
+  .view-only .spoilers.show-spoilers img {
     visibility: visible;
   }
   .spoilers.show-spoilers .embed-overlay::after,

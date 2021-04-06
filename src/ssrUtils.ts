@@ -1,4 +1,4 @@
-import BlockImage from "./custom-nodes/BlockImage";
+import { BlockImage } from "./custom-nodes/ssr";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 
 export const getSsrConverter = () => {
@@ -29,7 +29,7 @@ export const getSsrConverter = () => {
       converter.renderCustomWith(function (customOp, contextOp) {
         if (customOp.insert.type === "block-image") {
           const value = customOp.insert.value;
-          return BlockImage.renderForSsr(value);
+          return BlockImage(value);
         } else {
           // We try to be neutral with other custom blots.
           return "<div />";

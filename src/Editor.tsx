@@ -239,7 +239,7 @@ class Editor extends Component<EditorProps> {
 
     // TODO: context not existing (for typescript) has probably something to do with
     // nodes types missing
-    const FORBIDDEN_ENDINGS = [".ts", ".tsx", "Style", "utils", ".css"];
+    const FORBIDDEN_ENDINGS = [".ts", ".tsx", "Style", "utils", "ssr", ".css"];
     const FORBIDDEN_REGEXES = [/\/css\/.*/];
     require
       //@ts-ignore
