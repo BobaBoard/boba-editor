@@ -71,15 +71,16 @@ export const globalStyles = css.global`
     cursor: pointer;
   }
   .ql-block-image {
-    text-align: center;
     margin: 2px 0;
-    obejct-fit: contain;
+    object-fit: contain;
     height: auto;
   }
   .ql-block-image img {
     max-width: 100%;
     height: auto;
-    obejct-fit: contain;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
   }
   .ql-block-image.loading {
     width: 100%;

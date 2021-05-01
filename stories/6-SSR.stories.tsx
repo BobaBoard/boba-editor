@@ -23,10 +23,11 @@ const longText = `[
     {"insert":"Codeblock: \\n"},
     {"insert":"This is code block"},{"attributes":{"code-block":true},"insert":"\\n"},
     {"insert":"And this has some "},{"attributes":{"code":true},"insert":"inline code"},{"insert":"\\n"},
-    {"insert":"Also this one above is a single line break, while the one below is two:\\n\\nAnd here we are!\\n"},
-    {"insert":"Image? No "},
+    {"insert":"Also this one above is a single line break, while the one below is two:\\n\\nAnd here we have "},
+    {"insert":"spoilers!", "attributes":{"inline-spoilers": true}},
+    {"insert":"\\nImage? No "},
     {"attributes":{"link":"www.goojdkajdslaksdjaklsdjaklsdjaskldjaskldjaslkdjaskldjaskl…kdjalskdjaksldjaslkdjalksdjalksdjaslkdjalskdjaslkdjlkgle.com"},"insert":"problem"},
-    {"insert":"! Just pay attention to the extra empty line at the end!"},
+    {"insert":"! Just pay attention to the extra empty line at the end!\\n"},
     {"insert":{"block-image":{"src":"https://media.tenor.com/images/74905779610f0b24e5a4443f564398e6/tenor.gif","spoilers":true,"width":100,"height":100}}},
     {"attributes":{"italic":true},"insert":"This is a blockquote"},{"attributes":{"blockquote":true},"insert":"\\n"}
   ]`;
@@ -42,9 +43,11 @@ export const SSRTest = () => {
           marginRight: "15px",
         }}
       >
+        <h2>SSR</h2>
         <Editor initialText={JSON.parse(longText)} forceSSR={true} />
       </div>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+        <h2>REGULAR</h2>
         <Editor initialText={JSON.parse(longText)} />
       </div>
     </div>
@@ -65,6 +68,25 @@ export const ImageBugTest = () => {
         }}
       >
         <Editor initialText={JSON.parse(IMAGE_BUG)} forceSSR={true} />
+      </div>
+    </div>
+  );
+};
+
+const IMAGE_BUG2 =
+  '[{"insert":{"block-image":"https://cdn.discordapp.com/attachments/443967088118333442/691486081895628830/unknown.png"}}]';
+export const ImageBug2Test = () => {
+  return (
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          backgroundColor: "white",
+          maxWidth: "500px",
+          marginBottom: "15px",
+          marginRight: "15px",
+        }}
+      >
+        <Editor initialText={JSON.parse(IMAGE_BUG2)} forceSSR={true} />
       </div>
     </div>
   );

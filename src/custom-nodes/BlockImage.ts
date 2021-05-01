@@ -15,12 +15,14 @@ const log = require("debug")("bobapost:styles:block-image");
  * single image. Unlike the classic image type, the block image
  * will take the whole line by default.
  */
-export type SavedValue = {
-  src: string;
-  spoilers?: boolean;
-  width: number;
-  height: number;
-};
+export type SavedValue =
+  | {
+      src: string;
+      spoilers?: boolean;
+      width: number;
+      height: number;
+    }
+  | string;
 type Value = { loadPromise: Promise<string | ArrayBuffer> } | SavedValue;
 
 class BlockImage extends BlockEmbed {
@@ -68,7 +70,6 @@ class BlockImage extends BlockEmbed {
 
     return node;
   }
-
   static sanitize(src: string | ArrayBuffer) {
     return Image.sanitize(src);
   }

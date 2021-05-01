@@ -1,8 +1,19 @@
 import type { SavedValue as BlockImageSavedValue } from "./BlockImage";
-export const BlockImage = (value: BlockImageSavedValue) => {
-  const spoilersBlock = `<div class="embed-overlay spoilers" style="width:100%;height:${value.height}px;"></div>`;
-  const imageBlock = `<img src="${value.src}" width="${value.width}px" height="${value.height}px" />`;
-  return `<div class="block-image-class ql-block-image ql-embed" contenteditable="false" style="height:min(auto,${
-    value.height
-  }px);"> ${value.spoilers ? spoilersBlock : imageBlock}</div>`;
+export const BlockImage = (savedValue: BlockImageSavedValue) => {
+  const value = {
+    src: typeof savedValue === "string" ? savedValue : savedValue.src,
+    width: typeof savedValue === "string" ? undefined : savedValue.width + "px",
+    height:
+      typeof savedValue === "string" ? undefined : savedValue.height + "px",
+    spoilers: typeof savedValue === "string" ? false : savedValue.spoilers,
+  };
+  const spoilersBlock = `<div class="embed-overlay" style="width:100%;height:${value.height};"></div>`;
+  const imageBlock = `<img src="${value.src}" ${
+    value.width && `width="${value.width}"`
+  } ${value.height && `height="${value.height}"`} />`;
+  return `<div class="block-image-class ql-block-image ql-embed${
+    value.spoilers ? " spoilers" : ""
+  }" contenteditable="false">${
+    value.spoilers ? spoilersBlock : ""
+  }${imageBlock}</div>`;
 };

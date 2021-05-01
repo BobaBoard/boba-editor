@@ -13,7 +13,7 @@ import {
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
 import { globalStyles } from "./custom-nodes/css/global";
-import { getSsrConverter } from "./ssrUtils";
+import { getSsrConverter, attachEventListeners } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
 
 import "quill/dist/quill.bubble.css";
@@ -374,7 +374,10 @@ class Editor extends Component<EditorProps> {
 
   componentDidMount() {
     if (this.isServer()) {
-      // We do this so we can test how this will work with server rendering.
+      if (typeof "window" !== "undefined") {
+        // We're rendering in SSR mode, but we're on the client.
+        attachEventListeners(this.ssrRef);
+      }
       return;
     }
     this.addCustomEmbeds();

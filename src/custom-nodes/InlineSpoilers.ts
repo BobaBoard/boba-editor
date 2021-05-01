@@ -12,6 +12,10 @@ export default class InlineSpoilers extends Inline {
 
   constructor(domNode: HTMLElement) {
     super(domNode);
+    InlineSpoilers.addEventListeners(domNode);
+  }
+
+  static addEventListeners(domNode: HTMLElement) {
     domNode.addEventListener("click", (e) => {
       if (!domNode.classList.contains("visible")) {
         e.preventDefault();
