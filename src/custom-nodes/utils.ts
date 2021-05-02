@@ -17,7 +17,7 @@ export const makeSpoilerable = (
   embedValue: { spoilers?: boolean } | any
 ) => {
   const isSpoilered =
-    embedType.value(embedRoot)?.["spoilers"] || embedValue.spoilers;
+    embedType.value?.(embedRoot)?.["spoilers"] || embedValue.spoilers;
   embedRoot.addEventListener("click", () => {
     embedRoot.classList.toggle("show-spoilers");
   });

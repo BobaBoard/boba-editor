@@ -1,10 +1,17 @@
-// Matches to <em class="alt-italic">...</em>
-import Quill from "quill";
-
-const Inline = Quill.import("blots/inline");
+import { importQuillModule } from "./ssr";
+const Inline = importQuillModule("blots/inline");
 
 const log = require("debug")("bobapost:styles:spoilers");
 
+export const addEventListeners = (domNode: HTMLElement) => {
+  domNode.addEventListener("click", (e) => {
+    if (!domNode.classList.contains("visible")) {
+      e.preventDefault();
+    }
+    log(`Changing visibility of spoilers!`);
+    domNode.classList.toggle("visible");
+  });
+};
 export default class InlineSpoilers extends Inline {
   static blotName = "inline-spoilers";
   static tagName = "SPAN";
@@ -12,17 +19,7 @@ export default class InlineSpoilers extends Inline {
 
   constructor(domNode: HTMLElement) {
     super(domNode);
-    InlineSpoilers.addEventListeners(domNode);
-  }
-
-  static addEventListeners(domNode: HTMLElement) {
-    domNode.addEventListener("click", (e) => {
-      if (!domNode.classList.contains("visible")) {
-        e.preventDefault();
-      }
-      log(`Changing visibility of spoilers!`);
-      domNode.classList.toggle("visible");
-    });
+    addEventListeners(domNode);
   }
 
   static formats(domNode: HTMLElement) {
@@ -48,4 +45,5 @@ export default class InlineSpoilers extends Inline {
     }
   }
 }
+
 Inline.order.push("inline-spoilers");

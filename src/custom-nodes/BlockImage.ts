@@ -8,7 +8,7 @@ const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");
 const Icon = Quill.import("ui/icons");
 
-const log = require("debug")("bobapost:styles:block-image");
+const log = require("debug")("bobapost:embeds:block-image");
 
 /**
  * BlockImage is a block node (as opposed to inline) containing a

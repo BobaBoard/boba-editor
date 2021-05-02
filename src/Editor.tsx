@@ -543,7 +543,9 @@ class Editor extends Component<EditorProps> {
               <Spinner />
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
-            <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
+            {!ssrText && (
+              <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
+            )}
             {this.props.editable &&
               // When it's single line, there can only be ONE image
               (!this.props.singleLine || !this.state.hasImage) && (
