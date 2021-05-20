@@ -20,18 +20,21 @@ export const attachEventListeners = (ssrRef: RefObject<HTMLDivElement>) => {
 
 export const getSsrConverter = () => {
   return {
-    // InitialText is a quill ops array
-    convert: (initialText: any[]) => {
-      const textWithBlockRendering = initialText.map((op: any) => {
-        const blockImage = op.insert["block-image"];
-        if (blockImage) {
-          return {
-            ...op,
-            attributes: { renderAsBlock: true },
-          };
-        }
-        return op;
-      });
+    // InitialText is a quill ops array (sometimes)
+    convert: (initialText: any) => {
+      const actualDelta: any[] =
+        "ops" in initialText ? initialText.ops : (initialText as any[]);
+      const textWithBlockRendering =
+        actualDelta.map((op: any) => {
+          const blockImage = op.insert["block-image"];
+          if (blockImage) {
+            return {
+              ...op,
+              attributes: { renderAsBlock: true },
+            };
+          }
+          return op;
+        }) || [];
 
       const converter = new QuillDeltaToHtmlConverter(textWithBlockRendering, {
         multiLineParagraph: false,
