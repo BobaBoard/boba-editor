@@ -1,6 +1,6 @@
 {
   "name": "@bobaboard/boba-editor",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An advanced text editor based on QuillJS, vaguely inspired by Tumblr's. Created for BobaBoard.",
   "main": "dist/main.js",
   "types": "dist/index.d.ts",
