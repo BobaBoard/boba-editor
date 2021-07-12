@@ -1,5 +1,4 @@
 import React, { Component, createRef, forwardRef } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import classNames from "classnames";
 import {
   detectNewLine,
@@ -23,6 +22,7 @@ const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
 // @ts-ignore
 import SpoilersIcon from "./img/spoilers.svg";
+console.log(SpoilersIcon);
 // logging.enabled = true;
 // loggingVerbose.enabled = true;
 
@@ -266,7 +266,8 @@ class Editor extends Component<EditorProps> {
 
     if (this.context?.fetchers?.getTumblrEmbedFromUrl) {
       const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
-      TumblrEmbed.default.getTumblrEmbedFromUrl = this.context.fetchers?.getTumblrEmbedFromUrl;
+      TumblrEmbed.default.getTumblrEmbedFromUrl =
+        this.context.fetchers?.getTumblrEmbedFromUrl;
     }
 
     if (this.context?.fetchers?.getOEmbedFromUrl) {
@@ -276,11 +277,12 @@ class Editor extends Component<EditorProps> {
   }
 
   addRemoveLinebreaksOnPasteHandler() {
-    this.removeLineBreaksHandler = this.editorContainer.current?.addEventListener(
-      "paste",
-      removeLineBreaksFromPaste as any,
-      true
-    );
+    this.removeLineBreaksHandler =
+      this.editorContainer.current?.addEventListener(
+        "paste",
+        removeLineBreaksFromPaste as any,
+        true
+      );
   }
 
   addImagesPasteHandler() {
@@ -391,7 +393,8 @@ class Editor extends Component<EditorProps> {
           matchVisual: false,
         },
         magicUrl: {
-          urlRegularExpression: /(https?:\/\/[\S]+)|(www\.[\S]+)|(mailto:[\S]+)|(tel:[\S]+)/,
+          urlRegularExpression:
+            /(https?:\/\/[\S]+)|(www\.[\S]+)|(mailto:[\S]+)|(tel:[\S]+)/,
         },
         keyboard: {
           bindings: {},
@@ -476,8 +479,8 @@ class Editor extends Component<EditorProps> {
       const CustomImage = require("./custom-nodes/CustomImage");
       QuillModule.register("formats/image", CustomImage.default, true);
     }
-    const icons = QuillModule.import("ui/icons");
-    icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
+    // const icons = QuillModule.import("ui/icons");
+    // icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
   }
 
   componentWillUnmount() {
@@ -752,7 +755,9 @@ const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
           </span>
           <span className="ql-formats">
             <button className="ql-link"></button>
-            <button className="ql-inline-spoilers"></button>
+            <button className="ql-inline-spoilers">
+              <SpoilersIcon />
+            </button>
           </span>
           <span className="ql-formats">
             <button className="ql-list" value="bullet"></button>

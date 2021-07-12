@@ -14,6 +14,7 @@ module.exports = {
     filename: "[name].js",
     library: "boba-editor",
     libraryTarget: "umd",
+    globalObject: "globalThis",
   },
   entry: path.join(__dirname, "src/", "index.ts"),
   optimization: {
