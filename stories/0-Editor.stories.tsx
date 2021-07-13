@@ -21,28 +21,11 @@ const embedsUrl =
 
 const embedFetchers = {
   fetchers: {
-    getTumblrEmbedFromUrl: (url: string) => {
-      debugger;
-      const LOAD_DELAY = 1000;
-      const promise = new Promise((resolve, reject) => {
-        logging(`Calling ${embedsUrl}?iframe=0&uri=${url}`);
-        fetch(`${embedsUrl}?iframe=0&uri=${url}`)
-          .then((response) => {
-            setTimeout(() => {
-              resolve(response.json());
-            }, LOAD_DELAY);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-      return promise;
-    },
     getOEmbedFromUrl: (url: string) => {
       const LOAD_DELAY = 1000;
       const promise = new Promise((resolve, reject) => {
-        logging(`Calling http://${location.hostname}:8061/iframely?uri=${url}`);
-        fetch(`http://localhost:8061/iframely?uri=${url}`)
+        logging(`Calling ${embedsUrl}?uri=${url}`);
+        fetch(`${embedsUrl}?uri=${url}`)
           .then((response) => {
             setTimeout(() => {
               resolve(response.json());

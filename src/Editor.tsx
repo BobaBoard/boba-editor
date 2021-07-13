@@ -45,7 +45,6 @@ export interface EditorContextProps {
   };
   fetchers?: {
     getOEmbedFromUrl: (url: string) => any;
-    getTumblrEmbedFromUrl: (url: string) => any;
   };
 }
 export const EditorContext = React.createContext<EditorContextProps | null>(
@@ -263,15 +262,12 @@ class Editor extends Component<EditorProps> {
         );
       });
 
-    if (this.context?.fetchers?.getTumblrEmbedFromUrl) {
-      const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
-      TumblrEmbed.default.getTumblrEmbedFromUrl =
-        this.context.fetchers?.getTumblrEmbedFromUrl;
-    }
-
     if (this.context?.fetchers?.getOEmbedFromUrl) {
       const OEmbed = require("./custom-nodes/OEmbedBase");
       OEmbed.default.getOEmbedFromUrl = this.context.fetchers?.getOEmbedFromUrl;
+      const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
+      TumblrEmbed.default.getTumblrEmbedFromUrl =
+        this.context.fetchers?.getOEmbedFromUrl;
     }
   }
 

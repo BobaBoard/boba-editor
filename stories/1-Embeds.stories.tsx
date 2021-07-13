@@ -20,23 +20,6 @@ const embedsUrl =
 
 const embedFetchers = {
   fetchers: {
-    getTumblrEmbedFromUrl: (url: string) => {
-      const LOAD_DELAY = 1000;
-      const promise = new Promise((resolve, reject) => {
-        logging(`Calling ${embedsUrl}?iframe=0&uri=${url}`);
-        fetch(`${embedsUrl}?iframe=0&uri=${url}`)
-          .then((response) => {
-            setTimeout(() => {
-              resolve(response.json());
-            }, LOAD_DELAY);
-          })
-          .catch((error) => {
-            debugger;
-            reject(error);
-          });
-      });
-      return promise;
-    },
     getOEmbedFromUrl: (url: string) => {
       const LOAD_DELAY = 1000;
       const promise = new Promise((resolve, reject) => {
