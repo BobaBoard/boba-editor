@@ -22,7 +22,6 @@ const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
 // @ts-ignore
 import SpoilersIcon from "./img/spoilers.svg";
-console.log(SpoilersIcon);
 // logging.enabled = true;
 // loggingVerbose.enabled = true;
 

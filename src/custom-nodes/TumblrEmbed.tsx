@@ -1,6 +1,6 @@
 import { EmbedValue } from "../config";
 import Quill from "quill";
-
+import DOMPurify from "dompurify";
 const logging = require("debug")("bobapost:embeds:tumblt");
 
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -32,9 +32,8 @@ const attachObserver = (
       observer.disconnect();
       const checkNewHeight = () => {
         if (tumblrFrame.getBoundingClientRect().height != currentHeight) {
-          const loadingMessage = destinationNode.querySelector(
-            ".loading-message"
-          );
+          const loadingMessage =
+            destinationNode.querySelector(".loading-message");
           loadingMessage?.parentNode?.removeChild(loadingMessage);
           destinationNode.classList.add("loaded");
           destinationNode.classList.remove("loading");
@@ -107,7 +106,6 @@ class TumblrEmbed extends BlockEmbed {
     containerNode.style.position = "absolute";
     containerNode.style.left = `-10000px`;
     makeSpoilerable(this, node, data);
-    addEmbedEditOverlay(this, node);
     attachObserver(containerNode, node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");
@@ -124,12 +122,36 @@ class TumblrEmbed extends BlockEmbed {
       });
       return;
     }
-
     TumblrEmbed.getTumblrEmbedFromUrl(url)
       .then((data) => {
-        TumblrEmbed.loadPost(node, data);
+        const sanitizedData = DOMPurify.sanitize(data.html);
+        const containerNode = document.createElement("div");
+        containerNode.innerHTML = sanitizedData;
+        const tumblrPost = containerNode.querySelector(".tumblr-post") as
+          | HTMLElement
+          | undefined;
+        if (!tumblrPost) {
+          throw new Error("No valid Tumblr embed found in returned HTML");
+        }
+        const { href, did } = tumblrPost.dataset;
+        if (!href || !did) {
+          throw new Error("No valid data found in returned Tumblr HTML");
+        }
+        TumblrEmbed.loadPost(node, {
+          href,
+          did,
+          url,
+        });
       })
       .catch((err) => {
+        addErrorMessage(node, {
+          message: "There was an error loading the post!",
+          url: "#",
+        });
+        const loadingMessage = node.querySelector(".loading-message");
+        loadingMessage?.parentNode?.removeChild(loadingMessage);
+        node.classList.remove("loading");
+        TumblrEmbed.onLoadCallback?.();
         logging(err);
       });
 
@@ -162,6 +184,7 @@ class TumblrEmbed extends BlockEmbed {
       width: typeof value == "string" ? "" : value.embedWidth,
       height: typeof value == "string" ? "" : value.embedHeight,
     });
+    addEmbedEditOverlay(this, node);
 
     node.classList.add("ql-embed", "loading");
     if (typeof value == "string" || !("href" in value)) {

@@ -21,17 +21,21 @@ const embedsUrl =
 const embedFetchers = {
   fetchers: {
     getTumblrEmbedFromUrl: (url: string) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            url:
-              "https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its",
-            href:
-              "https://embed.tumblr.com/embed/post/1DU3s2LW_74-QOcKbxGMsw/647298900927053824",
-            did: "211b71f5c49a42458fc23a95335d65c4331e91b4",
+      const LOAD_DELAY = 1000;
+      const promise = new Promise((resolve, reject) => {
+        logging(`Calling ${embedsUrl}?iframe=0&uri=${url}`);
+        fetch(`${embedsUrl}?iframe=0&uri=${url}`)
+          .then((response) => {
+            setTimeout(() => {
+              resolve(response.json());
+            }, LOAD_DELAY);
+          })
+          .catch((error) => {
+            debugger;
+            reject(error);
           });
-        }, 25000);
       });
+      return promise;
     },
     getOEmbedFromUrl: (url: string) => {
       const LOAD_DELAY = 1000;

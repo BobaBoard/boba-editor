@@ -11,20 +11,32 @@ import { action } from "@storybook/addon-actions";
 
 const logging = require("debug")("bobapost:stories:editor");
 
+const REMOTE_EMBEDS_URL = `https://boba-embeds.herokuapp.com/iframely`;
+const LOCAL_EMBEDS_URL = `http://localhost:8061/iframely`;
+
+const embedsUrl =
+  process.env.STORYBOOK_LOCAL_EMBEDS === "true"
+    ? LOCAL_EMBEDS_URL
+    : REMOTE_EMBEDS_URL;
+
 const embedFetchers = {
   fetchers: {
     getTumblrEmbedFromUrl: (url: string) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            url:
-              "https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its",
-            href:
-              "https://embed.tumblr.com/embed/post/2_D8XbYRWYBtQD0A9Pfw-w/618042321716510720",
-            did: "211b71f5c49a42458fc23a95335d65c4331e91b4",
+      debugger;
+      const LOAD_DELAY = 1000;
+      const promise = new Promise((resolve, reject) => {
+        logging(`Calling ${embedsUrl}?iframe=0&uri=${url}`);
+        fetch(`${embedsUrl}?iframe=0&uri=${url}`)
+          .then((response) => {
+            setTimeout(() => {
+              resolve(response.json());
+            }, LOAD_DELAY);
+          })
+          .catch((error) => {
+            reject(error);
           });
-        }, 25000);
       });
+      return promise;
     },
     getOEmbedFromUrl: (url: string) => {
       const LOAD_DELAY = 1000;
