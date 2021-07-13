@@ -7,6 +7,7 @@ import { TooltipConfig, EmbedType, TooltipModule } from "./config";
 import GifImage from "./img/gif.svg";
 
 import Quill from "quill";
+import { EditorContextProps } from "../src/Editor";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
@@ -22,6 +23,7 @@ class Tooltip extends Component<{
   onInsertEmbed: ({}: { type: string; embed: any }) => void;
   onSetFormat: (format: string) => void;
   preventUpdate: (shouldPrevent: boolean) => void;
+  context: React.Context<EditorContextProps>;
 }> {
   state = {
     tenorOpen: false,
@@ -130,7 +132,14 @@ class Tooltip extends Component<{
               }}
             />
             {embedButtons}
-            <TenorKeyboard
+            {this.state.tenorOpen &&
+              this.props.context?.render?.listSelect([
+                {
+                  id: "id",
+                  name: "hello",
+                },
+              ])}
+            {/* <TenorKeyboard
               isOpen={this.state.tenorOpen}
               target={this.gifButton}
               onClose={(result: any) => {
@@ -143,7 +152,7 @@ class Tooltip extends Component<{
                 }
                 this.setState({ tenorOpen: false });
               }}
-            />
+            /> */}
           </div>
         </div>
         <style jsx>{`

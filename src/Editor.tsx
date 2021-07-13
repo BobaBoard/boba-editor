@@ -46,7 +46,18 @@ export interface EditorContextProps {
   fetchers?: {
     getOEmbedFromUrl: (url: string) => any;
   };
+  render?: {
+    listSelect: (
+      items: [
+        {
+          id: string;
+          name: string;
+        }
+      ]
+    ) => void;
+  };
 }
+
 export const EditorContext = React.createContext<EditorContextProps | null>(
   null
 );
@@ -565,6 +576,7 @@ class Editor extends Component<EditorProps> {
                   preventUpdate={(shouldPrevent) => {
                     this.skipTooltipUpdates = shouldPrevent;
                   }}
+                  context={this.context}
                 />
               )}
             {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
