@@ -1,7 +1,13 @@
 import { BlockImage } from "./custom-nodes/ssr";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import { RefObject } from "react";
-import cheerio from "cheerio";
+import type Cheerio from "cheerio";
+let CheerioModule: typeof Cheerio;
+// window = undefined;
+// document = undefined;
+if (typeof window !== "undefined") {
+  CheerioModule = require("cheerio") as typeof Cheerio;
+}
 import type {
   Node as CheerioNode,
   CheerioAPI,
@@ -22,7 +28,7 @@ const isSpoilerNode = (node: CheerioNode | null, $: CheerioAPI) => {
 };
 
 const compactSpoilers = (finalHtml: string) => {
-  const dom = cheerio.load(finalHtml, null, false);
+  const dom = CheerioModule.load(finalHtml, null, false);
   const inlineSpoilers = dom(".inline-spoilers").toArray();
   const inlineSpoilerGroups = inlineSpoilers
     // Get each separate group of inline spoilers
