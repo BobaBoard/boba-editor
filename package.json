@@ -28,6 +28,7 @@
   "dependencies": {
     "@atlaskit/popup": "^0.3.3",
     "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.10",
     "debug": "^4.1.1",
     "dompurify": "^2.3.0",
     "parchment": "^1.1.4",
