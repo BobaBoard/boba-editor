@@ -26,6 +26,21 @@ export const detectNewLine = (editor: Quill): BoundsStatic | null => {
   return null;
 };
 
+export const withLinkShortcut = (quillKeyboardConfig: any) => {
+  // TODO: at some point submit a PR to Quill to allow to
+  // bind this after configuration and clean this up.
+  quillKeyboardConfig.bindings["noLinebreak"] = {
+    key: "k",
+    shiftKey: null,
+    shortKey: true,
+    collapsed: false,
+    handler: function (range: RangeStatic, context: any) {
+      this.quill.theme.tooltip.edit(undefined, context.format?.link);
+      return true;
+    },
+  };
+};
+
 export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
   const Keyboard = QuillModule.import("modules/keyboard") as any;
   // TODO: at some point submit a PR to Quill to allow to
@@ -147,9 +162,8 @@ export const removeTrailingWhitespace = (delta: DeltaOperation[]) => {
     typeof resultDelta[resultDelta.length - 1].insert === "string" &&
     !resultDelta[resultDelta.length - 1].attributes
   ) {
-    resultDelta[resultDelta.length - 1].insert = resultDelta[
-      resultDelta.length - 1
-    ].insert.trimRight();
+    resultDelta[resultDelta.length - 1].insert =
+      resultDelta[resultDelta.length - 1].insert.trimRight();
   }
   return resultDelta;
 };

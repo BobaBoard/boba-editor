@@ -7,6 +7,7 @@ import {
   importEmbedModule,
   pasteImageAsBlockEmbed,
   withBlockquotesKeyboardBehavior,
+  withLinkShortcut,
   isEmptyDelta,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
@@ -405,6 +406,7 @@ class Editor extends Component<EditorProps> {
       this.addRemoveLinebreaksOnPasteHandler();
     }
     withBlockquotesKeyboardBehavior(quillConfig.modules.keyboard);
+    withLinkShortcut(quillConfig.modules.keyboard);
 
     this.maybeRegisterModules();
     this.editor = new QuillModule(
