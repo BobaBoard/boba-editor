@@ -16,7 +16,6 @@ import Spinner from "./Spinner";
 import { globalStyles } from "./custom-nodes/css/global";
 import { getSsrConverter, attachEventListeners } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
-import DOMPurify from "dompurify";
 
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
@@ -541,7 +540,7 @@ class Editor extends Component<EditorProps> {
               <div
                 className="ql-editor"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(ssrText),
+                  __html: ssrText,
                 }}
               ></div>
             </div>
