@@ -386,6 +386,11 @@ class Editor extends Component<EditorProps> {
       modules: {
         toolbar: {
           container: this.toolbarContainer.current,
+          handlers: {
+            link: function (value: string) {
+              debugger;
+            },
+          },
         },
         clipboard: {
           matchVisual: false,
@@ -414,6 +419,9 @@ class Editor extends Component<EditorProps> {
       this.editorContainer.current as any,
       quillConfig
     );
+    // Change the text in the tooltip textbox
+    // @ts-ignore
+    this.editor.theme.tooltip.textbox.dataset.link = "link a link!";
     this.props.onEditorCreated?.(this.editor);
     this.ssrRef?.current?.parentElement?.removeChild(this.ssrRef.current);
 
@@ -478,8 +486,6 @@ class Editor extends Component<EditorProps> {
       const CustomImage = require("./custom-nodes/CustomImage");
       QuillModule.register("formats/image", CustomImage.default, true);
     }
-    // const icons = QuillModule.import("ui/icons");
-    // icons["inline-spoilers"] = renderToStaticMarkup(<SpoilersIcon />);
   }
 
   componentWillUnmount() {
