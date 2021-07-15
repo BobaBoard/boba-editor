@@ -9,6 +9,7 @@ import {
   withBlockquotesKeyboardBehavior,
   withLinkShortcut,
   isEmptyDelta,
+  removeListKeyboardBindings,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
@@ -547,7 +548,11 @@ class Editor extends Component<EditorProps> {
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
             {!ssrText && (
-              <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
+              <Toolbar
+                ref={this.toolbarContainer}
+                loaded={this.state.loaded}
+                singleLine={!!this.props.singleLine}
+              />
             )}
             {this.props.editable &&
               // When it's single line, there can only be ONE image
@@ -739,57 +744,65 @@ class Editor extends Component<EditorProps> {
   }
 }
 
-const Toolbar = forwardRef<HTMLDivElement, { loaded: boolean }>(
-  ({ loaded }, ref) => {
-    return (
-      <>
-        <div
-          className={classNames("toolbar", "ql-toolbar", { loaded })}
-          ref={ref}
-        >
-          <span className="ql-formats">
-            <button className="ql-bold"></button>
-            <button className="ql-italic"></button>
-            <button className="ql-underline"></button>
-            <button className="ql-strike"></button>
-          </span>
-          <span className="ql-formats">
-            <button className="ql-link"></button>
-            <button className="ql-inline-spoilers">
-              <SpoilersIcon />
-            </button>
-          </span>
-          <span className="ql-formats">
-            <button className="ql-list" value="bullet"></button>
-            <button className="ql-list" value="ordered"></button>
-            <button className="ql-code"></button>
-            <button className="ql-blockquote"></button>
-          </span>
-          <span className="ql-formats">
-            <select className="ql-header">
-              <option value="h1">Heading 1</option>
-              <option value="h2">Heading 2</option>
-              <option value="h3">Heading 3</option>
-              <option value="">Normal</option>
-            </select>
-          </span>
-          <span className="ql-formats">
-            <button className="ql-clean"></button>
-          </span>
-        </div>
-        <style jsx>{`
-          .toolbar {
-            display: none;
-          }
-          .toolbar.loaded {
-            display: block;
-            text-align: center;
-          }
-        `}</style>
-      </>
-    );
+const Toolbar = forwardRef<
+  HTMLDivElement,
+  { loaded: boolean; singleLine: boolean }
+>(({ loaded, singleLine }, ref) => {
+  if (singleLine) {
+    removeListKeyboardBindings();
   }
-);
+  return (
+    <>
+      <div
+        className={classNames("toolbar", "ql-toolbar", { loaded })}
+        ref={ref}
+      >
+        <span className="ql-formats">
+          <button className="ql-bold"></button>
+          <button className="ql-italic"></button>
+          <button className="ql-underline"></button>
+          <button className="ql-strike"></button>
+        </span>
+        <span className="ql-formats">
+          <button className="ql-link"></button>
+          <button className="ql-inline-spoilers">
+            <SpoilersIcon />
+          </button>
+        </span>
+        <span className="ql-formats">
+          {!singleLine && (
+            <>
+              <button className="ql-list" value="bullet"></button>
+              <button className="ql-list" value="ordered"></button>
+            </>
+          )}
+          <button className="ql-code"></button>
+          <button className="ql-blockquote"></button>
+        </span>
+        <span className="ql-formats">
+          <select className="ql-header">
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="">Normal</option>
+          </select>
+        </span>
+        <span className="ql-formats">
+          <button className="ql-clean"></button>
+        </span>
+      </div>
+      <style jsx>{`
+        .toolbar {
+          display: none;
+        }
+        .toolbar.loaded {
+          display: block;
+          text-align: center;
+        }
+      `}</style>
+    </>
+  );
+});
 
 export interface EditorHandler {
   // Focus the embed.

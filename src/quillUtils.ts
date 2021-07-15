@@ -16,8 +16,7 @@ export const detectNewLine = (editor: Quill): BoundsStatic | null => {
   if (!editor.getSelection()) {
     return null;
   }
-  // @ts-ignore
-  const [line, _unused] = editor.getLine((editor.getSelection() as any).index);
+  const [line, _unused] = editor.getLine(editor.getSelection().index);
 
   if (line.cache && line.cache.length === 1) {
     const bounds = editor.getBounds((editor.getSelection() as any).index);
@@ -26,10 +25,13 @@ export const detectNewLine = (editor: Quill): BoundsStatic | null => {
   return null;
 };
 
+export const removeListKeyboardBindings = () => {
+  const Keyboard = QuillModule.import("modules/keyboard") as any;
+  Keyboard.DEFAULTS.bindings["list autofill"] = undefined;
+};
+
 export const withLinkShortcut = (quillKeyboardConfig: any) => {
-  // TODO: at some point submit a PR to Quill to allow to
-  // bind this after configuration and clean this up.
-  quillKeyboardConfig.bindings["noLinebreak"] = {
+  quillKeyboardConfig.bindings["linkShortcut"] = {
     key: "k",
     shiftKey: null,
     shortKey: true,
@@ -43,8 +45,6 @@ export const withLinkShortcut = (quillKeyboardConfig: any) => {
 
 export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
   const Keyboard = QuillModule.import("modules/keyboard") as any;
-  // TODO: at some point submit a PR to Quill to allow to
-  // bind this after configuration and clean this up.
   quillKeyboardConfig.bindings["blockquote-backspace"] = {
     key: Keyboard.keys.BACKSPACE,
     collapsed: true,
@@ -86,8 +86,6 @@ export const withBlockquotesKeyboardBehavior = (quillKeyboardConfig: any) => {
 
 export const withNoLinebreakHandler = (quillKeyboardConfig: any) => {
   const Keyboard = QuillModule.import("modules/keyboard") as any;
-  // TODO: at some point submit a PR to Quill to allow to
-  // bind this after configuration and clean this up.
   quillKeyboardConfig.bindings["noLinebreak"] = {
     key: Keyboard.keys.ENTER,
     shiftKey: null,
@@ -216,7 +214,6 @@ export const pasteImageAsBlockEmbed = (
 ) => {
   log("Paste event detected! Processing images...");
   let found = false;
-  // @ts-ignore
   log(pasteEvent.clipboardData?.items?.length);
   for (let i = 0; i < (pasteEvent.clipboardData?.items?.length || -1); i++) {
     const item = pasteEvent.clipboardData?.items[i] as DataTransferItem;
@@ -249,7 +246,9 @@ export const isEmptyDelta = (delta: DeltaOperation[] | Delta) => {
     return true;
   }
   let isEmpty = true;
-  // Apparently some
+  // Apparently some delta have been fucked up in some old release, causing all sort
+  // of issues when accessing them. By fucked up I mean that the object with "ops" was saved
+  // instead of just the delta itself.
   // https://v0.boba.social/!bobaland/thread/92a96953-9d97-4ad2-a4f1-1ec122dc34c3?thread
   actualDelta.map?.((op) => {
     if (typeof op.insert === "string") {
