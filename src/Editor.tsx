@@ -630,6 +630,12 @@ class Editor extends Component<EditorProps> {
           .editor-quill :global(.ql-tooltip) {
             z-index: 5;
           }
+          .editor-quill :global(.ql-tooltip) {
+            transform: translateY(20px);
+          }
+          .editor-quill :global(.ql-tooltip.ql-flip) {
+            transform: translateY(-20px);
+          }
           .editor :global(.ql-editor) :global(p) {
             word-break: break-word !important;
           }
