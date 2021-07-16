@@ -144,11 +144,12 @@ export const getSsrConverter = () => {
         }
         // Add the empty paragraph class to empty paragraphs.
         return (
-          // @ts-ignore
-          processedString.replaceAll?.(
-            "<p><br/></p>",
-            '<p class="empty"><br/></p>'
-          ) || processedString
+          processedString
+            // @ts-ignore
+            .replaceAll?.("<p><br></p>", '<p class="empty"><br/></p>')
+            // @ts-ignore
+            .replaceAll?.("<p><br/></p>", '<p class="empty"><br/></p>') ||
+          processedString
         );
       });
 

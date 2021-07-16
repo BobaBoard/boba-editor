@@ -52,7 +52,7 @@ const TWITTER_THREAD =
 const TUMBLR =
   '[{"insert":"NOTE: Tumblr Posts"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Tumblr posts are a bit weird. Unless you provide an endpoint that allows fetching the oEmbed data given the Tumblr URL, they won\'t work. It sucks, and I accept solutions.\\n"},{"insert":{"tumblr-embed":{"embedHeight": "840", "embedWidth": "500", "href":"https://embed.tumblr.com/embed/post/1DU3s2LW_74-QOcKbxGMsw/647298900927053824","did":"211b71f5c49a42458fc23a95335d65c4331e91b4","url":"https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its"}}},{"insert":"\\n"}]';
 const YOUTUBE =
-  '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"youtube-video":"https://www.youtube.com/embed/ROPpn-QcLZM"}},{"insert":"\\n"}]';
+  '[{"insert":"Open RP"},{"attributes":{"header":1},"insert":"\\n"},{"insert":"Youtube has a problem where paragraphs preceeding the embed are marked as empty on Safari. I refuse to keep fighting safari, so I hacked a solution.\\n"},{"insert":{"youtube-video":"https://www.youtube.com/embed/ROPpn-QcLZM"}},{"insert":"\\n"}]';
 const REDDIT =
   '[{"insert":"It\'s Reddit time!"},{"attributes":{"header":1},"insert":"\\n"},{"insert":{"reddit-embed":{"embedHeight": "629", "embedWidth": "500","url":"https://www.reddit.com/r/nextfuckinglevel/comments/ibikdr/50_year_old_firefighter_deadlifts_600_lbs_of/"}}},{"insert":"\\n"}]';
 const TIKTOK =

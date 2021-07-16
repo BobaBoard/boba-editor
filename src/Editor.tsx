@@ -10,6 +10,7 @@ import {
   withLinkShortcut,
   isEmptyDelta,
   removeListKeyboardBindings,
+  removeBuggedEmptyClasses,
 } from "./quillUtils";
 import Tooltip from "./Tooltip";
 import Spinner from "./Spinner";
@@ -450,6 +451,8 @@ class Editor extends Component<EditorProps> {
       // Save this editor for easy debug access.
       window["editor"] = this.editor;
     }
+
+    removeBuggedEmptyClasses(this.editorContainer.current);
 
     this.setState({
       loaded: true,

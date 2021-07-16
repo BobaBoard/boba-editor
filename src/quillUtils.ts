@@ -262,3 +262,18 @@ export const isEmptyDelta = (delta: DeltaOperation[] | Delta) => {
   log(delta);
   return isEmpty;
 };
+
+// Fixes a safari bug where the paragraph preceding certain embeds (e.g. YouTube)
+// is incorrectly marked as empty.
+export const removeBuggedEmptyClasses = (
+  editorContainer: HTMLDivElement | null
+) => {
+  const editor = editorContainer?.querySelector(".ql-editor");
+  if (editor) {
+    editor.childNodes.forEach((node) => {
+      if (node && "classList" in node && node["classList"]?.contains("empty")) {
+        node["classList"].toggle("empty", node.childNodes.length == 0);
+      }
+    });
+  }
+};
