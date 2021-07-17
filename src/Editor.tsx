@@ -386,11 +386,6 @@ class Editor extends Component<EditorProps> {
       modules: {
         toolbar: {
           container: this.toolbarContainer.current,
-          handlers: {
-            link: function (value: string) {
-              debugger;
-            },
-          },
         },
         clipboard: {
           matchVisual: false,
@@ -452,7 +447,9 @@ class Editor extends Component<EditorProps> {
       window["editor"] = this.editor;
     }
 
-    removeBuggedEmptyClasses(this.editorContainer.current);
+    if (!this.isServer) {
+      removeBuggedEmptyClasses(this.editorContainer.current);
+    }
 
     this.setState({
       loaded: true,
