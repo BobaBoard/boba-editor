@@ -153,6 +153,7 @@ const TEST_EMBEDS = [
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://archiveofourown.org/works/28349940/chapters/69459594"}',
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://anarchism.space/@ExperimentV/105713537503551493"}',
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://tanoshimi.xyz/2016/11/29/yes-sadpanda-is-one-of-my-sources/"}',
+  '{"embedHeight":"367.5","embedWidth":"500","url":"https://egypt.urnash.com/blog/2014/08/09/stereotypes/"}',
   '{"embedHeight":"367.5","embedWidth":"500","url":"https://www.traeume-aus-edelstahl.de/details.html?_filterartnr=hr007&_random=1120875411"}',
 ];
 
