@@ -1,12 +1,13 @@
-import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import Editor, {
-  EditorHandler,
   EditorContext,
+  EditorHandler,
   getAllImages,
   removeTrailingWhitespace,
   replaceImages,
 } from "../src";
+
+import React from "react";
 import { action } from "@storybook/addon-actions";
 
 const logging = require("debug")("bobapost:stories:editor");

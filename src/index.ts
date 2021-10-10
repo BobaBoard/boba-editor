@@ -1,11 +1,19 @@
 import Editor, { EditorContext } from "./Editor";
-import type { EditorHandler } from "./Editor";
 import {
+  getAllImages,
+  removeTrailingWhitespace,
+  replaceImages,
+} from "./quillUtils";
+
+import type { EditorHandler } from "./Editor";
+import { getDeltaSummary } from "./semanticUtils";
+
+export {
   getAllImages,
   replaceImages,
   removeTrailingWhitespace,
-} from "./quillUtils";
-
-export { getAllImages, replaceImages, removeTrailingWhitespace, EditorContext };
+  getDeltaSummary,
+  EditorContext,
+};
 export default Editor;
 export type { EditorHandler };
