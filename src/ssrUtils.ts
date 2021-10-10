@@ -1,21 +1,23 @@
+import type {
+  CheerioAPI,
+  Element as CheerioElement,
+  Node as CheerioNode,
+} from "cheerio";
+
 import { BlockImage } from "./custom-nodes/ssr";
+import type Cheerio from "cheerio";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import { RefObject } from "react";
-import type Cheerio from "cheerio";
+import { addEventListeners as addSpoilersEventListeners } from "./custom-nodes/InlineSpoilers";
+// import BlockImageType from "./custom-nodes/BlockImage";
+import { makeSpoilerable } from "./custom-nodes/utils";
+
 let CheerioModule: typeof Cheerio;
 // window = undefined;
 // document = undefined;
 if (typeof window !== "undefined") {
   CheerioModule = require("cheerio") as typeof Cheerio;
 }
-import type {
-  Node as CheerioNode,
-  CheerioAPI,
-  Element as CheerioElement,
-} from "cheerio";
-import { addEventListeners as addSpoilersEventListeners } from "./custom-nodes/InlineSpoilers";
-// import BlockImageType from "./custom-nodes/BlockImage";
-import { makeSpoilerable } from "./custom-nodes/utils";
 
 const isSpoilerNode = (node: CheerioNode | null, $: CheerioAPI) => {
   if (!node) {
