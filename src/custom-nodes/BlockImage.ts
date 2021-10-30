@@ -1,9 +1,6 @@
 import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
 
 import Quill from "quill";
-import React from "react";
-import ReactDOM from "react-dom";
-import Spinner from "../Spinner";
 
 const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -55,7 +52,6 @@ class BlockImage extends BlockEmbed {
 
     const spinnerNode = document.createElement("div");
     spinnerNode.classList.add("spinner");
-    ReactDOM.render(React.createElement(Spinner, {}, null), spinnerNode);
     node.appendChild(spinnerNode);
     if (value["loadPromise"]) {
       (value["loadPromise"] as Promise<string | ArrayBuffer>)
