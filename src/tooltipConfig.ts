@@ -1,5 +1,15 @@
 import { TooltipConfig, TooltipModule } from "./config";
 
+import ExternalEmbedIcon from "./img/external_embed.svg";
+import InstagramIcon from "./img/instagram.svg";
+import PixivIcon from "./img/pixiv.svg";
+import RedditIcon from "./img/reddit.svg";
+import TiktokIcon from "./img/tiktok.svg";
+import TumblrIcon from "./img/tumblr_icon.svg";
+import TwitterIcon from "./img/twitter.svg";
+import VimeoIcon from "./img/vimeo.svg";
+import YouTubeIcon from "./img/yt_icon.svg";
+
 let RedditEmbed;
 let TweetEmbed;
 let PixivEmbed;
@@ -22,24 +32,6 @@ if (typeof window !== "undefined") {
   OEmbedEmbed = require("./custom-nodes/OEmbedBase").default;
 }
 
-// @ts-ignore
-import YouTubeIcon from "./img/yt_icon.svg";
-// @ts-ignore
-import TumblrIcon from "./img/tumblr_icon.svg";
-// @ts-ignore
-import TiktokIcon from "./img/tiktok.svg";
-// @ts-ignore
-import TwitterIcon from "./img/twitter.svg";
-// @ts-ignore
-import RedditIcon from "./img/reddit.svg";
-// @ts-ignore
-import PixivIcon from "./img/pixiv.svg";
-// @ts-ignore
-import InstagramIcon from "./img/instagram.svg";
-// @ts-ignore
-import VimeoIcon from "./img/vimeo.svg";
-// @ts-ignore
-import ExternalEmbedIcon from "./img/external_embed.svg";
 
 export const defaultConfig: TooltipConfig = {
   enabledModules: [

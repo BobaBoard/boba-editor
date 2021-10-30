@@ -1,8 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom";
-// @ts-ignore
 import CloseButton from "../img/close.svg";
-// @ts-ignore
 import SpoilersIcon from "../img/spoilers.svg";
 
 const logging = require("debug")("bobapost:embeds:utils");
@@ -57,7 +53,7 @@ export const addEmbedEditOverlay = (
   embedType: any,
   embedRoot: HTMLElement,
   extraSettings?: {
-    icon: any;
+    icon: string;
     initialValue: boolean;
     onToggle: (root: HTMLElement, value: boolean) => void;
   }[]
@@ -67,7 +63,9 @@ export const addEmbedEditOverlay = (
   const closeButton = document.createElement("div");
   closeButton.classList.add("close-button");
 
-  ReactDOM.render(React.createElement(CloseButton, {}, null), closeButton);
+  const closeButtonImg = document.createElement("img");
+  closeButtonImg.src = CloseButton;
+  closeButton.appendChild(closeButtonImg);
   containerDiv.appendChild(closeButton);
   closeButton.addEventListener("click", () => {
     embedType.onRemoveRequest(embedRoot);
@@ -80,10 +78,9 @@ export const addEmbedEditOverlay = (
     if (embedType.onMarkSpoilers) {
       const spoilersButton = document.createElement("div");
       spoilersButton.classList.add("spoilers-button", "embed-options-button");
-      ReactDOM.render(
-        React.createElement(SpoilersIcon, {}, null),
-        spoilersButton
-      );
+      const spoilersImg = document.createElement("img");
+      spoilersImg.src = SpoilersIcon;
+      spoilersButton.appendChild(spoilersImg);
       optionsOverlay.appendChild(spoilersButton);
       spoilersButton.classList.toggle(
         "active",
@@ -110,10 +107,9 @@ export const addEmbedEditOverlay = (
     extraSettings?.forEach((setting) => {
       const threadButton = document.createElement("div");
       threadButton.classList.add("thread-button", "embed-options-button");
-      ReactDOM.render(
-        React.createElement(setting.icon, {}, null),
-        threadButton
-      );
+      const threadButtonImg = document.createElement("img");
+      threadButtonImg.src = setting.icon;
+      threadButton.appendChild(threadButtonImg);
       optionsOverlay.appendChild(threadButton);
       threadButton.classList.toggle("active", !!setting.initialValue);
       threadButton.addEventListener("click", (e) => {

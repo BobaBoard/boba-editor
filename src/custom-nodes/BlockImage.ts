@@ -1,5 +1,6 @@
-import Quill from "quill";
 import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
+
+import Quill from "quill";
 import React from "react";
 import ReactDOM from "react-dom";
 import Spinner from "../Spinner";

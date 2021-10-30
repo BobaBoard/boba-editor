@@ -46,6 +46,10 @@ module.exports = {
         loader: "babel-loader",
       },
       {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loader: "base64-image-loader",
+      },
+      {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },

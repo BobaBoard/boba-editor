@@ -1,26 +1,23 @@
+import {
+  addEmbedEditOverlay,
+  addErrorMessage,
+  addLoadingMessage,
+  makeSpoilerable,
+} from "./utils";
+
+import { EditorContextProps } from "../Editor";
+import { EmbedValue } from "../config";
 import Quill from "quill";
-import React from "react";
-import ReactDOM from "react-dom";
-// @ts-ignore
 import ThreadIcon from "../img/thread.svg";
+import TwitterIcon from "../img/twitter.svg";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import {
-  addEmbedEditOverlay,
-  addLoadingMessage,
-  addErrorMessage,
-  makeSpoilerable,
-} from "./utils";
 
 const logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 
-// @ts-ignore
-import TwitterIcon from "../img/twitter.svg";
-import { EmbedValue } from "../config";
-import { EditorContextProps } from "../Editor";
 
 interface TweetEmbed extends EmbedValue {
   href: string;
@@ -82,7 +79,9 @@ class TweetEmbed extends BlockEmbed {
         }
         if (el.getBoundingClientRect().height == 0) {
           node.classList.add("ios-bug");
-          ReactDOM.render(React.createElement(TwitterIcon, {}, null), node);
+          const twitterImg = document.createElement("img");
+          twitterImg.src = TwitterIcon;
+          node.appendChild(twitterImg);
           addErrorMessage(node, {
             message: `You've been hit by... <br />
              You've been strucky by... <br />

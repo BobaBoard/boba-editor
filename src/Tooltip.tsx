@@ -1,12 +1,12 @@
+import { EmbedType, TooltipConfig, TooltipModule } from "./config";
 import React, { Component, forwardRef } from "react";
-const TenorKeyboard = require("./TenorKeyboard").default;
-import classNames from "classnames";
-import { TooltipConfig, EmbedType, TooltipModule } from "./config";
 
-// @ts-ignore
 import GifImage from "./img/gif.svg";
-
 import Quill from "quill";
+import classNames from "classnames";
+
+const TenorKeyboard = require("./TenorKeyboard").default;
+
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
@@ -33,7 +33,6 @@ class Tooltip extends Component<{
   render() {
     let embedButtons = this.props.config.enabledEmbeds.map(
       (embed: EmbedType) => {
-        let Icon = embed.icon;
         return (
           <button
             className={"ql-" + embed.embedName}
@@ -49,7 +48,7 @@ class Tooltip extends Component<{
               }
             }}
           >
-            <Icon key={embed.embedName} />
+            <img src={embed.icon} key={embed.embedName} />
           </button>
         );
       }
@@ -101,7 +100,7 @@ class Tooltip extends Component<{
                 this.setState({ tenorOpen: true });
               }}
             >
-              <GifImage key="gif_image" />
+              <img src={GifImage} />
             </button>
             <button
               className={classNames("ql-blockquote", {
@@ -157,6 +156,16 @@ class Tooltip extends Component<{
             align-items: center;
             max-width: 70vw;
             transform: translateY(-5px);
+          }
+          .tooltip :global(button img) {
+            filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg)
+              brightness(91%) contrast(94%);
+            max-width: 100%;
+            max-height: 100%;
+          }
+          .tooltip :global(button:hover img) {
+            filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+              brightness(105%) contrast(105%);
           }
           .hidden {
             display: none !important;

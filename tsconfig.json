@@ -24,6 +24,6 @@
     "esModuleInterop": true,
     "types": ["react", "react-dom", "styled-jsx", "node", "quill"]
   },
-  "include": ["/**/*"],
+  "include": ["/**/*", "./custom-types.d.ts"],
   "exclude": ["node_modules", "build", "scripts", "dist"]
 }

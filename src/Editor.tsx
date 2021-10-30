@@ -1,37 +1,37 @@
-import React, { Component, createRef, forwardRef } from "react";
-import classNames from "classnames";
-import {
-  detectNewLine,
-  withNoLinebreakHandler,
-  removeLineBreaksFromPaste,
-  importEmbedModule,
-  pasteImageAsBlockEmbed,
-  withBlockquotesKeyboardBehavior,
-  withLinkShortcut,
-  isEmptyDelta,
-  removeListKeyboardBindings,
-  removeBuggedEmptyClasses,
-} from "./quillUtils";
-import Tooltip from "./Tooltip";
-import Spinner from "./Spinner";
-import { globalStyles } from "./custom-nodes/css/global";
-import { getSsrConverter, attachEventListeners } from "./ssrUtils";
-import { defaultConfig, singleLineConfig } from "./tooltipConfig";
-
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
 
-const logging = require("debug")("bobapost:editor");
-const loggingVerbose = require("debug")("bobapost:editor:verbose");
-// @ts-ignore
-import SpoilersIcon from "./img/spoilers.svg";
-// logging.enabled = true;
-// loggingVerbose.enabled = true;
+import React, { Component, createRef, forwardRef } from "react";
+import { attachEventListeners, getSsrConverter } from "./ssrUtils";
+import { defaultConfig, singleLineConfig } from "./tooltipConfig";
+import {
+  detectNewLine,
+  importEmbedModule,
+  isEmptyDelta,
+  pasteImageAsBlockEmbed,
+  removeBuggedEmptyClasses,
+  removeLineBreaksFromPaste,
+  removeListKeyboardBindings,
+  withBlockquotesKeyboardBehavior,
+  withLinkShortcut,
+  withNoLinebreakHandler,
+} from "./quillUtils";
 
+import type { Delta } from "quill";
 // Only import Quill if there is a "window".
 // This allows the editor to be imported even in a SSR environment.
 import type Quill from "quill";
-import type { Delta } from "quill";
+import Spinner from "./Spinner";
+import SpoilersIcon from "./img/spoilers.svg";
+import Tooltip from "./Tooltip";
+import classNames from "classnames";
+import { globalStyles } from "./custom-nodes/css/global";
+
+const logging = require("debug")("bobapost:editor");
+const loggingVerbose = require("debug")("bobapost:editor:verbose");
+// logging.enabled = true;
+// loggingVerbose.enabled = true;
+
 let QuillModule: typeof Quill;
 // window = undefined;
 // document = undefined;
@@ -777,7 +777,7 @@ const Toolbar = forwardRef<
         <span className="ql-formats">
           <button className="ql-link"></button>
           <button className="ql-inline-spoilers">
-            <SpoilersIcon />
+            <img src={SpoilersIcon} />
           </button>
         </span>
         <span className="ql-formats">

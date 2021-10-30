@@ -27,7 +27,7 @@ export const globalStyles = css.global`
     padding: 20px;
     margin: 10px 0;
   }
-  .ql-embed.ios-bug > svg {
+  .ql-embed.ios-bug > img {
     position: absolute;
     width: 50px;
     left: 10px;
@@ -193,18 +193,20 @@ export const globalStyles = css.global`
     pointer-events: all;
     z-index: 2;
   }
-  .close-button svg {
-    fill: #ccc;
+  .close-button img {
+    filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg) brightness(91%) contrast(94%);
     top: 50%;
     left: 50%;
     display: block;
     position: absolute;
     transform: translate(-50%, -50%);
   }
-  .close-button:hover svg, .close-button:hover {
-    fill: white;
+  .close-button:hover {
     border-color: white;
     cursor: pointer;
+  }
+  .close-button:hover img {
+    filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg) brightness(105%) contrast(105%);
   }
   .editor.view-only .close-button {
     display: none;
@@ -255,13 +257,24 @@ export const globalStyles = css.global`
     width: 20px;
     margin: 0px 3px;
   }
+  .embed-options-button img {    
+    filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg) brightness(91%) contrast(94%);
+  }
+  .embed-options-button:hover img {    
+    filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+      brightness(105%) contrast(105%);
+  }
+  .embed-options-button.active img {    
+    filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+      brightness(105%) contrast(105%);
+  }
   .embed-options-button.active .ql-fill {
     fill: white;
   }
   .embed-options-button:hover {
     cursor: pointer;
   }
-  .embed-options-button > svg {
+  .embed-options-button > img {
     height: 20px;
     width: 20px;
   }
