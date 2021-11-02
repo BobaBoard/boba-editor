@@ -39,6 +39,7 @@ class BlockImage extends BlockEmbed {
     log(value);
     if (src) {
       img.setAttribute("src", this.sanitize(src));
+      img.classList.add("image");
     }
     if (value["width"] || value["height"]) {
       img.setAttribute("width", `${value["width"]}px`);
@@ -76,7 +77,7 @@ class BlockImage extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement): SavedValue | null {
-    const img = domNode.querySelector("img");
+    const img = domNode.querySelector<HTMLImageElement>("img.image");
     if (!img) {
       return null;
     }
