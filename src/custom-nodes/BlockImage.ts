@@ -23,10 +23,15 @@ export type SavedValue =
   | string;
 type Value = { loadPromise: Promise<string | ArrayBuffer> } | SavedValue;
 
+const setImageValue = (img: HTMLImageElement, src: string) => {
+  img.setAttribute("src", src);
+  img.classList.add("image");
+};
+
 class BlockImage extends BlockEmbed {
   static create(value: Value) {
     const node = super.create();
-    const img = document.createElement("IMG");
+    const img = document.createElement("IMG") as HTMLImageElement;
     img.onload = () => {
       node.removeChild(node.querySelector(".spinner"));
       node.classList.remove("loading");
@@ -38,6 +43,7 @@ class BlockImage extends BlockEmbed {
     log(`Image value:`);
     log(value);
     if (src) {
+      setImageValue(img, this.sanitize(src));
       img.setAttribute("src", this.sanitize(src));
       img.classList.add("image");
     }
@@ -58,8 +64,7 @@ class BlockImage extends BlockEmbed {
     if (value["loadPromise"]) {
       (value["loadPromise"] as Promise<string | ArrayBuffer>)
         .then((src) => {
-          img.setAttribute("src", this.sanitize(src));
-          img.classList.add("image");
+          setImageValue(img, this.sanitize(src));
         })
         .catch(() => {
           node.removeChild(node.querySelector(".spinner"));
