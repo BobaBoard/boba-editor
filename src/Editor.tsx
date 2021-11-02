@@ -810,6 +810,16 @@ const Toolbar = forwardRef<
           display: block;
           text-align: center;
         }
+        .toolbar :global(button img) {
+          filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg)
+            brightness(91%) contrast(94%);
+          max-width: 100%;
+          max-height: 100%;
+        }
+        .toolbar :global(button:hover img) {
+          filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+            brightness(105%) contrast(105%);
+        }
       `}</style>
     </>
   );
