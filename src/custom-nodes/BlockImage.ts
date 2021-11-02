@@ -54,10 +54,12 @@ class BlockImage extends BlockEmbed {
     const spinnerNode = document.createElement("div");
     spinnerNode.classList.add("spinner");
     node.appendChild(spinnerNode);
+    // TODO: test this special case
     if (value["loadPromise"]) {
       (value["loadPromise"] as Promise<string | ArrayBuffer>)
         .then((src) => {
           img.setAttribute("src", this.sanitize(src));
+          img.classList.add("image");
         })
         .catch(() => {
           node.removeChild(node.querySelector(".spinner"));
