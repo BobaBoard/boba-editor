@@ -1,6 +1,4 @@
-import React from "react";
 import { getSsrConverter } from "../src/ssrUtils";
-import { render } from "@testing-library/react";
 
 const longText = `[
     {"insert":"This is a H1 Header"},{"attributes":{"header":1},"insert":"\\n"},
