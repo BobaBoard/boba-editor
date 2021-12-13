@@ -1,5 +1,6 @@
+import type { BoundsStatic, Delta, DeltaOperation, RangeStatic } from "quill";
+
 import { EditorContextProps } from "./Editor";
-import type { BoundsStatic, DeltaOperation, RangeStatic, Delta } from "quill";
 import type Quill from "quill";
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {

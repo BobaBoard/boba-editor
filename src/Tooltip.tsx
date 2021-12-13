@@ -37,6 +37,7 @@ class Tooltip extends Component<{
           <button
             className={"ql-" + embed.embedName}
             key={embed.embedName}
+            aria-label={embed.embedName}
             onClick={() => {
               // TODO: make a prettier input
               let url = prompt("Gimme a " + embed.embedName + " url");
@@ -60,6 +61,7 @@ class Tooltip extends Component<{
             className={classNames("tooltip ql-tooltip ql-toolbar", {
               hidden: !this.props.show,
             })}
+            role="toolbar"
             style={{
               top: `${this.props.top}px`,
               right: `${this.props.right}px`,

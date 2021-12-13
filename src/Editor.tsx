@@ -1,6 +1,8 @@
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
 
+import * as CustomNodes from "./custom-nodes";
+
 import React, { Component, createRef, forwardRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
@@ -238,39 +240,20 @@ class Editor extends Component<EditorProps> {
       this.onEmbedChange();
     };
 
-    // TODO: context not existing (for typescript) has probably something to do with
-    // nodes types missing
-    const FORBIDDEN_ENDINGS = [".ts", ".tsx", "Style", "utils", "ssr", ".css"];
-    const FORBIDDEN_REGEXES = [/\/css\/.*/];
-    require
-      //@ts-ignore
-      .context("./custom-nodes/", true)
-      .keys()
-      // Doing this by filtering because regexes defeated me
-      .filter((moduleName: string) => {
-        return (
-          !FORBIDDEN_ENDINGS.some((ending) => moduleName.endsWith(ending)) &&
-          !FORBIDDEN_REGEXES.some((regex) => moduleName.match(regex))
-        );
-      })
-      .map((path: string) => path.substring(2))
-      .forEach((moduleName: string) => {
-        importEmbedModule(
-          moduleName,
-          {
-            onLoadCallback: embedsLoadedCallback,
-            onRemoveRequestCallback: embedCloseCallback,
-          },
-          this.context?.cache
-        );
-      });
+    Object.keys(CustomNodes).forEach((key) => {
+      importEmbedModule(
+        key,
+        {
+          onLoadCallback: embedsLoadedCallback,
+          onRemoveRequestCallback: embedCloseCallback,
+        },
+        this.context?.cache
+      );
+    });
 
     if (this.context?.fetchers?.getOEmbedFromUrl) {
       const OEmbed = require("./custom-nodes/OEmbedBase");
       OEmbed.default.getOEmbedFromUrl = this.context.fetchers?.getOEmbedFromUrl;
-      const TumblrEmbed = require("./custom-nodes/TumblrEmbed");
-      TumblrEmbed.default.getTumblrEmbedFromUrl =
-        this.context.fetchers?.getOEmbedFromUrl;
     }
   }
 
@@ -583,7 +566,11 @@ class Editor extends Component<EditorProps> {
                 />
               )}
             {/* Never add dynamic classes to this. If React re-renders it, then Quill fucks up.*/}
-            <div className="editor-quill" ref={this.editorContainer}></div>
+            <div
+              className="editor-quill"
+              ref={this.editorContainer}
+              role="textbox"
+            ></div>
           </div>
         )}
 

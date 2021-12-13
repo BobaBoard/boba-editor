@@ -22,7 +22,15 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "types": ["react", "react-dom", "styled-jsx", "node", "quill", "jest"]
+    "types": [
+      "react",
+      "react-dom",
+      "styled-jsx",
+      "node",
+      "quill",
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
   "include": ["/**/*", "./custom-types.d.ts"],
   "exclude": ["node_modules", "build", "scripts", "dist"]
