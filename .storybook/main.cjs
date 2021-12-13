@@ -5,6 +5,7 @@ module.exports = {
     "@storybook/addon-controls",
     "@storybook/addon-viewport/register",
     "@storybook/addon-actions",
+    "@storybook/addon-a11y",
   ],
   webpackFinal: async (config) => {
     config.devtool = "inline-source-map";
