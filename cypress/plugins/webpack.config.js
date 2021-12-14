@@ -19,20 +19,6 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  externals: {
-    react: {
-      root: "React",
-      commonjs2: "react",
-      commonjs: "react",
-      amd: "react",
-    },
-    "react-dom": {
-      root: "ReactDOM",
-      commonjs2: "react-dom",
-      commonjs: "react-dom",
-      amd: "react-dom",
-    },
-  },
   // Source maps support ('inline-source-map' also works)
   devtool: "source-map",
 

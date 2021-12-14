@@ -29,7 +29,9 @@
       "node",
       "quill",
       "jest",
-      "@testing-library/jest-dom"
+      "cypress-wait-until",
+      "@testing-library/jest-dom",
+      "@testing-library/cypress"
     ]
   },
   "include": ["/**/*", "./custom-types.d.ts"],
