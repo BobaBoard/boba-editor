@@ -1,6 +1,7 @@
 {
   "component": {
     "testFiles": "**/*.spec.{js,ts,jsx,tsx}",
-    "componentFolder": "tests"
+    "componentFolder": "tests",
+    "video": false
   }
 }

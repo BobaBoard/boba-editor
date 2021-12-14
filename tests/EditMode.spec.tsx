@@ -26,14 +26,15 @@ const embedFetchers = {
 };
 
 const waitForTwitterScript = () => {
-  cy.document().then((doc) => {
-    const twitterLibrary = doc.createElement("script");
-    twitterLibrary.src = "https://platform.twitter.com/widgets.js";
-    doc.body.appendChild(twitterLibrary);
+  cy.window().then((win) => {
+    if (!win["twttr"]) {
+      const twitterLibrary = win.document.createElement("script");
+      twitterLibrary.src = "https://platform.twitter.com/widgets.js";
+      win.document.body.appendChild(twitterLibrary);
+    }
   });
   cy.waitUntil(() => {
     return cy.window().then((win) => {
-      console.log(win["twttr"]);
       return win["twttr"] !== undefined;
     });
   });

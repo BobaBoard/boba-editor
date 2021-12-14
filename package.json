@@ -14,8 +14,9 @@
     "visual-testing": "backstop test",
     "approve-visuals": "backstop approve",
     "test": "jest tests",
-    "test:watch": "npm run test -- --watch",
-    "cypress": "cypress open-ct"
+    "test:watch": "yarn run test -- --watch",
+    "cypress": "cypress open-ct",
+    "cypress:ci": "cypress run-ct"
   },
   "repository": {
     "type": "git",
