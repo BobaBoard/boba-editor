@@ -1,8 +1,6 @@
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
 
-import * as CustomNodes from "./custom-nodes";
-
 import React, { Component, createRef, forwardRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
@@ -35,10 +33,12 @@ const loggingVerbose = require("debug")("bobapost:editor:verbose");
 // loggingVerbose.enabled = true;
 
 let QuillModule: typeof Quill;
+let CustomNodes = {};
 // window = undefined;
 // document = undefined;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
+  CustomNodes = require("./custom-nodes");
 }
 
 export interface EditorContextProps {
