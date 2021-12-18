@@ -3,6 +3,7 @@ import Editor, { EditorContext } from "../../src";
 import { EditableEditorProps } from "Editor";
 import React from "react";
 import { mount } from "@cypress/react";
+import { text } from "cheerio/lib/api/manipulation";
 
 const REMOTE_EMBEDS_URL = `https://boba-embeds.herokuapp.com/iframely`;
 
@@ -41,11 +42,11 @@ const waitForTwitterScript = () => {
   });
 };
 
-const loadTweet = ({
-  tweetUrl,
+const loadYouTubeVideo = ({
+  videoUrl,
   onTextChange,
 }: {
-  tweetUrl: string;
+  videoUrl: string;
   onTextChange?: EditableEditorProps["onTextChange"];
 }) => {
   mount(
@@ -62,26 +63,26 @@ const loadTweet = ({
   );
 
   cy.window().then((win) => {
-    cy.stub(win, "prompt").returns(tweetUrl);
+    cy.stub(win, "prompt").returns(videoUrl);
   });
 
-  waitForTwitterScript();
+  //waitForTwitterScript();
   // Clicks on the empty editor, the tooltip should appear
   cy.get(".ql-editor").click();
 
   // Clicks on the twitter button
-  const tooltipContaner = cy.findByLabelText("twitter");
+  const tooltipContaner = cy.findByLabelText("youtube");
   tooltipContaner.click();
 };
 
-it("Correctly loads twitter embeds dimensions", () => {
+it("Correctly loads YouTube video dimensions", () => {
   const textChange = cy.spy();
-  loadTweet({
-    tweetUrl: "https://twitter.com/BobaBoard/status/1263913643650908160",
+  loadYouTubeVideo({
+    videoUrl: "https://www.youtube.com/watch?v=EuRwxzKt0vo",
     onTextChange: textChange,
   });
 
-  cy.get(".ql-tweet[data-rendered*=true]")
+  cy.get(".ql-youtube-video")
     .should("be.visible")
     .then(() => {
       console.log(textChange.lastCall);
@@ -90,11 +91,8 @@ it("Correctly loads twitter embeds dimensions", () => {
           ops: [
             {
               insert: {
-                tweet: {
-                  url: "https://twitter.com/BobaBoard/status/1263913643650908160",
-                  embedWidth: "469",
-                  embedHeight: "635",
-                  thread: false,
+                "youtube-video": {
+                  url: "https://www.youtube.com/embed/EuRwxzKt0vo",
                   spoilers: false,
                 },
               },
@@ -108,18 +106,18 @@ it("Correctly loads twitter embeds dimensions", () => {
     });
 });
 
-it("Correctly toggles spoilers on", () => {
+it("Correctly toggles YouTube video spoilers on", () => {
   const textChange = cy.spy();
-  loadTweet({
-    tweetUrl: "https://twitter.com/BobaBoard/status/1263913643650908160",
+  loadYouTubeVideo({
+    videoUrl: "https://www.youtube.com/watch?v=EuRwxzKt0vo",
     onTextChange: textChange,
   });
 
-  cy.get(".ql-tweet[data-rendered*=true]")
+  cy.get(".ql-youtube-video")
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-tweet[spoilers*=true]")
+      cy.get(".ql-youtube-video[spoilers*=true]")
         .should("be.visible")
         .then(() => {
           expect(
@@ -127,11 +125,8 @@ it("Correctly toggles spoilers on", () => {
               ops: [
                 {
                   insert: {
-                    tweet: {
-                      url: "https://twitter.com/BobaBoard/status/1263913643650908160",
-                      embedWidth: "469",
-                      embedHeight: "635",
-                      thread: false,
+                    "youtube-video": {
+                      url: "https://www.youtube.com/embed/EuRwxzKt0vo",
                       spoilers: true,
                     },
                   },
@@ -146,22 +141,22 @@ it("Correctly toggles spoilers on", () => {
     });
 });
 
-it("Correctly toggles spoilers off", () => {
+it("Correctly toggles YouTube video spoilers off", () => {
   const textChange = cy.spy();
-  loadTweet({
-    tweetUrl: "https://twitter.com/BobaBoard/status/1263913643650908160",
+  loadYouTubeVideo({
+    videoUrl: "https://www.youtube.com/watch?v=EuRwxzKt0vo",
     onTextChange: textChange,
   });
 
-  cy.get(".ql-tweet[data-rendered*=true]")
+  cy.get(".ql-youtube-video")
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-tweet[spoilers*=true]")
+      cy.get(".ql-youtube-video[spoilers*=true]")
         .should("be.visible")
         .then(() => {
           cy.findByLabelText("Toggle spoilers off").click();
-          cy.get(".ql-tweet:not([spoilers*=true])")
+          cy.get(".ql-youtube-video:not([spoilers*=true])")
             .should("be.visible")
             .then(() => {
               expect(
@@ -169,11 +164,8 @@ it("Correctly toggles spoilers off", () => {
                   ops: [
                     {
                       insert: {
-                        tweet: {
-                          url: "https://twitter.com/BobaBoard/status/1263913643650908160",
-                          embedWidth: "469",
-                          embedHeight: "635",
-                          thread: false,
+                        "youtube-video": {
+                          url: "https://www.youtube.com/embed/EuRwxzKt0vo",
                           spoilers: false,
                         },
                       },
@@ -189,14 +181,14 @@ it("Correctly toggles spoilers off", () => {
     });
 });
 
-it("Correctly removes the tweet", () => {
+it("Correctly removes the YouTube video", () => {
   const textChange = cy.spy();
-  loadTweet({
-    tweetUrl: "https://twitter.com/BobaBoard/status/1263913643650908160",
+  loadYouTubeVideo({
+    videoUrl: "https://www.youtube.com/watch?v=EuRwxzKt0vo",
     onTextChange: textChange,
   });
 
-  cy.get(".ql-tweet[data-rendered*=true]")
+  cy.get(".ql-youtube-video")
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Delete embed").click();
