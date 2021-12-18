@@ -429,6 +429,35 @@ export const globalStyles = css.global`
     left: 50%;
     transform: translateX(-50%);
   }
+
+  button.embed-options-button {
+    display: inline-block;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    background: transparent;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  button.embed-options-button:hover,
+  button.embed-options-button:focus {
+      background: transparent;
+  }
+
+  button.embed-options-button:focus {
+      outline: none;
+  }
+
+  button.embed-options-button:active {
+      transform: scale(0.99);
+  }
   .embed-options-button {
     height: 20px;
     width: 20px;

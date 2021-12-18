@@ -848,14 +848,14 @@ interface BaseProps {
   forceSSR?: boolean;
 }
 
-interface EditableProps extends BaseProps {
+export interface EditableEditorProps extends BaseProps {
   editable: true;
   // Whether to focus the editor when it's first mounted.
   focusOnMount?: boolean;
   // Every time the text is changed, this method will be called with
   // the new QuillJS delta.
   onTextChange: (newText: any) => void;
-  // Called every time the "empty" status of the editor changes (and the first time
+  // Called every time the "empty" sta tus of the editor changes (and the first time
   // the editor is mounted).
   // This is not the same as counting the characters on the "text" parameter in
   // onTextChange, because that contains additional QuillJS delta "noise". In addition,
@@ -866,10 +866,10 @@ interface EditableProps extends BaseProps {
   onCharactersChange?: (_: number) => void;
 }
 
-interface NonEditableProps extends BaseProps {
+export interface NonEditableEditorProps extends BaseProps {
   editable?: false;
 }
 
-export type EditorProps = EditableProps | NonEditableProps;
+export type EditorProps = EditableEditorProps | NonEditableEditorProps;
 
 export default Editor;

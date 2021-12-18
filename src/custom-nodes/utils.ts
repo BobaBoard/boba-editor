@@ -60,8 +60,9 @@ export const addEmbedEditOverlay = (
 ) => {
   const containerDiv = document.createElement("div");
   containerDiv.classList.add("embed-overlay");
-  const closeButton = document.createElement("div");
+  const closeButton = document.createElement("button");
   closeButton.classList.add("close-button");
+  closeButton.ariaLabel = "Delete embed";
 
   const closeButtonImg = document.createElement("img");
   closeButtonImg.src = CloseButton;
@@ -76,30 +77,25 @@ export const addEmbedEditOverlay = (
     const optionsOverlay = document.createElement("div");
     optionsOverlay.classList.add("options-overlay");
     if (embedType.onMarkSpoilers) {
-      const spoilersButton = document.createElement("div");
+      const isSpoilered = !!embedType.value(embedRoot).spoilers;
+      const spoilersButton = document.createElement("button");
+      spoilersButton.ariaLabel = `Toggle spoilers ${
+        isSpoilered ? "off" : "on"
+      }`;
       spoilersButton.classList.add("spoilers-button", "embed-options-button");
       const spoilersImg = document.createElement("img");
       spoilersImg.src = SpoilersIcon;
       spoilersButton.appendChild(spoilersImg);
       optionsOverlay.appendChild(spoilersButton);
-      spoilersButton.classList.toggle(
-        "active",
-        !!embedType.value(embedRoot).spoilers
-      );
-      containerDiv.classList.toggle(
-        "spoilers",
-        !!embedType.value(embedRoot).spoilers
-      );
+      spoilersButton.classList.toggle("active", isSpoilered);
+      containerDiv.classList.toggle("spoilers", isSpoilered);
       spoilersButton.addEventListener("click", (e) => {
-        spoilersButton.classList.toggle("active");
-        embedType.onMarkSpoilers?.(
-          embedRoot,
-          spoilersButton.classList.contains("active")
-        );
-        containerDiv.classList.toggle(
-          "spoilers",
-          spoilersButton.classList.contains("active")
-        );
+        const spoilersActive = spoilersButton.classList.toggle("active");
+        embedType.onMarkSpoilers?.(embedRoot, spoilersActive);
+        spoilersButton.ariaLabel = `Toggle spoilers ${
+          spoilersActive ? "off" : "on"
+        }`;
+        containerDiv.classList.toggle("spoilers", spoilersActive);
         e.stopPropagation();
         e.preventDefault();
       });
