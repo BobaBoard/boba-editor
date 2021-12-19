@@ -24,6 +24,7 @@ import Spinner from "./Spinner";
 import { Toolbar } from "./Toolbar";
 import Tooltip from "./Tooltip";
 import classNames from "classnames";
+import editorStyle from "./css/Editor.module.css";
 import { globalStyles } from "./custom-nodes/css/global";
 
 const logging = require("debug")("bobapost:editor");
@@ -504,13 +505,14 @@ class Editor extends Component<EditorProps> {
     const ssrText =
       // @ts-ignore
       this.isServer() && getSsrConverter().convert(this.props.initialText);
-    const editorClasses = classNames("editor", {
-      loaded: this.state.loaded,
-      "single-line": this.props.singleLine,
-      "has-image": this.state.hasImage,
-      "view-only": !this.props.editable,
+    const editorClasses = classNames(editorStyle.editor, {
+      [editorStyle.loaded]: this.state.loaded,
+      [editorStyle["single-line"]]: this.props.singleLine,
+      [editorStyle["has-image"]]: this.state.hasImage,
+      [editorStyle["view-only"]]: !this.props.editable,
     });
 
+    console.log(editorStyle);
     return (
       <>
         {ssrText && (
@@ -530,7 +532,7 @@ class Editor extends Component<EditorProps> {
         )}
         {!ssrText && (
           <div className={editorClasses}>
-            <div className="spinner">
+            <div className={editorStyle.spinner}>
               <Spinner />
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
@@ -572,167 +574,6 @@ class Editor extends Component<EditorProps> {
             ></div>
           </div>
         )}
-
-        <style jsx>{`
-          .editor,
-          .editor-quill,
-          .editor-quill,
-          .editor :global(.ql-editor) {
-            min-height: inherit;
-            font-family: "Inter", sans-serif;
-            color: var(--text-color, inherit);
-          }
-          .editor {
-            position: relative;
-            height: 100%;
-          }
-          .editor-quill {
-            flex-grow: 1;
-            font-size: medium;
-          }
-          .loaded .spinner {
-            display: none;
-          }
-          .spinner {
-            text-align: center;
-            position: absolute;
-            z-index: 5;
-            right: 50%;
-            transform: translateX(50%);
-          }
-          .editor.view-only .editor-quill :global(.ql-editor) > :global(*) {
-            cursor: auto !important;
-          }
-          .editor :global(.ql-editor) {
-            overflow: visible;
-            height: 100%;
-            padding: 0;
-          }
-          :global(.ql-container.ql-bubble:not(.ql-disabled) a::before),
-          :global(.ql-container.ql-bubble:not(.ql-disabled) a::after) {
-            word-break: keep-all;
-            max-width: min(300px, 60vw);
-          }
-          .editor-quill :global(.ql-tooltip) {
-            z-index: 5;
-          }
-          .editor-quill :global(.ql-tooltip) {
-            transform: translateY(20px);
-          }
-          .editor-quill :global(.ql-tooltip.ql-flip) {
-            transform: translateY(-20px);
-          }
-          .editor :global(.ql-editor) :global(p) {
-            word-break: break-word !important;
-          }
-          .editor :global(.ql-container) :global(a) {
-            white-space: normal !important;
-            word-break: break-word !important;
-            color: var(--a-color, rgb(249, 102, 128));
-            cursor: pointer;
-          }
-          .editor :global(.ql-bubble .ql-toolbar .ql-formats) {
-            margin-right: 8px;
-          }
-          .editor :global(.ql-bubble .ql-picker-label) {
-            padding-left: 0px;
-          }
-          .editor :global(.ql-container) :global(a:visited) {
-            color: var(--a-visited-color, #eb0f37);
-          }
-          .editor :global(:not(blockquote)) + :global(blockquote) {
-            margin-top: 10px;
-          }
-          .editor :global(blockquote) + :global(:not(blockquote)) {
-            margin-top: 10px;
-          }
-          .editor :global(blockquote) {
-            margin-bottom: 0px;
-            margin-top: 0px;
-            border-left: 5px solid #e6e6e9;
-            margin-left: var(--text-padding, 10px);
-            margin-right: var(--text-padding, 10px);
-          }
-          .editor :global(.ql-editor) :global(h1) {
-            font-size: 32px;
-            line-height: 38px;
-          }
-          .editor :global(.ql-editor) :global(h2) {
-            font-size: 24px;
-            line-height: 30px;
-          }
-          .editor :global(.ql-editor) :global(h3) {
-            font-size: 19px;
-            line-height: 25px;
-          }
-          .editor :global(.ql-editor) :global(h1),
-          .editor :global(.ql-editor) :global(h2),
-          .editor :global(.ql-editor) :global(h3) {
-            margin-bottom: 4px;
-            font-weight: normal;
-            padding-left: var(--text-padding, 10px);
-            padding-right: var(--text-padding, 10px);
-          }
-          .editor :global(ul),
-          .editor :global(ol) {
-            padding-left: 0;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            margin-left: calc(var(--text-padding, 10px) + 5px);
-            margin-right: calc(var(--text-padding, 10px) + 5px);
-          }
-          .editor :global(.ql-bubble .ql-editor pre.ql-syntax),
-          .editor :global(.ql-bubble .ql-editor code) {
-            background-color: #e6e6e9;
-            color: black;
-            border-radius: 8px;
-            font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo,
-              monospace;
-            font-size: small;
-          }
-          .editor :global(.ql-editor h1:first-child),
-          .editor :global(.ql-editor h2:first-child),
-          .editor :global(.ql-editor h3:first-child),
-          .editor :global(.ql-editor p:first-child) {
-            padding-top: var(--text-padding, 10px);
-          }
-          .editor :global(p) {
-            padding-left: var(--text-padding, 10px);
-            padding-right: var(--text-padding, 10px);
-          }
-          .editor :global(:not(p):not(h1):not(h2):not(h3) + p) {
-            padding-top: var(--text-padding, 5px);
-          }
-          .editor :global(p.empty:not(:last-child)) {
-            line-height: 10px;
-          }
-          .editor :global(p:last-child) {
-            padding-bottom: var(--text-padding, 10px);
-          }
-          .editor.view-only :global(p.empty:last-child) {
-            display: none;
-          }
-          .editor.single-line.has-image :global(p.empty) {
-            display: none;
-          }
-          .editor.single-line :global(img) {
-            max-height: 250px;
-            display: block;
-            margin: 0 auto;
-          }
-          .editor.single-line :global(.ql-block-image) {
-            margin: 0;
-          }
-          .editor :global(.ql-editor blockquote:first-child) {
-            margin-top: 5px;
-          }
-          .editor :global(.ql-editor blockquote:last-child) {
-            // Without this, the margin collapses and leaves a blank
-            // space on backgrounds wrapping the editor.
-            display: inline-block;
-            margin-bottom: 5px;
-          }
-        `}</style>
         {/* Add global styles for types*/}
         <style jsx>{globalStyles}</style>
       </>

@@ -2,7 +2,7 @@ import React from "react";
 import SpoilersIcon from "./img/spoilers.svg";
 import classNames from "classnames";
 import { removeListKeyboardBindings } from "./quillUtils";
-import toolbarStyle from "./Toolbar.module.css";
+import toolbarStyle from "./css/Toolbar.module.css";
 
 export const Toolbar = React.forwardRef<
   HTMLDivElement,
