@@ -718,7 +718,6 @@ class Editor extends Component<EditorProps> {
           }
           .editor.single-line :global(img) {
             max-height: 250px;
-            width: auto;
             display: block;
             margin: 0 auto;
           }

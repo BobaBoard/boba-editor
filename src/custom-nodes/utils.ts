@@ -62,7 +62,7 @@ export const addEmbedEditOverlay = (
   containerDiv.classList.add("embed-overlay");
   const closeButton = document.createElement("button");
   closeButton.classList.add("close-button");
-  closeButton.ariaLabel = "Delete embed";
+  closeButton.setAttribute("aria-label", "Delete embed");
 
   const closeButtonImg = document.createElement("img");
   closeButtonImg.src = CloseButton;
@@ -79,9 +79,10 @@ export const addEmbedEditOverlay = (
     if (embedType.onMarkSpoilers) {
       const isSpoilered = !!embedType.value(embedRoot).spoilers;
       const spoilersButton = document.createElement("button");
-      spoilersButton.ariaLabel = `Toggle spoilers ${
-        isSpoilered ? "off" : "on"
-      }`;
+      spoilersButton.setAttribute(
+        "aria-label",
+        `Toggle spoilers ${isSpoilered ? "off" : "on"}`
+      );
       spoilersButton.classList.add("spoilers-button", "embed-options-button");
       const spoilersImg = document.createElement("img");
       spoilersImg.src = SpoilersIcon;
@@ -92,9 +93,10 @@ export const addEmbedEditOverlay = (
       spoilersButton.addEventListener("click", (e) => {
         const spoilersActive = spoilersButton.classList.toggle("active");
         embedType.onMarkSpoilers?.(embedRoot, spoilersActive);
-        spoilersButton.ariaLabel = `Toggle spoilers ${
-          spoilersActive ? "off" : "on"
-        }`;
+        spoilersButton.setAttribute(
+          "aria-label",
+          `Toggle spoilers ${spoilersActive ? "off" : "on"}`
+        );
         containerDiv.classList.toggle("spoilers", spoilersActive);
         e.stopPropagation();
         e.preventDefault();

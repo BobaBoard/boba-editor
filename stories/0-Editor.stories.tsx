@@ -143,7 +143,6 @@ export const EditorState = () => {
           )}
           onTextChange={action("TextChange")}
           onIsEmptyChange={action("EmptyChange")}
-          onSubmit={action("Submit")}
         />
       </div>
       <input
@@ -180,7 +179,6 @@ export const ImageLoading = () => {
           }}
           focusOnMount={true}
           onIsEmptyChange={action("EmptyChange")}
-          onSubmit={action("Submit")}
           onEditorCreated={(editor) => setEditor(editor)}
         />
       </div>
@@ -228,7 +226,6 @@ export const EditorFocus = () => {
           )}
           onTextChange={action("TextChange")}
           onIsEmptyChange={action("EmptyChange")}
-          onSubmit={action("Submit")}
         />
       </div>
       <input
@@ -264,7 +261,6 @@ export const OutputTest = () => {
           }}
           focusOnMount={true}
           onIsEmptyChange={action("EmptyChange")}
-          onSubmit={action("Submit")}
         />
       </div>
       <input

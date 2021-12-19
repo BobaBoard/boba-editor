@@ -1,7 +1,8 @@
-import { action } from "@storybook/addon-actions";
-import React from "react";
 //import { linkTo } from "@storybook/addon-links";
 import Editor, { EditorContext } from "../src";
+
+import React from "react";
+import { action } from "@storybook/addon-actions";
 
 const logging = require("debug")("bobapost:stories:embeds");
 
@@ -75,10 +76,6 @@ const EmbedsTemplate = (args: { content: string; editable?: boolean }) => {
           focusOnMount={true}
           onIsEmptyChange={() => {
             logging("empty!");
-          }}
-          onSubmit={() => {
-            // This is for cmd + enter
-            logging("submit!");
           }}
           onEmbedLoaded={() => {
             setLoading(false);
@@ -180,7 +177,6 @@ export const BestEffortStory = () => (
               onIsEmptyChange={() => {
                 logging("empty!");
               }}
-              onSubmit={action("submit")}
             />
           </div>
         );
@@ -236,10 +232,6 @@ export const EmbedCaching = () => {
               focusOnMount={true}
               onIsEmptyChange={() => {
                 logging("empty!");
-              }}
-              onSubmit={() => {
-                // This is for cmd + enter
-                logging("submit!");
               }}
             />
           </div>

@@ -3,7 +3,6 @@ import Editor, { EditorContext } from "../../src";
 import { EditableEditorProps } from "Editor";
 import React from "react";
 import { mount } from "@cypress/react";
-import { text } from "cheerio/lib/api/manipulation";
 
 const REMOTE_EMBEDS_URL = `https://boba-embeds.herokuapp.com/iframely`;
 
