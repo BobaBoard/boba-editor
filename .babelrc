@@ -5,7 +5,6 @@
     "@babel/preset-typescript"
   ],
   "plugins": [
-    ["styled-jsx/babel"],
     ["@babel/plugin-proposal-optional-chaining", { "loose": true }],
     ["@babel/plugin-proposal-class-properties", { "loose": true }],
     ["@babel/plugin-proposal-private-methods", { "loose": true }],

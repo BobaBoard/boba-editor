@@ -25,7 +25,6 @@
     "types": [
       "react",
       "react-dom",
-      "styled-jsx",
       "node",
       "quill",
       "jest",
