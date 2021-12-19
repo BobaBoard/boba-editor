@@ -1,7 +1,7 @@
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
 
-import React, { Component, createRef, forwardRef } from "react";
+import React, { Component, createRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
 import {
@@ -11,7 +11,6 @@ import {
   pasteImageAsBlockEmbed,
   removeBuggedEmptyClasses,
   removeLineBreaksFromPaste,
-  removeListKeyboardBindings,
   withBlockquotesKeyboardBehavior,
   withLinkShortcut,
   withNoLinebreakHandler,
@@ -22,7 +21,7 @@ import type { Delta } from "quill";
 // This allows the editor to be imported even in a SSR environment.
 import type Quill from "quill";
 import Spinner from "./Spinner";
-import SpoilersIcon from "./img/spoilers.svg";
+import { Toolbar } from "./Toolbar";
 import Tooltip from "./Tooltip";
 import classNames from "classnames";
 import { globalStyles } from "./custom-nodes/css/global";
@@ -740,76 +739,6 @@ class Editor extends Component<EditorProps> {
     );
   }
 }
-
-const Toolbar = forwardRef<
-  HTMLDivElement,
-  { loaded: boolean; singleLine: boolean }
->(({ loaded, singleLine }, ref) => {
-  if (singleLine) {
-    removeListKeyboardBindings();
-  }
-  return (
-    <>
-      <div
-        className={classNames("toolbar", "ql-toolbar", { loaded })}
-        ref={ref}
-      >
-        <span className="ql-formats">
-          <button className="ql-bold"></button>
-          <button className="ql-italic"></button>
-          <button className="ql-underline"></button>
-          <button className="ql-strike"></button>
-        </span>
-        <span className="ql-formats">
-          <button className="ql-link"></button>
-          <button className="ql-inline-spoilers">
-            <img src={SpoilersIcon} />
-          </button>
-        </span>
-        <span className="ql-formats">
-          {!singleLine && (
-            <>
-              <button className="ql-list" value="bullet"></button>
-              <button className="ql-list" value="ordered"></button>
-            </>
-          )}
-          <button className="ql-code"></button>
-          <button className="ql-blockquote"></button>
-        </span>
-        <span className="ql-formats">
-          <select className="ql-header">
-            <option value="h1">Heading 1</option>
-            <option value="h2">Heading 2</option>
-            <option value="h3">Heading 3</option>
-            <option value="">Normal</option>
-          </select>
-        </span>
-        <span className="ql-formats">
-          <button className="ql-clean"></button>
-        </span>
-      </div>
-      <style jsx>{`
-        .toolbar {
-          display: none;
-        }
-        .toolbar.loaded {
-          display: block;
-          text-align: center;
-        }
-        .toolbar :global(button img) {
-          filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg)
-            brightness(91%) contrast(94%);
-          max-width: 100%;
-          max-height: 100%;
-        }
-        .toolbar :global(button:hover img) {
-          filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
-            brightness(105%) contrast(105%);
-        }
-      `}</style>
-    </>
-  );
-});
 
 export interface EditorHandler {
   // Focus the embed.

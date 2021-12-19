@@ -6,6 +6,7 @@ module.exports = {
     "@storybook/addon-viewport/register",
     "@storybook/addon-actions",
     "@storybook/addon-a11y",
+    "storybook-css-modules-preset",
   ],
   webpackFinal: async (config) => {
     config.devtool = "inline-source-map";
@@ -22,5 +23,8 @@ module.exports = {
     });
     config.resolve.extensions.push(".ts", ".tsx");
     return config;
+  },
+  features: {
+    postcss: false,
   },
 };
