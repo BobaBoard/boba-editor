@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.export.json --emitDeclarationOnly && ./node_modules/.bin/webpack --mode production  --config webpack.config.cjs --display-error-details",
+    "profile": "tsc -p tsconfig.export.json --emitDeclarationOnly && ./node_modules/.bin/webpack --mode production  --config webpack.config.cjs --profile --json > stats.json",
     "build:dev": "rm -rf dist && tsc -p tsconfig.export.json --emitDeclarationOnly && ./node_modules/.bin/webpack --mode development --config webpack.config.cjs",
     "build:force-dev": "rm -rf dist && ./node_modules/.bin/webpack --mode development",
     "storybook": "cross-env DEBUG=bobapost:* start-storybook -p 6006",
