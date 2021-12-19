@@ -4,6 +4,7 @@
   min-height: inherit;
   font-family: "Inter", sans-serif;
   color: var(--text-color, inherit);
+  position: relative;
 }
 .editor .ql-editor {
   position: relative;

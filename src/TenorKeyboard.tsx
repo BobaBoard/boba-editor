@@ -4,16 +4,16 @@ import { Popover } from "react-tiny-popover";
 import React from "react";
 import keyboardStyle from "./css/TenorKeyboard.module.css";
 
-const gifJokes = [
-  "Thank you, user! But your gif is in another castle!",
-  "These aren't the gifs you're looking for.",
-  "F",
-  "I don't know what that is, I've never seen that.",
-  "HQ! HQ! There's no gif here.",
-  "You can't get ye gifs!",
-  "The gif is a lie.",
-  "You get a gif! You get a gif! Everyone gets... oh, you dont. Sorry.",
-];
+// const gifJokes = [
+//   "Thank you, user! But your gif is in another castle!",
+//   "These aren't the gifs you're looking for.",
+//   "F",
+//   "I don't know what that is, I've never seen that.",
+//   "HQ! HQ! There's no gif here.",
+//   "You can't get ye gifs!",
+//   "The gif is a lie.",
+//   "You get a gif! You get a gif! Everyone gets... oh, you dont. Sorry.",
+// ];
 
 const TRIES = 10;
 const TenorKeyboard = (props: {
@@ -21,7 +21,6 @@ const TenorKeyboard = (props: {
   onClose: (gif?: Result) => void;
   target: React.MutableRefObject<HTMLElement>;
 }) => {
-  const [joke, setJoke] = React.useState(gifJokes[0]);
   const tenor = React.useRef<Tenor>(null);
   const jokes = React.useRef<HTMLDivElement>(null);
   return (
@@ -50,9 +49,6 @@ const TenorKeyboard = (props: {
                 // @ts-ignore
                 if (status.pages && status.pages[0].results.length == 0) {
                   jokes.current && (jokes.current.style.display = "block");
-                  setJoke(
-                    gifJokes[Math.floor(Math.random() * gifJokes.length)]
-                  );
                 } else {
                   jokes.current && (jokes.current.style.display = "none");
                 }
@@ -80,15 +76,6 @@ const TenorKeyboard = (props: {
                   }}
                 />
               </div>
-              <div className={keyboardStyle["tenor-joke-container"]}>
-                <div
-                  className={keyboardStyle["tenor-joke"]}
-                  ref={jokes}
-                  style={{ display: "none" }}
-                >
-                  {joke}
-                </div>
-              </div>
             </div>
           );
         }}
@@ -98,7 +85,7 @@ const TenorKeyboard = (props: {
             position: "absolute",
             pointerEvents: "none",
             top: 0,
-            right: 0,
+            left: 0,
             width: (props.target.current?.clientWidth || 0) + "px",
             opacity: 0,
             height: (props.target.current?.clientHeight || 0) + "px",
