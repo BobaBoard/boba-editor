@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 
-import Tenor from "react-tenor";
 import Popup from "@atlaskit/popup";
+import Tenor from "react-tenor";
+import keyboardStyle from "./css/TenorKeyboard.module.css";
 
 const gifJokes = [
   "Thank you, user! But your gif is in another castle!",
@@ -61,7 +62,7 @@ const TenorKeyboard = (props) => {
           };
           setTimeout(maybeFocus, 1);
           return (
-            <div className="tenor-picker">
+            <div className={keyboardStyle["tenor-picker"]}>
               <div>
                 <Tenor
                   key="tenor"
@@ -73,9 +74,9 @@ const TenorKeyboard = (props) => {
                   }}
                 />
               </div>
-              <div className="tenor-joke-container">
+              <div className={keyboardStyle["tenor-joke-container"]}>
                 <div
-                  className="tenor-joke"
+                  className={keyboardStyle["tenor-joke"]}
                   ref={jokes}
                   style={{ display: "none" }}
                 >
@@ -105,80 +106,6 @@ const TenorKeyboard = (props) => {
           );
         }}
       />
-      <style jsx>
-        {`
-          .tenor-picker {
-            max-height: 300px;
-            max-width: 100vw;
-            width: 480px;
-            border-radius: 3px;
-            background: black;
-            overflow-x: hidden;
-          }
-          .tenor-joke-container {
-            background: black;
-            text-align: center;
-            color: gray;
-            font-size: smaller;
-            padding: 10px;
-            height: 100px;
-            position: relative;
-          }
-          .tenor-joke {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 5px;
-            width: 100%;
-          }
-          :global(.react-tenor) {
-            border: 0;
-            background: black;
-          }
-          :global(.react-tenor),
-          :global(.react-tenor--search),
-          :global(.react-tenor--search-bar) {
-            border-radius: 3px;
-          }
-          :global(.react-tenor-active) :global(.react-tenor--search),
-          :global(.react-tenor-active) :global(.react-tenor--search-bar) {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-          }
-          :global(.react-tenor--search) {
-            border: 0;
-            background: #000000;
-            color: white;
-          }
-          :global(.react-tenor--spinner) {
-            top: 5px;
-            right: 5px;
-          }
-          :global(.react-tenor--search:focus) {
-            box-shadow: none;
-          }
-          :global(.react-tenor-active) {
-            background: black;
-          }
-          :global(.react-tenor--results) {
-            overflow-x: hidden;
-          }
-          :global(.react-tenor--autocomplete) {
-            top: 0;
-          }
-          :global(.react-tenor--suggestions),
-          .tenor-joke-container {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-          }
-          :global(.react-tenor--suggestions button) {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-          }
-          :global(.react-tenor--suggestions button:hover) {
-            background: rgba(255, 255, 255, 0.3);
-          }
-        `}
-      </style>
     </>
   );
 };

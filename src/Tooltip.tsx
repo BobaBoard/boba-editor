@@ -4,6 +4,7 @@ import React, { Component, forwardRef } from "react";
 import GifImage from "./img/gif.svg";
 import Quill from "quill";
 import classNames from "classnames";
+import tooltipStyle from "./css/Tooltip.module.css";
 
 const TenorKeyboard = require("./TenorKeyboard").default;
 
@@ -54,13 +55,18 @@ class Tooltip extends Component<{
         );
       }
     );
+
     return (
       <>
         <div className="ql-bubble">
           <div
-            className={classNames("tooltip ql-tooltip ql-toolbar", {
-              hidden: !this.props.show,
-            })}
+            className={classNames(
+              tooltipStyle.tooltip,
+              "ql-tooltip ql-toolbar",
+              {
+                [tooltipStyle.hidden]: !this.props.show,
+              }
+            )}
             role="toolbar"
             style={{
               top: `${this.props.top}px`,
@@ -69,9 +75,10 @@ class Tooltip extends Component<{
           >
             <button
               className={classNames("ql-image", {
-                hidden: !this.props.config.enabledModules.includes(
-                  TooltipModule.IMAGE
-                ),
+                [tooltipStyle.hidden]:
+                  !this.props.config.enabledModules.includes(
+                    TooltipModule.IMAGE
+                  ),
               })}
               onClick={() => {
                 this.imageInput.current?.click();
@@ -91,9 +98,8 @@ class Tooltip extends Component<{
             />
             <button
               className={classNames("ql-image-gif ql-image", {
-                hidden: !this.props.config.enabledModules.includes(
-                  TooltipModule.GIF
-                ),
+                [tooltipStyle.hidden]:
+                  !this.props.config.enabledModules.includes(TooltipModule.GIF),
               })}
               ref={this.gifButton}
               onClick={(e) => {
@@ -106,9 +112,10 @@ class Tooltip extends Component<{
             </button>
             <button
               className={classNames("ql-blockquote", {
-                hidden: !this.props.config.enabledModules.includes(
-                  TooltipModule.QUOTE
-                ),
+                [tooltipStyle.hidden]:
+                  !this.props.config.enabledModules.includes(
+                    TooltipModule.QUOTE
+                  ),
               })}
               onClick={() => {
                 this.props.onSetFormat("blockquote");
@@ -119,9 +126,10 @@ class Tooltip extends Component<{
             />
             <button
               className={classNames("ql-code-block", {
-                hidden: !this.props.config.enabledModules.includes(
-                  TooltipModule.CODEBLOCK
-                ),
+                [tooltipStyle.hidden]:
+                  !this.props.config.enabledModules.includes(
+                    TooltipModule.CODEBLOCK
+                  ),
               })}
               onClick={() => {
                 this.props.onSetFormat("code-block");
@@ -147,36 +155,6 @@ class Tooltip extends Component<{
             />
           </div>
         </div>
-        <style jsx>{`
-          .tooltip {
-            position: absolute;
-            z-index: 5;
-            padding: 0 5px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            max-width: 70vw;
-            transform: translateY(-5px);
-          }
-          .tooltip :global(button img) {
-            filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg)
-              brightness(91%) contrast(94%);
-            max-width: 100%;
-            max-height: 100%;
-          }
-          .tooltip :global(button:hover img) {
-            filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
-              brightness(105%) contrast(105%);
-          }
-          .hidden {
-            display: none !important;
-          }
-          :global(.ql-tumblr) {
-            padding: 4px 7px;
-            margin-top: 1px;
-          }
-        `}</style>
       </>
     );
   }

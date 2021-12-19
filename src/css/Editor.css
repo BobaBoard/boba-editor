@@ -1,15 +1,15 @@
 .editor,
-:global(.editor-quill),
-.editor :global(.ql-editor) {
+.editor-quill,
+.editor .ql-editor {
   min-height: inherit;
   font-family: "Inter", sans-serif;
   color: var(--text-color, inherit);
 }
-.editor {
+.editor .ql-editor {
   position: relative;
   height: 100%;
 }
-:global(.editor-quill) {
+.editor-quill {
   flex-grow: 1;
   font-size: medium;
 }
@@ -23,135 +23,136 @@
   right: 50%;
   transform: translateX(50%);
 }
-.editor.view-only :global(.editor-quill) :global(.ql-editor) > :global(*) {
+.editor.view-only .editor-quill .ql-editor > * {
   cursor: auto !important;
 }
-.editor :global(.ql-editor) {
+.editor .ql-editor {
   overflow: visible;
   height: 100%;
   padding: 0;
 }
-:global(.ql-container.ql-bubble:not(.ql-disabled) a::before),
-:global(.ql-container.ql-bubble:not(.ql-disabled) a::after) {
+.ql-container.ql-bubble:not(.ql-disabled a::before),
+.ql-container.ql-bubble:not(.ql-disabled a::after) {
   word-break: keep-all;
   max-width: min(300px, 60vw);
 }
-:global(.editor-quill) :global(.ql-tooltip) {
+.editor-quill .ql-tooltip {
   z-index: 5;
 }
-:global(.editor-quill) :global(.ql-tooltip) {
+.editor-quill .ql-tooltip {
   transform: translateY(20px);
 }
-:global(.editor-quill) :global(.ql-tooltip.ql-flip) {
+.editor-quill .ql-tooltip.ql-flip {
   transform: translateY(-20px);
 }
-.editor :global(.ql-editor) :global(p) {
+.editor .ql-editor p {
   word-break: break-word !important;
 }
-.editor :global(.ql-container) :global(a) {
+.editor .ql-container a {
   white-space: normal !important;
   word-break: break-word !important;
   color: var(--a-color, rgb(249, 102, 128));
   cursor: pointer;
 }
-.editor :global(.ql-bubble .ql-toolbar .ql-formats) {
+.editor .ql-bubble .ql-toolbar .ql-formats {
   margin-right: 8px;
 }
-.editor :global(.ql-bubble .ql-picker-label) {
+.editor .ql-bubble .ql-picker-label {
   padding-left: 0px;
 }
-.editor :global(.ql-container) :global(a:visited) {
+.editor .ql-container a:visited {
   color: var(--a-visited-color, #eb0f37);
 }
-.editor :global(:not(blockquote)) + :global(blockquote) {
+.editor .ql-editor :not(blockquote) + blockquote {
   margin-top: 10px;
 }
-.editor :global(blockquote) + :global(:not(blockquote)) {
+.editor .ql-editor blockquote + :not(blockquote) {
   margin-top: 10px;
 }
-.editor :global(blockquote) {
+.editor .ql-editor blockquote {
   margin-bottom: 0px;
   margin-top: 0px;
   border-left: 5px solid #e6e6e9;
   margin-left: var(--text-padding, 10px);
   margin-right: var(--text-padding, 10px);
 }
-.editor :global(.ql-editor) :global(h1) {
+.editor .ql-editor h1 {
   font-size: 32px;
   line-height: 38px;
 }
-.editor :global(.ql-editor) :global(h2) {
+.editor .ql-editor h2 {
   font-size: 24px;
   line-height: 30px;
 }
-.editor :global(.ql-editor) :global(h3) {
+.editor .ql-editor h3 {
   font-size: 19px;
   line-height: 25px;
 }
-.editor :global(.ql-editor) :global(h1),
-.editor :global(.ql-editor) :global(h2),
-.editor :global(.ql-editor) :global(h3) {
+.editor .ql-editor h1,
+.editor .ql-editor h2,
+.editor .ql-editor h3 {
   margin-bottom: 4px;
   font-weight: normal;
   padding-left: var(--text-padding, 10px);
   padding-right: var(--text-padding, 10px);
 }
-.editor :global(ul),
-.editor :global(ol) {
+.editor .ql-editor ul,
+.editor .ql-editor ol {
   padding-left: 0;
   margin-top: 5px;
   margin-bottom: 10px;
   margin-left: calc(var(--text-padding, 10px) + 5px);
   margin-right: calc(var(--text-padding, 10px) + 5px);
 }
-.editor :global(.ql-bubble .ql-editor pre.ql-syntax),
-.editor :global(.ql-bubble .ql-editor code) {
+.editor .ql-bubble .ql-editor pre.ql-syntax,
+.editor .ql-bubble .ql-editor code {
   background-color: #e6e6e9;
   color: black;
   border-radius: 8px;
   font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
   font-size: small;
 }
-.editor :global(.ql-editor h1:first-child),
-.editor :global(.ql-editor h2:first-child),
-.editor :global(.ql-editor h3:first-child),
-.editor :global(.ql-editor p:first-child) {
+.editor .ql-editor h1:first-child,
+.editor .ql-editor h2:first-child,
+.editor .ql-editor h3:first-child,
+.editor .ql-editor p:first-child {
   padding-top: var(--text-padding, 10px);
 }
-.editor :global(p) {
+.editor .ql-editor p {
   padding-left: var(--text-padding, 10px);
   padding-right: var(--text-padding, 10px);
 }
-.editor :global(:not(p):not(h1):not(h2):not(h3) + p) {
+.editor .ql-editor p:not(p:not(h1):not(h2):not(h3) + p) {
   padding-top: var(--text-padding, 5px);
 }
-.editor :global(p.empty:not(:last-child)) {
+.editor .ql-editor p.empty:not(:last-child) {
   line-height: 10px;
 }
-.editor :global(p:last-child) {
+.editor .ql-editor p:last-child {
   padding-bottom: var(--text-padding, 10px);
 }
-.editor.view-only :global(p.empty:last-child) {
+.editor.view-only p.empty:last-child {
   display: none;
 }
-.editor.single-line.has-image :global(p.empty) {
+.editor.single-line.has-image p.empty {
   display: none;
 }
-.editor.single-line :global(img) {
+.editor.single-line img {
   max-height: 250px;
   display: block;
   margin: 0 auto;
 }
-.editor.single-line :global(.ql-block-image) {
+.editor.single-line .ql-block-image {
   margin: 0;
 }
-.editor :global(.ql-editor blockquote:first-child) {
+.editor .ql-editor blockquote:first-child {
   margin-top: 5px;
 }
-.editor :global(.ql-editor blockquote:last-child) {
+.editor .ql-editor blockquote:last-child {
   /*
    Without this, the margin collapses and leaves a blank
-   space on backgrounds wrapping the editor. */
+   space on backgrounds wrapping the editor. 
+   */
   display: inline-block;
   margin-bottom: 5px;
 }

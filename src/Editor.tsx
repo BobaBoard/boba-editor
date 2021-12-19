@@ -1,5 +1,7 @@
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
+import "./custom-nodes/css/global.css";
+import "./css/Editor.css";
 
 import React, { Component, createRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
@@ -24,8 +26,6 @@ import Spinner from "./Spinner";
 import { Toolbar } from "./Toolbar";
 import Tooltip from "./Tooltip";
 import classNames from "classnames";
-import editorStyle from "./css/Editor.module.css";
-import { globalStyles } from "./custom-nodes/css/global";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
@@ -505,14 +505,13 @@ class Editor extends Component<EditorProps> {
     const ssrText =
       // @ts-ignore
       this.isServer() && getSsrConverter().convert(this.props.initialText);
-    const editorClasses = classNames(editorStyle.editor, {
-      [editorStyle.loaded]: this.state.loaded,
-      [editorStyle["single-line"]]: this.props.singleLine,
-      [editorStyle["has-image"]]: this.state.hasImage,
-      [editorStyle["view-only"]]: !this.props.editable,
+    const editorClasses = classNames("editor", {
+      loaded: this.state.loaded,
+      "single-line": this.props.singleLine,
+      "has-image": this.state.hasImage,
+      "view-only": !this.props.editable,
     });
 
-    console.log(editorStyle);
     return (
       <>
         {ssrText && (
@@ -532,7 +531,7 @@ class Editor extends Component<EditorProps> {
         )}
         {!ssrText && (
           <div className={editorClasses}>
-            <div className={editorStyle.spinner}>
+            <div className="spinner">
               <Spinner />
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
@@ -574,8 +573,6 @@ class Editor extends Component<EditorProps> {
             ></div>
           </div>
         )}
-        {/* Add global styles for types*/}
-        <style jsx>{globalStyles}</style>
       </>
     );
   }
