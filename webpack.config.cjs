@@ -7,7 +7,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   plugins: [new MiniCssExtractPlugin()],
-
+  target: "node",
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[name].js",
