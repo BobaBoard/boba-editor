@@ -25,7 +25,6 @@
     "types": [
       "react",
       "react-dom",
-      "styled-jsx",
       "node",
       "quill",
       "jest",
@@ -35,5 +34,6 @@
     ]
   },
   "include": ["/**/*", "./custom-types.d.ts"],
-  "exclude": ["node_modules", "build", "scripts", "dist"]
+  "exclude": ["node_modules", "build", "scripts", "dist"],
+  "plugins": [{ "name": "typescript-plugin-css-modules" }]
 }

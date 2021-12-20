@@ -1,7 +1,8 @@
-import { action } from "@storybook/addon-actions";
-import React from "react";
+import React, { CSSProperties } from "react";
+
 //import { linkTo } from "@storybook/addon-links";
 import Editor from "../src";
+import { action } from "@storybook/addon-actions";
 
 export default {
   title: "Spoilers",
@@ -148,7 +149,14 @@ export const LinkAndMultipleFormattingNotEditable = () => (
   <div>
     <div
       className="test"
-      style={{ backgroundColor: "white", maxWidth: "500px" }}
+      style={
+        {
+          backgroundColor: "white",
+          maxWidth: "500px",
+          "--a-visited-color": "green",
+          "--a-color": "brown",
+        } as CSSProperties
+      }
     >
       <Editor
         editable={false}
@@ -157,10 +165,5 @@ export const LinkAndMultipleFormattingNotEditable = () => (
         )}
       />
     </div>
-    <style jsx>{`
-      .test {
-        --a-visited-color: green;
-      }
-    `}</style>
   </div>
 );

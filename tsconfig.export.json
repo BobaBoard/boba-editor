@@ -6,7 +6,7 @@
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
     "sourceMap": true,
     "allowJs": false,
-    "jsx": "preserve",
+    "jsx": "react",
     "moduleResolution": "node",
     "rootDirs": ["src"],
     "baseUrl": "",
@@ -22,7 +22,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "types": ["styled-jsx", "react", "react-dom", "node", "quill", "jest"]
+    "types": ["react", "react-dom", "node", "quill", "jest"]
   },
   "include": ["src/**/*", "./custom-types.d.ts"],
   "exclude": ["node_modules", "build", "scripts"]

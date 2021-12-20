@@ -1,7 +1,9 @@
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
+import "./custom-nodes/css/global.css";
+import "./css/Editor.css";
 
-import React, { Component, createRef, forwardRef } from "react";
+import React, { Component, createRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
 import {
@@ -11,7 +13,6 @@ import {
   pasteImageAsBlockEmbed,
   removeBuggedEmptyClasses,
   removeLineBreaksFromPaste,
-  removeListKeyboardBindings,
   withBlockquotesKeyboardBehavior,
   withLinkShortcut,
   withNoLinebreakHandler,
@@ -22,10 +23,9 @@ import type { Delta } from "quill";
 // This allows the editor to be imported even in a SSR environment.
 import type Quill from "quill";
 import Spinner from "./Spinner";
-import SpoilersIcon from "./img/spoilers.svg";
+import { Toolbar } from "./Toolbar";
 import Tooltip from "./Tooltip";
 import classNames from "classnames";
-import { globalStyles } from "./custom-nodes/css/global";
 
 const logging = require("debug")("bobapost:editor");
 const loggingVerbose = require("debug")("bobapost:editor:verbose");
@@ -517,9 +517,13 @@ class Editor extends Component<EditorProps> {
         {ssrText && (
           <div className={editorClasses}>
             <div
-              className="editor-quill ql-container ql-bubble "
+              className="editor-quill ql-container ql-bubble ql-disabled"
               ref={this.ssrRef}
+              role="textbox"
             >
+              <div className="spinner">
+                <Spinner />
+              </div>
               <div
                 className="ql-editor"
                 dangerouslySetInnerHTML={{
@@ -573,243 +577,10 @@ class Editor extends Component<EditorProps> {
             ></div>
           </div>
         )}
-
-        <style jsx>{`
-          .editor,
-          .editor-quill,
-          .editor-quill,
-          .editor :global(.ql-editor) {
-            min-height: inherit;
-            font-family: "Inter", sans-serif;
-            color: var(--text-color, inherit);
-          }
-          .editor {
-            position: relative;
-            height: 100%;
-          }
-          .editor-quill {
-            flex-grow: 1;
-            font-size: medium;
-          }
-          .loaded .spinner {
-            display: none;
-          }
-          .spinner {
-            text-align: center;
-            position: absolute;
-            z-index: 5;
-            right: 50%;
-            transform: translateX(50%);
-          }
-          .editor.view-only .editor-quill :global(.ql-editor) > :global(*) {
-            cursor: auto !important;
-          }
-          .editor :global(.ql-editor) {
-            overflow: visible;
-            height: 100%;
-            padding: 0;
-          }
-          :global(.ql-container.ql-bubble:not(.ql-disabled) a::before),
-          :global(.ql-container.ql-bubble:not(.ql-disabled) a::after) {
-            word-break: keep-all;
-            max-width: min(300px, 60vw);
-          }
-          .editor-quill :global(.ql-tooltip) {
-            z-index: 5;
-          }
-          .editor-quill :global(.ql-tooltip) {
-            transform: translateY(20px);
-          }
-          .editor-quill :global(.ql-tooltip.ql-flip) {
-            transform: translateY(-20px);
-          }
-          .editor :global(.ql-editor) :global(p) {
-            word-break: break-word !important;
-          }
-          .editor :global(.ql-container) :global(a) {
-            white-space: normal !important;
-            word-break: break-word !important;
-            color: var(--a-color, rgb(249, 102, 128));
-            cursor: pointer;
-          }
-          .editor :global(.ql-bubble .ql-toolbar .ql-formats) {
-            margin-right: 8px;
-          }
-          .editor :global(.ql-bubble .ql-picker-label) {
-            padding-left: 0px;
-          }
-          .editor :global(.ql-container) :global(a:visited) {
-            color: var(--a-visited-color, #eb0f37);
-          }
-          .editor :global(:not(blockquote)) + :global(blockquote) {
-            margin-top: 10px;
-          }
-          .editor :global(blockquote) + :global(:not(blockquote)) {
-            margin-top: 10px;
-          }
-          .editor :global(blockquote) {
-            margin-bottom: 0px;
-            margin-top: 0px;
-            border-left: 5px solid #e6e6e9;
-            margin-left: var(--text-padding, 10px);
-            margin-right: var(--text-padding, 10px);
-          }
-          .editor :global(.ql-editor) :global(h1) {
-            font-size: 32px;
-            line-height: 38px;
-          }
-          .editor :global(.ql-editor) :global(h2) {
-            font-size: 24px;
-            line-height: 30px;
-          }
-          .editor :global(.ql-editor) :global(h3) {
-            font-size: 19px;
-            line-height: 25px;
-          }
-          .editor :global(.ql-editor) :global(h1),
-          .editor :global(.ql-editor) :global(h2),
-          .editor :global(.ql-editor) :global(h3) {
-            margin-bottom: 4px;
-            font-weight: normal;
-            padding-left: var(--text-padding, 10px);
-            padding-right: var(--text-padding, 10px);
-          }
-          .editor :global(ul),
-          .editor :global(ol) {
-            padding-left: 0;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            margin-left: calc(var(--text-padding, 10px) + 5px);
-            margin-right: calc(var(--text-padding, 10px) + 5px);
-          }
-          .editor :global(.ql-bubble .ql-editor pre.ql-syntax),
-          .editor :global(.ql-bubble .ql-editor code) {
-            background-color: #e6e6e9;
-            color: black;
-            border-radius: 8px;
-            font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo,
-              monospace;
-            font-size: small;
-          }
-          .editor :global(.ql-editor h1:first-child),
-          .editor :global(.ql-editor h2:first-child),
-          .editor :global(.ql-editor h3:first-child),
-          .editor :global(.ql-editor p:first-child) {
-            padding-top: var(--text-padding, 10px);
-          }
-          .editor :global(p) {
-            padding-left: var(--text-padding, 10px);
-            padding-right: var(--text-padding, 10px);
-          }
-          .editor :global(:not(p):not(h1):not(h2):not(h3) + p) {
-            padding-top: var(--text-padding, 5px);
-          }
-          .editor :global(p.empty:not(:last-child)) {
-            line-height: 10px;
-          }
-          .editor :global(p:last-child) {
-            padding-bottom: var(--text-padding, 10px);
-          }
-          .editor.view-only :global(p.empty:last-child) {
-            display: none;
-          }
-          .editor.single-line.has-image :global(p.empty) {
-            display: none;
-          }
-          .editor.single-line :global(img) {
-            max-height: 250px;
-            display: block;
-            margin: 0 auto;
-          }
-          .editor.single-line :global(.ql-block-image) {
-            margin: 0;
-          }
-          .editor :global(.ql-editor blockquote:first-child) {
-            margin-top: 5px;
-          }
-          .editor :global(.ql-editor blockquote:last-child) {
-            // Without this, the margin collapses and leaves a blank
-            // space on backgrounds wrapping the editor.
-            display: inline-block;
-            margin-bottom: 5px;
-          }
-        `}</style>
-        {/* Add global styles for types*/}
-        <style jsx>{globalStyles}</style>
       </>
     );
   }
 }
-
-const Toolbar = forwardRef<
-  HTMLDivElement,
-  { loaded: boolean; singleLine: boolean }
->(({ loaded, singleLine }, ref) => {
-  if (singleLine) {
-    removeListKeyboardBindings();
-  }
-  return (
-    <>
-      <div
-        className={classNames("toolbar", "ql-toolbar", { loaded })}
-        ref={ref}
-      >
-        <span className="ql-formats">
-          <button className="ql-bold"></button>
-          <button className="ql-italic"></button>
-          <button className="ql-underline"></button>
-          <button className="ql-strike"></button>
-        </span>
-        <span className="ql-formats">
-          <button className="ql-link"></button>
-          <button className="ql-inline-spoilers">
-            <img src={SpoilersIcon} />
-          </button>
-        </span>
-        <span className="ql-formats">
-          {!singleLine && (
-            <>
-              <button className="ql-list" value="bullet"></button>
-              <button className="ql-list" value="ordered"></button>
-            </>
-          )}
-          <button className="ql-code"></button>
-          <button className="ql-blockquote"></button>
-        </span>
-        <span className="ql-formats">
-          <select className="ql-header">
-            <option value="h1">Heading 1</option>
-            <option value="h2">Heading 2</option>
-            <option value="h3">Heading 3</option>
-            <option value="">Normal</option>
-          </select>
-        </span>
-        <span className="ql-formats">
-          <button className="ql-clean"></button>
-        </span>
-      </div>
-      <style jsx>{`
-        .toolbar {
-          display: none;
-        }
-        .toolbar.loaded {
-          display: block;
-          text-align: center;
-        }
-        .toolbar :global(button img) {
-          filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg)
-            brightness(91%) contrast(94%);
-          max-width: 100%;
-          max-height: 100%;
-        }
-        .toolbar :global(button:hover img) {
-          filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
-            brightness(105%) contrast(105%);
-        }
-      `}</style>
-    </>
-  );
-});
 
 export interface EditorHandler {
   // Focus the embed.
