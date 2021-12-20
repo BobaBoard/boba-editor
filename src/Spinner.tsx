@@ -10,11 +10,11 @@ const Spinner: React.FC<{
   let width = props.width || 40;
   let margin = props.margin || width / 10;
   const spinnerProperties = {
-    width: `${width - margin * 2}px;`,
-    height: `${width - margin * 2}px;`,
-    margin: `${margin}px;`,
-    border: `${margin}px solid ${color};`,
-    borderColor: `${color} transparent transparent transparent;`,
+    width: `${width - margin * 2}px`,
+    height: `${width - margin * 2}px`,
+    margin: `${margin}px`,
+    border: `${margin}px solid ${color}`,
+    borderColor: `${color} transparent transparent transparent`,
   };
 
   return (
