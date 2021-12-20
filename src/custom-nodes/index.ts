@@ -4,6 +4,7 @@ export { default as CustomImage } from "./CustomImage";
 export { default as CustomText } from "./CustomText";
 export { default as InlineSpoilers } from "./InlineSpoilers";
 export { default as InstagramEmbed } from "./InstagramEmbed";
+export { default as OEmbedBase } from "./OEmbedBase";
 export { default as PixivEmbed } from "./PixivEmbed";
 export { default as RedditEmbed } from "./RedditEmbed";
 export { default as TikTokEmbed } from "./TikTokEmbed";
