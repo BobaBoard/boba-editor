@@ -506,7 +506,7 @@ class Editor extends Component<EditorProps> {
       // @ts-ignore
       this.isServer() && getSsrConverter().convert(this.props.initialText);
     const editorClasses = classNames("editor", {
-      loaded: this.state.loaded,
+      loaded: this.state.loaded || this.isServer(),
       "single-line": this.props.singleLine,
       "has-image": this.state.hasImage,
       "view-only": !this.props.editable,
