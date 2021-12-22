@@ -26,21 +26,6 @@ const embedFetchers = {
   },
 };
 
-const waitForTwitterScript = () => {
-  cy.window().then((win) => {
-    if (!win["twttr"]) {
-      const twitterLibrary = win.document.createElement("script");
-      twitterLibrary.src = "https://platform.twitter.com/widgets.js";
-      win.document.body.appendChild(twitterLibrary);
-    }
-  });
-  cy.waitUntil(() => {
-    return cy.window().then((win) => {
-      return win["twttr"] !== undefined;
-    });
-  });
-};
-
 const loadYouTubeVideo = ({
   videoUrl,
   onTextChange,
@@ -191,7 +176,7 @@ it("Correctly removes the YouTube video", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Delete embed").click();
-      cy.get(".ql-tweet")
+      cy.get(".ql-youtube-video")
         .should("not.exist")
         .then(() => {
           expect(

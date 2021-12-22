@@ -1,16 +1,18 @@
-import { EmbedValue } from "../config";
-import Quill from "quill";
-import DOMPurify from "dompurify";
-const logging = require("debug")("bobapost:embeds:tumblt");
-
-const BlockEmbed = Quill.import("blots/block/embed");
 import {
   addEmbedEditOverlay,
   addErrorMessage,
   addLoadingMessage,
   makeSpoilerable,
 } from "./utils";
+
+import DOMPurify from "dompurify";
 import { EditorContextProps } from "../Editor";
+import { EmbedValue } from "../config";
+import Quill from "quill";
+
+const logging = require("debug")("bobapost:embeds:tumblt");
+
+const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
 
@@ -50,6 +52,7 @@ const attachObserver = (
             const embedSizes = tumblrFrame.getBoundingClientRect();
             destinationNode.dataset.embedWidth = `${embedSizes.width}`;
             destinationNode.dataset.embedHeight = `${embedSizes.height}`;
+            destinationNode.classList.add("size-loaded");
             TumblrEmbed.onLoadCallback?.();
           }, 200);
           return;
@@ -78,7 +81,7 @@ class TumblrEmbed extends BlockEmbed {
     return "";
   }
 
-  static getTumblrEmbedFromUrl = (url: any): Promise<any> => {
+  static getOEmbedFromUrl = (url: any): Promise<any> => {
     throw new Error("unimplemented");
   };
 
@@ -122,7 +125,7 @@ class TumblrEmbed extends BlockEmbed {
       });
       return;
     }
-    TumblrEmbed.getTumblrEmbedFromUrl(url)
+    TumblrEmbed.getOEmbedFromUrl(url)
       .then((data) => {
         const sanitizedData = DOMPurify.sanitize(data.html);
         const containerNode = document.createElement("div");

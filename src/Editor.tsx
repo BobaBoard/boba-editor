@@ -253,7 +253,10 @@ class Editor extends Component<EditorProps> {
 
     if (this.context?.fetchers?.getOEmbedFromUrl) {
       const OEmbed = require("./custom-nodes/OEmbedBase");
+      const Tumblr = require("./custom-nodes/TumblrEmbed");
       OEmbed.default.getOEmbedFromUrl = this.context.fetchers?.getOEmbedFromUrl;
+      // TODO: make tumblr inherit from default oembed implementation
+      Tumblr.default.getOEmbedFromUrl = this.context.fetchers?.getOEmbedFromUrl;
     }
   }
 

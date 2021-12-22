@@ -2,6 +2,7 @@
   "component": {
     "testFiles": "**/*.spec.{js,ts,jsx,tsx}",
     "componentFolder": "tests",
-    "video": false
+    "video": false,
+    "chromeWebSecurity": false
   }
 }
