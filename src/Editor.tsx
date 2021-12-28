@@ -523,7 +523,7 @@ class Editor extends Component<EditorProps> {
               ref={this.ssrRef}
               role="textbox"
             >
-              <div className="spinner">
+              <div className="ql-spinner">
                 <Spinner />
               </div>
               <div
@@ -537,7 +537,7 @@ class Editor extends Component<EditorProps> {
         )}
         {!ssrText && (
           <div className={editorClasses}>
-            <div className="spinner">
+            <div className="ql-spinner">
               <Spinner />
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
