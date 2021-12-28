@@ -2,6 +2,7 @@ import type { BoundsStatic, Delta, DeltaOperation, RangeStatic } from "quill";
 
 import { EditorContextProps } from "./Editor";
 import type Quill from "quill";
+
 let QuillModule: typeof Quill;
 if (typeof window !== "undefined") {
   QuillModule = require("quill") as typeof Quill;
@@ -11,7 +12,9 @@ const log = require("debug")("bobapost:quillUtils");
 
 // Checks whether the editor selection is currently on an empty
 // line and returns the line boundaries in the affermative case.
-export const detectNewLine = (editor: Quill): BoundsStatic | null => {
+export const maybeGetNewLineBoundaries = (
+  editor: Quill
+): BoundsStatic | null => {
   // Must focus on editor to get selection
   //editor.focus();
   if (!editor.getSelection()) {

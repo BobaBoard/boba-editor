@@ -35,7 +35,6 @@ module.exports = {
   },
   // Source maps support ('inline-source-map' also works)
   devtool: "source-map",
-
   module: {
     rules: [
       {
@@ -50,7 +49,16 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              modules: true,
+              localIdentName: "[name]__[local]--[hash:base64:5]",
+            },
+          },
+        ],
       },
     ],
   },

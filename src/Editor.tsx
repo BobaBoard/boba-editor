@@ -7,9 +7,9 @@ import React, { Component, createRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
 import {
-  detectNewLine,
   importEmbedModule,
   isEmptyDelta,
+  maybeGetNewLineBoundaries,
   pasteImageAsBlockEmbed,
   removeBuggedEmptyClasses,
   removeLineBreaksFromPaste,
@@ -168,7 +168,7 @@ class Editor extends Component<EditorProps> {
           if (!this.props.editable) {
             return;
           }
-          const bounds = detectNewLine(this.editor);
+          const bounds = maybeGetNewLineBoundaries(this.editor);
           this.maybeShowEmptyLineTooltip(bounds);
         }
       }
@@ -209,7 +209,7 @@ class Editor extends Component<EditorProps> {
   onEmbedChange(changes?: { isEmbedLoad?: boolean }) {
     if (this.props.editable) {
       this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
+      const bounds = maybeGetNewLineBoundaries(this.editor);
       logging(`Embeds callback activated! New line bounds:`);
       logging(bounds);
       this.maybeShowEmptyLineTooltip(bounds);
@@ -235,7 +235,7 @@ class Editor extends Component<EditorProps> {
       logging(`deleting embed`);
       QuillModule.find(root, true)?.remove();
       this.skipTooltipUpdates = false;
-      const bounds = detectNewLine(this.editor);
+      const bounds = maybeGetNewLineBoundaries(this.editor);
       this.maybeShowEmptyLineTooltip(bounds);
       this.onEmbedChange();
     };
