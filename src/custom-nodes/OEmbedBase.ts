@@ -1,13 +1,15 @@
-import { EditorContextProps } from "../Editor";
-import Quill from "quill";
-
-const BlockEmbed = Quill.import("blots/block/embed");
 import {
   addEmbedEditOverlay,
   addErrorMessage,
   addLoadingMessage,
   makeSpoilerable,
 } from "./utils";
+
+import { EditorContextProps } from "../Editor";
+import OEmbedHtml from "./OEmbedBase.html";
+import Quill from "quill";
+
+const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
 const logging = require("debug")("bobapost:embeds:oembeds");
@@ -277,6 +279,12 @@ class OEmbed extends BlockEmbed {
         }
       | { data: any; url: string }
   ) {
+    console.log(OEmbedHtml);
+    console.log(OEmbedHtml);
+    console.log(OEmbedHtml);
+    console.log(OEmbedHtml);
+    console.log(OEmbedHtml);
+    console.log(OEmbedHtml);
     const oEmbedNode = document.createElement("div");
     // Add this to the post for rendering, but
     // also to the node for value retrieval

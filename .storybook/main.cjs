@@ -1,3 +1,6 @@
+const webpackConfig = require("../webpack.config.cjs");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 module.exports = {
   stories: ["../stories/**/*.stories.tsx"],
   addons: [
@@ -21,6 +24,12 @@ module.exports = {
         },
       ],
     });
+
+    config.module.rules.push({
+      test: /\.html$/,
+      use: ["html-loader"],
+    });
+
     config.resolve.extensions.push(".ts", ".tsx");
     return config;
   },
