@@ -26,6 +26,7 @@ const TenorKeyboard = (props: {
   return (
     <>
       <Popover
+        containerStyle={{ zIndex: "100" }}
         isOpen={props.isOpen}
         onClickOutside={() => {
           props.onClose();

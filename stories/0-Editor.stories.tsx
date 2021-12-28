@@ -7,6 +7,7 @@ import Editor, {
   replaceImages,
 } from "../src";
 
+import { Delta } from "quill";
 import React from "react";
 import { action } from "@storybook/addon-actions";
 
@@ -235,6 +236,35 @@ export const EditorFocus = () => {
         }}
         value="focus"
       />
+    </>
+  );
+};
+
+export const ZIndex = () => {
+  const editorRef = React.createRef<EditorHandler>();
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          zIndex: 100,
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "#ff00ff50",
+        }}
+      >
+        <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+          <Editor
+            handler={editorRef}
+            editable={true}
+            initialText={JSON.parse('[{"insert":""}]')}
+            onTextChange={action("TextChange")}
+            onIsEmptyChange={action("EmptyChange")}
+          />
+        </div>
+      </div>
     </>
   );
 };

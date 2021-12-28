@@ -5,6 +5,7 @@
   border-radius: 3px;
   background: black;
   overflow-x: hidden;
+  z-index: 100;
 }
 .tenor-joke-container {
   background: black;
