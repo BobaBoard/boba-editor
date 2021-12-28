@@ -1,0 +1,62 @@
+.editor .ql-oembed-embed {
+  white-space: normal;
+}
+.editor .ql-oembed-embed .embed-node.loading {
+  visibility: hidden;
+}
+/*
+   * TODO: figure out how to stop special-casing Tumblr & Twitter
+   */
+.editor .ql-oembed-embed .loading-message,
+.editor .ql-tumblr-embed .loading-message {
+  width: 100%;
+  height: 50px;
+  margin: 10px 0;
+  text-align: center;
+  line-height: 50px;
+  color: white;
+  position: relative;
+}
+.editor .ql-oembed-embed .loading-message a,
+.editor .ql-tumblr-embed .loading-message a,
+.editor .tweet .loading-message a {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.editor .ql-oembed-embed.best-effort {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  border: 1px solid #d0d0d0;
+}
+.editor .ql-oembed-embed.best-effort img {
+  border-radius: 10px 10px 0px 0px;
+  width: 100%;
+}
+.editor .ql-oembed-embed.best-effort .container.with-icon {
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 100%;
+  background-size: 20px;
+}
+.editor .ql-oembed-embed.best-effort h1 {
+  font-size: 25px;
+  text-decoration: underline;
+}
+.editor .ql-oembed-embed.best-effort h1,
+.editor .ql-oembed-embed.best-effort p {
+  color: black;
+}
+.editor .ql-oembed-embed.best-effort a {
+  display: block;
+  text-decoration: none;
+}
+.editor .reddit-card a {
+  color: black !important;
+}
+
+.editor .best-effort {
+  text-align: left;
+}

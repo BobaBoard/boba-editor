@@ -1,6 +1,5 @@
 import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
-import "./custom-nodes/css/global.css";
 import "./css/Editor.css";
 
 import React, { Component, createRef } from "react";

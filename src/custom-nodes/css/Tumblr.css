@@ -1,0 +1,18 @@
+.editor .ql-tumblr-embed.loading {
+  background-color: #34526f;
+  text-align: center;
+  color: white;
+  min-height: 80px;
+  /*
+   * Figure out how to readd overflow hidden to this
+   */
+}
+
+.editor .ql-tumblr-embed iframe {
+  margin: 3px auto !important;
+}
+
+.editor .ql-tumblr-embed .loading-message {
+  position: relative;
+  margin-bottom: 50px;
+}

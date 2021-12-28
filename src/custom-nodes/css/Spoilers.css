@@ -1,0 +1,88 @@
+.editor.view-only .spoilers .embed-overlay::after,
+.editor.view-only .embed-overlay.spoilers::after {
+  opacity: 1;
+}
+
+.editor.view-only .spoilers .embed-overlay,
+.editor.view-only .embed-overlay.spoilers {
+  pointer-events: all;
+}
+
+.editor.view-only .spoilers .embed-overlay:hover,
+.editor.view-only .embed-overlay.spoilers:hover {
+  cursor: pointer;
+}
+
+.editor .spoilers .embed-overlay::after,
+.editor .embed-overlay.spoilers::after {
+  content: "";
+  background-image: url(https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fadmin%2Fspoilers.png?alt=media&token=a343aee0-e90f-4379-8d41-1cac1f65f7ee);
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  opacity: 0.1;
+  z-index: 3;
+}
+
+.editor.view-only img.spoilers {
+  visibility: hidden;
+}
+
+.editor.view-only .spoilers > img {
+  visibility: hidden;
+}
+
+.editor.view-only .show-spoilers img.spoilers {
+  visibility: visible;
+}
+
+.editor.view-only .spoilers.show-spoilers img {
+  visibility: visible;
+}
+
+.editor .spoilers.show-spoilers .embed-overlay::after,
+.editor .show-spoilers .embed-overlay.spoilers::after {
+  visibility: hidden;
+}
+
+.editor .spoilers.show-spoilers .embed-overlay,
+.editor .show-spoilers .embed-overlay.spoilers {
+  display: none;
+}
+
+.editor .spoilers img:hover {
+  cursor: pointer;
+}
+
+.editor .ql-editor .inline-spoilers {
+  padding: 1px;
+  border: 1px dashed black;
+  background-color: #e6dede;
+}
+
+.editor.view-only .inline-spoilers:not(.visible) code {
+  background-color: black !important;
+}
+
+.editor .ql-editor .inline-spoilers:hover {
+  cursor: pointer;
+}
+
+.editor.view-only .inline-spoilers {
+  background-color: black;
+}
+
+.editor.view-only .inline-spoilers:not(.visible),
+.editor.view-only .inline-spoilers:not(.visible) * {
+  color: transparent !important;
+  text-decoration-color: transparent !important;
+}
+
+.editor.view-only .inline-spoilers.visible {
+  background-color: transparent;
+  color: inherit;
+}

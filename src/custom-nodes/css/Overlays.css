@@ -1,0 +1,146 @@
+/**
+ *
+ * OPTIONS OVERLAY
+ * 
+ */
+
+.editor.view-only .options-overlay {
+  display: none;
+}
+
+.editor .options-overlay {
+  display: flex;
+  background-color: #444;
+  max-width: 300px;
+  border-radius: 15px;
+  padding: 5px 15px;
+  margin-top: 5px;
+  pointer-events: all;
+  z-index: 5;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+button.embed-options-button {
+  display: inline-block;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  background: transparent;
+  color: #ffffff;
+  font-family: sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.editor button.embed-options-button:hover,
+.editor button.embed-options-button:focus {
+  background: transparent;
+}
+
+.editor button.embed-options-button:focus {
+  outline: none;
+}
+
+.editor button.embed-options-button:active {
+  transform: scale(0.99);
+}
+.editor .embed-options-button {
+  height: 20px;
+  width: 20px;
+  margin: 0px 3px;
+}
+.editor .embed-options-button img {
+  filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg) brightness(91%)
+    contrast(94%);
+}
+.editor .embed-options-button:hover img {
+  filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+    brightness(105%) contrast(105%);
+}
+.editor .embed-options-button.active img {
+  filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+    brightness(105%) contrast(105%);
+}
+.editor .embed-options-button.active .ql-fill {
+  fill: white;
+}
+.editor .embed-options-button:hover {
+  cursor: pointer;
+}
+.editor .embed-options-button > img {
+  height: 20px;
+  width: 20px;
+}
+
+/**
+ *
+ * LOADING AND ERRORS
+ * 
+ */
+
+.editor .ql-embed.loading a {
+  color: white !important;
+}
+.editor .ql-embed .error-message {
+  width: 100%;
+  background-color: rgb(255, 15, 75);
+  text-align: center;
+  line-height: 25px;
+  color: white;
+  padding: 10px;
+  margin: 10px 0;
+}
+.editor .ql-embed .error-message a {
+  color: white !important;
+}
+
+.editor .ql-embed {
+  text-align: center;
+  position: relative;
+}
+
+/**
+ *
+ * CLOSE BUTTON
+ * 
+ */
+
+.editor .close-button {
+  width: 35px;
+  height: 35px;
+  background-color: #444;
+  position: absolute;
+  border: 3px solid #ccc;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  pointer-events: all;
+  z-index: 2;
+}
+.editor .close-button img {
+  filter: invert(90%) sepia(0%) saturate(0%) hue-rotate(68deg) brightness(91%)
+    contrast(94%);
+  top: 50%;
+  left: 50%;
+  display: block;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.editor .close-button:hover {
+  border-color: white;
+  cursor: pointer;
+}
+.editor .close-button:hover img {
+  filter: invert(100%) sepia(4%) saturate(16%) hue-rotate(126deg)
+    brightness(105%) contrast(105%);
+}
+.editor.view-only .close-button {
+  display: none;
+}

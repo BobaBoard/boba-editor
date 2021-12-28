@@ -1,0 +1,35 @@
+.editor .tweet .loading-message {
+  width: 100%;
+  min-height: 50px;
+  background-color: #1da1f2;
+  margin: 10px 0;
+  text-align: center;
+  line-height: 50px;
+  color: white;
+  position: relative;
+}
+.editor .twitter-tweet-rendered {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  background-color: black;
+}
+
+.editor .ql-embed.ios-bug .error-message {
+  width: 100%;
+  height: 150px;
+  background-color: black;
+  text-align: center;
+  line-height: 25px;
+  color: white;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", sans-serif;
+  padding: 20px;
+  margin: 10px 0;
+}
+
+.editor .ql-embed.ios-bug > img {
+  position: absolute;
+  width: 50px;
+  left: 10px;
+  top: 10px;
+}

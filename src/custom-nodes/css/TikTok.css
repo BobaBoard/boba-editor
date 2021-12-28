@@ -1,0 +1,49 @@
+.editor .ql-tiktok-embed {
+  color: black;
+  text-align: left;
+}
+
+.editor .ql-tiktok-embed *:not(p) > a[title] {
+  font-weight: bold;
+}
+
+.editor .ql-embed:not(.ql-tiktok-embed) a {
+  color: white;
+  cursor: pointer;
+}
+
+.editor .ql-embed:not(.ql-tiktok-embed) a:hover {
+  color: white;
+  cursor: pointer;
+}
+
+.editor .ql-tiktok-embed.loading {
+  background-color: aquamarine;
+  padding: 30px;
+  text-align: center;
+  color: white;
+  height: 80px;
+  /*
+     * Figure out how to readd overflow hidden to this
+     */
+}
+
+blockquote.tiktok-embed {
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.editor .ql-tiktok-embed.loading .loading-message {
+  position: relative;
+  margin-bottom: 50px;
+}
+
+.editor .tiktok-video {
+  white-space: normal;
+}
+
+.editor .tiktok-video blockquote {
+  border-left: 0 !important;
+  padding: 0 !important;
+}
