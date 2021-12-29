@@ -6,6 +6,7 @@ import {
 import CloseButton from "../img/close.svg";
 import EmbedOverlayHtml from "./templates/EmbedOverlay.html";
 import SpoilersIcon from "../img/spoilers.svg";
+
 const logging = require("debug")("bobapost:embeds:utils");
 
 // NOTE/TODO
@@ -167,12 +168,13 @@ export const addLoadingMessage = (
     height?: string;
   }
 ) => {
-  const loadingMessage = document.createElement("div");
-  const linkToOriginal = document.createElement("a");
-  linkToOriginal.innerHTML = message || "Loading...";
-  linkToOriginal.href = url;
-  loadingMessage.appendChild(linkToOriginal);
-  loadingMessage.classList.add("loading-message");
+  const loadingMessage = loadTemplateFromString(
+    `<div class="loading-message">
+      <a>Loading...</a>
+    </div>`
+  );
+  message && (loadingMessage.querySelector("a")!.innerHTML = message);
+  loadingMessage.querySelector("a")!.href = url;
   if (color) {
     loadingMessage.style.backgroundColor = color;
   }
@@ -197,18 +199,19 @@ export const addErrorMessage = (
     url?: string;
   }
 ) => {
-  const loadingMessage = document.createElement("div");
+  const errorMessage = loadTemplateFromString(
+    `<div class="error-message">
+      <a />
+    </div>`
+  );
   if (url) {
-    const linkToOriginal = document.createElement("a");
-    linkToOriginal.innerHTML = message;
-    linkToOriginal.href = url;
-    loadingMessage.appendChild(linkToOriginal);
+    errorMessage.querySelector("a")!.innerHTML = message;
+    errorMessage.querySelector("a")!.href = url;
   } else {
-    loadingMessage.innerHTML = message;
+    errorMessage.innerHTML = message;
   }
-  loadingMessage.classList.add("error-message");
 
-  embedRoot.appendChild(loadingMessage);
+  embedRoot.appendChild(errorMessage);
 
   return embedRoot;
 };
