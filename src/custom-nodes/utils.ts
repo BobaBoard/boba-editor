@@ -1,6 +1,11 @@
-import CloseButton from "../img/close.svg";
-import SpoilersIcon from "../img/spoilers.svg";
+import {
+  loadTemplateFromString,
+  loadTemplateFromTemplateNode,
+} from "./utils/template-utils";
 
+import CloseButton from "../img/close.svg";
+import EmbedOverlayHtml from "./templates/EmbedOverlay.html";
+import SpoilersIcon from "../img/spoilers.svg";
 const logging = require("debug")("bobapost:embeds:utils");
 
 // NOTE/TODO
@@ -49,6 +54,36 @@ export const makeSpoilerable = (
   }
 };
 
+const createOptionNode = (
+  embedOverlay: HTMLElement,
+  settings: {
+    icon: string;
+    initialActive: boolean;
+    getAriaLabel: (active: boolean) => string;
+    onToggle: (active: boolean) => void;
+  }
+) => {
+  const optionButton = loadTemplateFromTemplateNode(
+    embedOverlay.querySelector<HTMLTemplateElement>(".option-template")!
+  );
+  const optionButtonImg = optionButton.querySelector("img") as HTMLImageElement;
+  optionButtonImg.src = settings.icon;
+  optionButton.classList.toggle("active", settings.initialActive);
+  optionButton.setAttribute(
+    "aria-label",
+    settings.getAriaLabel(settings.initialActive)
+  );
+  optionButton.addEventListener("click", (e) => {
+    const active = optionButton.classList.toggle("active");
+    settings.onToggle(active);
+    optionButton.setAttribute("aria-label", settings.getAriaLabel(active));
+    e.stopPropagation();
+    e.preventDefault();
+  });
+
+  return optionButton;
+};
+
 export const addEmbedEditOverlay = (
   embedType: any,
   embedRoot: HTMLElement,
@@ -58,70 +93,61 @@ export const addEmbedEditOverlay = (
     onToggle: (root: HTMLElement, value: boolean) => void;
   }[]
 ) => {
-  const containerDiv = document.createElement("div");
-  containerDiv.classList.add("embed-overlay");
-  const closeButton = document.createElement("button");
-  closeButton.classList.add("close-button");
-  closeButton.setAttribute("aria-label", "Delete embed");
+  const embedOverlay = loadTemplateFromString(EmbedOverlayHtml);
+  const optionsOverlay = embedOverlay.querySelector(
+    ".options-overlay"
+  ) as HTMLElement;
+  const closeButtonImg = embedOverlay.querySelector(
+    ".close-button img"
+  ) as HTMLImageElement;
+  const closeButton = embedOverlay.querySelector(
+    ".close-button"
+  ) as HTMLElement;
 
-  const closeButtonImg = document.createElement("img");
+  // TODO: see about directly loading this from the html template
   closeButtonImg.src = CloseButton;
-  closeButton.appendChild(closeButtonImg);
-  containerDiv.appendChild(closeButton);
   closeButton.addEventListener("click", () => {
     embedType.onRemoveRequest(embedRoot);
   });
 
   const hasOption = embedType.onMarkSpoilers || extraSettings?.length;
   if (hasOption) {
-    const optionsOverlay = document.createElement("div");
-    optionsOverlay.classList.add("options-overlay");
     if (embedType.onMarkSpoilers) {
-      const isSpoilered = !!embedType.value(embedRoot).spoilers;
-      const spoilersButton = document.createElement("button");
-      spoilersButton.setAttribute(
-        "aria-label",
-        `Toggle spoilers ${isSpoilered ? "off" : "on"}`
+      const hasSpoilers = !!embedType.value(embedRoot).spoilers;
+      optionsOverlay.appendChild(
+        createOptionNode(embedOverlay, {
+          icon: SpoilersIcon,
+          initialActive: hasSpoilers,
+          getAriaLabel: (active) => `Toggle spoilers ${active ? "off" : "on"}`,
+          onToggle: (active) => {
+            embedType.onMarkSpoilers?.(embedRoot, active);
+            // TODO: should this go here?
+            embedOverlay.classList.toggle("spoilers", active);
+          },
+        })
       );
-      spoilersButton.classList.add("spoilers-button", "embed-options-button");
-      const spoilersImg = document.createElement("img");
-      spoilersImg.src = SpoilersIcon;
-      spoilersButton.appendChild(spoilersImg);
-      optionsOverlay.appendChild(spoilersButton);
-      spoilersButton.classList.toggle("active", isSpoilered);
-      containerDiv.classList.toggle("spoilers", isSpoilered);
-      spoilersButton.addEventListener("click", (e) => {
-        const spoilersActive = spoilersButton.classList.toggle("active");
-        embedType.onMarkSpoilers?.(embedRoot, spoilersActive);
-        spoilersButton.setAttribute(
-          "aria-label",
-          `Toggle spoilers ${spoilersActive ? "off" : "on"}`
-        );
-        containerDiv.classList.toggle("spoilers", spoilersActive);
-        e.stopPropagation();
-        e.preventDefault();
-      });
-    }
-    extraSettings?.forEach((setting) => {
-      const threadButton = document.createElement("div");
-      threadButton.classList.add("thread-button", "embed-options-button");
-      const threadButtonImg = document.createElement("img");
-      threadButtonImg.src = setting.icon;
-      threadButton.appendChild(threadButtonImg);
-      optionsOverlay.appendChild(threadButton);
-      threadButton.classList.toggle("active", !!setting.initialValue);
-      threadButton.addEventListener("click", (e) => {
-        threadButton.classList.toggle("active");
-        setting.onToggle(embedRoot, threadButton.classList.contains("active"));
-        e.stopPropagation();
-        e.preventDefault();
-      });
-    });
 
-    containerDiv.appendChild(optionsOverlay);
+      // TODO: should this go here?
+      embedOverlay.classList.toggle("spoilers", hasSpoilers);
+    }
+
+    // TODO: add extra settings and don't toggle spoilers when clicking on
+    // element if we're in edit mode
+
+    extraSettings?.forEach((setting) => {
+      optionsOverlay.appendChild(
+        createOptionNode(embedOverlay, {
+          ...setting,
+          initialActive: setting.initialValue,
+          // TODO: fill aria label
+          getAriaLabel: () => ``,
+          onToggle: (active) => setting.onToggle(embedRoot, active),
+        })
+      );
+    });
   }
 
-  embedRoot.appendChild(containerDiv);
+  embedRoot.appendChild(embedOverlay);
   return embedRoot;
 };
 

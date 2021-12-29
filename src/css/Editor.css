@@ -14,10 +14,10 @@
   flex-grow: 1;
   font-size: medium;
 }
-.loaded .spinner {
+.loaded .ql-spinner {
   display: none;
 }
-.spinner {
+.ql-spinner {
   text-align: center;
   position: absolute;
   z-index: 5;

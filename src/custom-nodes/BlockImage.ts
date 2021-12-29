@@ -1,6 +1,8 @@
 import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
 
+import BlockImageHtml from "./templates/BlockImage.html";
 import Quill from "quill";
+import { loadTemplateInNode } from "./utils/template-utils";
 
 const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -28,13 +30,24 @@ const setImageValue = (img: HTMLImageElement, src: string) => {
   img.classList.add("image");
 };
 
+// TODO: can this just be display: none?
+const removeLoadingOverlay = (rootNode: HTMLElement) => {
+  const spinner = rootNode.querySelector(".spinner");
+  if (spinner) {
+    spinner.parentElement?.removeChild(spinner);
+  }
+  rootNode.classList.remove("loading");
+};
+
 class BlockImage extends BlockEmbed {
   static create(value: Value) {
     const node = super.create();
-    const img = document.createElement("IMG") as HTMLImageElement;
+    loadTemplateInNode(node, BlockImageHtml);
+
+    // TODO: choose a more descriptive name for this class
+    const img = node.querySelector(".image") as HTMLImageElement;
     img.onload = () => {
-      node.removeChild(node.querySelector(".spinner"));
-      node.classList.remove("loading");
+      removeLoadingOverlay(node);
       if (BlockImage.onLoadCallback) {
         BlockImage.onLoadCallback();
       }
@@ -45,21 +58,15 @@ class BlockImage extends BlockEmbed {
     if (src) {
       setImageValue(img, this.sanitize(src));
       img.setAttribute("src", this.sanitize(src));
-      img.classList.add("image");
     }
     if (value["width"] || value["height"]) {
       img.setAttribute("width", `${value["width"]}px`);
       img.setAttribute("height", `${value["height"]}px`);
     }
-    node.setAttribute("contenteditable", false);
-    node.classList.add("ql-block-image", "ql-embed", "loading");
     makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node);
     node.appendChild(img);
 
-    const spinnerNode = document.createElement("div");
-    spinnerNode.classList.add("spinner");
-    node.appendChild(spinnerNode);
     // TODO: test this special case
     if (value["loadPromise"]) {
       (value["loadPromise"] as Promise<string | ArrayBuffer>)
@@ -67,9 +74,8 @@ class BlockImage extends BlockEmbed {
           setImageValue(img, this.sanitize(src));
         })
         .catch(() => {
-          node.removeChild(node.querySelector(".spinner"));
+          removeLoadingOverlay(node);
           node.classList.add("error");
-          node.classList.remove("loading");
         });
     }
 
