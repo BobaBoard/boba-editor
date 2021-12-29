@@ -1,13 +1,9 @@
-import {
-  addEmbedEditOverlay,
-  addErrorMessage,
-  addLoadingMessage,
-  makeSpoilerable,
-} from "./utils";
+import { addErrorMessage, addLoadingMessage, makeSpoilerable } from "./utils";
 
 import { EditorContextProps } from "../Editor";
 import OEmbedHtml from "./OEmbedBase.html";
 import Quill from "quill";
+import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");

@@ -1,14 +1,10 @@
-import {
-  addEmbedEditOverlay,
-  addErrorMessage,
-  addLoadingMessage,
-  makeSpoilerable,
-} from "./utils";
+import { addErrorMessage, addLoadingMessage, makeSpoilerable } from "./utils";
 
 import DOMPurify from "dompurify";
 import { EditorContextProps } from "../Editor";
 import { EmbedValue } from "../config";
 import Quill from "quill";
+import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
 const logging = require("debug")("bobapost:embeds:tumblt");
 

@@ -1,16 +1,13 @@
+import { addErrorMessage, addLoadingMessage, makeSpoilerable } from "./utils";
+
+import { EditorContextProps } from "../Editor";
 import { EmbedValue } from "../config";
 import Quill from "quill";
+import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 
-import {
-  addEmbedEditOverlay,
-  addErrorMessage,
-  addLoadingMessage,
-  makeSpoilerable,
-} from "./utils";
-import { EditorContextProps } from "../Editor";
 
 const logging = require("debug")("bobapost:embeds:youtube");
 
@@ -89,9 +86,8 @@ class YouTubeEmbed extends BlockEmbed {
     embedFrame.onload = () => {
       node.classList.remove("loading");
       YouTubeEmbed.onLoadCallback?.();
-      const loadingNode: HTMLDivElement = node.querySelector(
-        ".loading-message"
-      );
+      const loadingNode: HTMLDivElement =
+        node.querySelector(".loading-message");
       if (loadingNode) {
         node.removeChild(loadingNode);
       }
