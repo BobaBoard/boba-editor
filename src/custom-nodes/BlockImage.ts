@@ -1,11 +1,8 @@
-import {
-  addEmbedEditOverlay,
-  loadTemplateInNode,
-  makeSpoilerable,
-} from "./utils";
+import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
 
 import BlockImageHtml from "./templates/BlockImage.html";
 import Quill from "quill";
+import { loadTemplateInNode } from "./utils/template-utils";
 
 const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");

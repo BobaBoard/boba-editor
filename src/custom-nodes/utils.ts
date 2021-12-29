@@ -1,8 +1,11 @@
+import {
+  loadTemplateFromString,
+  loadTemplateFromTemplateNode,
+} from "./utils/template-utils";
+
 import CloseButton from "../img/close.svg";
 import EmbedOverlayHtml from "./templates/EmbedOverlay.html";
 import SpoilersIcon from "../img/spoilers.svg";
-import invariant from "tiny-invariant";
-
 const logging = require("debug")("bobapost:embeds:utils");
 
 // NOTE/TODO
@@ -51,29 +54,6 @@ export const makeSpoilerable = (
   }
 };
 
-const stripEmptyTextNodes = (templateRoot: HTMLElement) => {
-  const treeWalker = document.createTreeWalker(
-    templateRoot,
-    NodeFilter.SHOW_ALL
-  );
-  let currentNode: Node | null = treeWalker.currentNode;
-  const toRemove: Node[] = [];
-
-  // find all empty nodes
-  while (currentNode) {
-    if (currentNode.nodeType == Node.TEXT_NODE) {
-      // TODO: figure out how to keep text nodes that have values
-      toRemove.push(currentNode);
-    }
-    currentNode = treeWalker.nextNode();
-  }
-  toRemove.forEach((node) => {
-    node.parentElement?.removeChild(node);
-  });
-
-  return templateRoot;
-};
-
 const createOptionNode = (
   embedOverlay: HTMLElement,
   settings: {
@@ -83,10 +63,9 @@ const createOptionNode = (
     onToggle: (active: boolean) => void;
   }
 ) => {
-  const optionButton = embedOverlay
-    .querySelector<HTMLTemplateElement>(".option-template")
-    ?.content.querySelector("button")
-    ?.cloneNode(true) as HTMLElement;
+  const optionButton = loadTemplateFromTemplateNode(
+    embedOverlay.querySelector<HTMLTemplateElement>(".option-template")!
+  );
   const optionButtonImg = optionButton.querySelector("img") as HTMLImageElement;
   optionButtonImg.src = settings.icon;
   optionButton.classList.toggle("active", settings.initialActive);
@@ -102,19 +81,7 @@ const createOptionNode = (
     e.preventDefault();
   });
 
-  return stripEmptyTextNodes(optionButton);
-  //   threadButton.classList.add("thread-button", "embed-options-button");
-  //   const threadButtonImg = document.createElement("img");
-  //   threadButtonImg.src = setting.icon;
-  //   threadButton.appendChild(threadButtonImg);
-  //   optionsOverlay.appendChild(threadButton);
-  //   threadButton.classList.toggle("active", !!setting.initialValue);
-  //   threadButton.addEventListener("click", (e) => {
-  //     threadButton.classList.toggle("active");
-  //     setting.onToggle(embedRoot, threadButton.classList.contains("active"));
-  //     e.stopPropagation();
-  //     e.preventDefault();
-  //   });
+  return optionButton;
 };
 
 export const addEmbedEditOverlay = (
@@ -154,6 +121,7 @@ export const addEmbedEditOverlay = (
           getAriaLabel: (active) => `Toggle spoilers ${active ? "off" : "on"}`,
           onToggle: (active) => {
             embedType.onMarkSpoilers?.(embedRoot, active);
+            // TODO: should this go here?
             embedOverlay.classList.toggle("spoilers", active);
           },
         })
@@ -243,36 +211,4 @@ export const addErrorMessage = (
   embedRoot.appendChild(loadingMessage);
 
   return embedRoot;
-};
-
-export const loadTemplateInNode = (
-  targetNode: HTMLElement,
-  template: string
-) => {
-  const templateElement = loadTemplateFromString(template);
-  Array.from(templateElement.attributes).forEach((attribute) => {
-    if (attribute.name == "class") {
-      targetNode.classList.add(...Array.from(templateElement.classList));
-      return;
-    }
-    targetNode.setAttribute(attribute.name, attribute.value);
-  });
-  templateElement.childNodes.forEach((node) => {
-    targetNode.appendChild(node.cloneNode());
-  });
-};
-
-export const loadTemplateFromString = (template: string) => {
-  const templateNode = document.createElement("template");
-  templateNode.innerHTML = template.trim();
-  invariant(
-    templateNode.content.childElementCount === 1 &&
-      templateNode.content.firstChild,
-    "No child element (or multiple elements) found in template."
-  );
-  // Remove all empty text nodes
-  // TODO: this should be done through the html-loader config
-  const templateRoot = templateNode.content.firstChild as HTMLElement;
-
-  return stripEmptyTextNodes(templateRoot);
 };

@@ -73,7 +73,6 @@ button.embed-options-button {
 .editor .embed-options-button:hover,
 .embed-options-button img:hover {
   cursor: pointer;
-  background-color: red;
 }
 .editor .embed-options-button > img {
   height: 20px;
