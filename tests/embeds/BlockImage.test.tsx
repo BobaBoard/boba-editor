@@ -46,8 +46,8 @@ beforeAll(() => {
 describe("Block Image", () => {
   test("Correctly renders loading image snapshot", async () => {
     const { baseElement } = render(<BlockImageEmbed />);
-    expect(baseElement.querySelector(".block-image-class"))
-      .toMatchInlineSnapshot(`
+    expect(baseElement.querySelector(".block-image-class")).
+toMatchInlineSnapshot(`
 <div
   class="block-image-class ql-block-image ql-embed loading"
   contenteditable="false"
@@ -69,6 +69,9 @@ describe("Block Image", () => {
     <div
       class="options-overlay"
     >
+      <template
+        class="option-template"
+      />
       <button
         aria-label="Toggle spoilers on"
         class="spoilers-button embed-options-button"
@@ -96,8 +99,8 @@ describe("Block Image", () => {
       const event: any = {};
       image.onload(event);
     });
-    expect(baseElement.querySelector(".block-image-class"))
-      .toMatchInlineSnapshot(`
+    expect(baseElement.querySelector(".block-image-class")).
+toMatchInlineSnapshot(`
 <div
   class="block-image-class ql-block-image ql-embed"
   contenteditable="false"
@@ -116,6 +119,9 @@ describe("Block Image", () => {
     <div
       class="options-overlay"
     >
+      <template
+        class="option-template"
+      />
       <button
         aria-label="Toggle spoilers on"
         class="spoilers-button embed-options-button"
@@ -146,8 +152,8 @@ describe("Block Image", () => {
 
     fireEvent.click(baseElement.querySelector(".spoilers-button"));
 
-    expect(baseElement.querySelector(".block-image-class"))
-      .toMatchInlineSnapshot(`
+    expect(baseElement.querySelector(".block-image-class")).
+toMatchInlineSnapshot(`
 <div
   class="block-image-class ql-block-image ql-embed"
   contenteditable="false"
@@ -167,6 +173,9 @@ describe("Block Image", () => {
     <div
       class="options-overlay"
     >
+      <template
+        class="option-template"
+      />
       <button
         aria-label="Toggle spoilers off"
         class="spoilers-button embed-options-button active"

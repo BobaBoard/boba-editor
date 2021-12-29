@@ -51,6 +51,72 @@ export const makeSpoilerable = (
   }
 };
 
+const stripEmptyTextNodes = (templateRoot: HTMLElement) => {
+  const treeWalker = document.createTreeWalker(
+    templateRoot,
+    NodeFilter.SHOW_ALL
+  );
+  let currentNode: Node | null = treeWalker.currentNode;
+  const toRemove: Node[] = [];
+
+  // find all empty nodes
+  while (currentNode) {
+    if (currentNode.nodeType == Node.TEXT_NODE) {
+      // TODO: figure out how to keep text nodes that have values
+      toRemove.push(currentNode);
+    }
+    currentNode = treeWalker.nextNode();
+  }
+  toRemove.forEach((node) => {
+    node.parentElement?.removeChild(node);
+  });
+
+  return templateRoot;
+};
+
+const createOptionNode = (
+  embedOverlay: HTMLElement,
+  settings: {
+    icon: string;
+    initialActive: boolean;
+    getAriaLabel: (active: boolean) => string;
+    onToggle: (active: boolean) => void;
+  }
+) => {
+  const optionButton = embedOverlay
+    .querySelector<HTMLTemplateElement>(".option-template")
+    ?.content.querySelector("button")
+    ?.cloneNode(true) as HTMLElement;
+  const optionButtonImg = optionButton.querySelector("img") as HTMLImageElement;
+  optionButtonImg.src = settings.icon;
+  optionButton.classList.toggle("active", settings.initialActive);
+  optionButton.setAttribute(
+    "aria-label",
+    settings.getAriaLabel(settings.initialActive)
+  );
+  optionButton.addEventListener("click", (e) => {
+    const active = optionButton.classList.toggle("active");
+    settings.onToggle(active);
+    optionButton.setAttribute("aria-label", settings.getAriaLabel(active));
+    e.stopPropagation();
+    e.preventDefault();
+  });
+
+  return stripEmptyTextNodes(optionButton);
+  //   threadButton.classList.add("thread-button", "embed-options-button");
+  //   const threadButtonImg = document.createElement("img");
+  //   threadButtonImg.src = setting.icon;
+  //   threadButton.appendChild(threadButtonImg);
+  //   optionsOverlay.appendChild(threadButton);
+  //   threadButton.classList.toggle("active", !!setting.initialValue);
+  //   threadButton.addEventListener("click", (e) => {
+  //     threadButton.classList.toggle("active");
+  //     setting.onToggle(embedRoot, threadButton.classList.contains("active"));
+  //     e.stopPropagation();
+  //     e.preventDefault();
+  //   });
+};
+
 export const addEmbedEditOverlay = (
   embedType: any,
   embedRoot: HTMLElement,
@@ -60,7 +126,10 @@ export const addEmbedEditOverlay = (
     onToggle: (root: HTMLElement, value: boolean) => void;
   }[]
 ) => {
-  const embedOverlay = loadTemplate(EmbedOverlayHtml);
+  const embedOverlay = loadTemplateFromString(EmbedOverlayHtml);
+  const optionsOverlay = embedOverlay.querySelector(
+    ".options-overlay"
+  ) as HTMLElement;
   const closeButtonImg = embedOverlay.querySelector(
     ".close-button img"
   ) as HTMLImageElement;
@@ -77,52 +146,37 @@ export const addEmbedEditOverlay = (
   const hasOption = embedType.onMarkSpoilers || extraSettings?.length;
   if (hasOption) {
     if (embedType.onMarkSpoilers) {
-      const isSpoilered = !!embedType.value(embedRoot).spoilers;
-      const spoilersButton = embedOverlay.querySelector(
-        "button.spoilers-button"
-      ) as HTMLButtonElement;
-      const spoilersImg = embedOverlay.querySelector(
-        "button.spoilers-button img"
-      ) as HTMLImageElement;
-      spoilersButton.setAttribute(
-        "aria-label",
-        `Toggle spoilers ${isSpoilered ? "off" : "on"}`
+      const hasSpoilers = !!embedType.value(embedRoot).spoilers;
+      optionsOverlay.appendChild(
+        createOptionNode(embedOverlay, {
+          icon: SpoilersIcon,
+          initialActive: hasSpoilers,
+          getAriaLabel: (active) => `Toggle spoilers ${active ? "off" : "on"}`,
+          onToggle: (active) => {
+            embedType.onMarkSpoilers?.(embedRoot, active);
+            embedOverlay.classList.toggle("spoilers", active);
+          },
+        })
       );
-      // TODO: see about directly loading this from the html template
-      spoilersImg.src = SpoilersIcon;
-      spoilersButton.classList.toggle("active", isSpoilered);
-      embedOverlay.classList.toggle("spoilers", isSpoilered);
-      spoilersButton.addEventListener("click", (e) => {
-        const spoilersActive = spoilersButton.classList.toggle("active");
-        embedType.onMarkSpoilers?.(embedRoot, spoilersActive);
-        spoilersButton.setAttribute(
-          "aria-label",
-          `Toggle spoilers ${spoilersActive ? "off" : "on"}`
-        );
-        embedOverlay.classList.toggle("spoilers", spoilersActive);
-        e.stopPropagation();
-        e.preventDefault();
-      });
+
+      // TODO: should this go here?
+      embedOverlay.classList.toggle("spoilers", hasSpoilers);
     }
 
     // TODO: add extra settings and don't toggle spoilers when clicking on
     // element if we're in edit mode
 
-    // extraSettings?.forEach((setting) => {
-    //   const threadButton = document.createElement("div");
-    //   threadButton.classList.add("thread-button", "embed-options-button");
-    //   const threadButtonImg = document.createElement("img");
-    //   threadButtonImg.src = setting.icon;
-    //   threadButton.appendChild(threadButtonImg);
-    //   optionsOverlay.appendChild(threadButton);
-    //   threadButton.classList.toggle("active", !!setting.initialValue);
-    //   threadButton.addEventListener("click", (e) => {
-    //     threadButton.classList.toggle("active");
-    //     setting.onToggle(embedRoot, threadButton.classList.contains("active"));
-    //     e.stopPropagation();
-    //     e.preventDefault();
-    //   });
-    // });
+    extraSettings?.forEach((setting) => {
+      optionsOverlay.appendChild(
+        createOptionNode(embedOverlay, {
+          ...setting,
+          initialActive: setting.initialValue,
+          // TODO: fill aria label
+          getAriaLabel: () => ``,
+          onToggle: (active) => setting.onToggle(embedRoot, active),
+        })
+      );
+    });
   }
 
   embedRoot.appendChild(embedOverlay);
@@ -195,7 +249,7 @@ export const loadTemplateInNode = (
   targetNode: HTMLElement,
   template: string
 ) => {
-  const templateElement = loadTemplate(template);
+  const templateElement = loadTemplateFromString(template);
   Array.from(templateElement.attributes).forEach((attribute) => {
     if (attribute.name == "class") {
       targetNode.classList.add(...Array.from(templateElement.classList));
@@ -208,7 +262,7 @@ export const loadTemplateInNode = (
   });
 };
 
-export const loadTemplate = (template: string) => {
+export const loadTemplateFromString = (template: string) => {
   const templateNode = document.createElement("template");
   templateNode.innerHTML = template.trim();
   invariant(
@@ -220,24 +274,5 @@ export const loadTemplate = (template: string) => {
   // TODO: this should be done through the html-loader config
   const templateRoot = templateNode.content.firstChild as HTMLElement;
 
-  const treeWalker = document.createTreeWalker(
-    templateRoot,
-    NodeFilter.SHOW_ALL
-  );
-  let currentNode: Node | null = treeWalker.currentNode;
-  const toRemove: Node[] = [];
-
-  // find all empty nodes
-  while (currentNode) {
-    if (currentNode.nodeType == Node.TEXT_NODE) {
-      // TODO: figure out how to keep text nodes that have values
-      toRemove.push(currentNode);
-    }
-    currentNode = treeWalker.nextNode();
-  }
-  toRemove.forEach((node) => {
-    node.parentElement?.removeChild(node);
-  });
-
-  return templateRoot;
+  return stripEmptyTextNodes(templateRoot);
 };
