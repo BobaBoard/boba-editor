@@ -87,8 +87,8 @@ const EmbedsTemplate = (args: { content: string; editable?: boolean }) => {
   );
 };
 
-export const ImageEmbed = EmbedsTemplate.bind({});
-ImageEmbed.args = {
+export const BlockImageEmbed = EmbedsTemplate.bind({});
+BlockImageEmbed.args = {
   content: IMAGE,
   editable: true,
 };
@@ -184,10 +184,6 @@ export const BestEffortStory = () => (
     </div>
   </EditorContext.Provider>
 );
-
-BestEffortStory.story = {
-  name: "best effort",
-};
 
 export const EmbedCaching = () => {
   const [showEmbed, setShowEmbed] = React.useState(true);
