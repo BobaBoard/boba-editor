@@ -49,8 +49,8 @@
   visibility: hidden;
 }
 
-.editor .spoilers.show-spoilers .embed-overlay,
-.editor .show-spoilers .embed-overlay.spoilers {
+.editor.view-only .spoilers.show-spoilers .embed-overlay,
+.editor.view-only .show-spoilers .embed-overlay.spoilers {
   display: none;
 }
 
