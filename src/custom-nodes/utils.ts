@@ -1,5 +1,7 @@
 import CloseButton from "../img/close.svg";
+import EmbedOverlayHtml from "./templates/EmbedOverlay.html";
 import SpoilersIcon from "../img/spoilers.svg";
+import invariant from "tiny-invariant";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
@@ -58,38 +60,38 @@ export const addEmbedEditOverlay = (
     onToggle: (root: HTMLElement, value: boolean) => void;
   }[]
 ) => {
-  const containerDiv = document.createElement("div");
-  containerDiv.classList.add("embed-overlay");
-  const closeButton = document.createElement("button");
-  closeButton.classList.add("close-button");
-  closeButton.setAttribute("aria-label", "Delete embed");
+  const embedOverlay = loadTemplate(EmbedOverlayHtml);
+  const closeButtonImg = embedOverlay.querySelector(
+    ".close-button img"
+  ) as HTMLImageElement;
+  const closeButton = embedOverlay.querySelector(
+    ".close-button"
+  ) as HTMLElement;
 
-  const closeButtonImg = document.createElement("img");
+  // TODO: see about directly loading this from the html template
   closeButtonImg.src = CloseButton;
-  closeButton.appendChild(closeButtonImg);
-  containerDiv.appendChild(closeButton);
   closeButton.addEventListener("click", () => {
     embedType.onRemoveRequest(embedRoot);
   });
 
   const hasOption = embedType.onMarkSpoilers || extraSettings?.length;
   if (hasOption) {
-    const optionsOverlay = document.createElement("div");
-    optionsOverlay.classList.add("options-overlay");
     if (embedType.onMarkSpoilers) {
       const isSpoilered = !!embedType.value(embedRoot).spoilers;
-      const spoilersButton = document.createElement("button");
+      const spoilersButton = embedOverlay.querySelector(
+        "button.spoilers-button"
+      ) as HTMLButtonElement;
+      const spoilersImg = embedOverlay.querySelector(
+        "button.spoilers-button img"
+      ) as HTMLImageElement;
       spoilersButton.setAttribute(
         "aria-label",
         `Toggle spoilers ${isSpoilered ? "off" : "on"}`
       );
-      spoilersButton.classList.add("spoilers-button", "embed-options-button");
-      const spoilersImg = document.createElement("img");
+      // TODO: see about directly loading this from the html template
       spoilersImg.src = SpoilersIcon;
-      spoilersButton.appendChild(spoilersImg);
-      optionsOverlay.appendChild(spoilersButton);
       spoilersButton.classList.toggle("active", isSpoilered);
-      containerDiv.classList.toggle("spoilers", isSpoilered);
+      embedOverlay.classList.toggle("spoilers", isSpoilered);
       spoilersButton.addEventListener("click", (e) => {
         const spoilersActive = spoilersButton.classList.toggle("active");
         embedType.onMarkSpoilers?.(embedRoot, spoilersActive);
@@ -97,31 +99,33 @@ export const addEmbedEditOverlay = (
           "aria-label",
           `Toggle spoilers ${spoilersActive ? "off" : "on"}`
         );
-        containerDiv.classList.toggle("spoilers", spoilersActive);
+        embedOverlay.classList.toggle("spoilers", spoilersActive);
         e.stopPropagation();
         e.preventDefault();
       });
     }
-    extraSettings?.forEach((setting) => {
-      const threadButton = document.createElement("div");
-      threadButton.classList.add("thread-button", "embed-options-button");
-      const threadButtonImg = document.createElement("img");
-      threadButtonImg.src = setting.icon;
-      threadButton.appendChild(threadButtonImg);
-      optionsOverlay.appendChild(threadButton);
-      threadButton.classList.toggle("active", !!setting.initialValue);
-      threadButton.addEventListener("click", (e) => {
-        threadButton.classList.toggle("active");
-        setting.onToggle(embedRoot, threadButton.classList.contains("active"));
-        e.stopPropagation();
-        e.preventDefault();
-      });
-    });
 
-    containerDiv.appendChild(optionsOverlay);
+    // TODO: add extra settings and don't toggle spoilers when clicking on
+    // element if we're in edit mode
+
+    // extraSettings?.forEach((setting) => {
+    //   const threadButton = document.createElement("div");
+    //   threadButton.classList.add("thread-button", "embed-options-button");
+    //   const threadButtonImg = document.createElement("img");
+    //   threadButtonImg.src = setting.icon;
+    //   threadButton.appendChild(threadButtonImg);
+    //   optionsOverlay.appendChild(threadButton);
+    //   threadButton.classList.toggle("active", !!setting.initialValue);
+    //   threadButton.addEventListener("click", (e) => {
+    //     threadButton.classList.toggle("active");
+    //     setting.onToggle(embedRoot, threadButton.classList.contains("active"));
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    //   });
+    // });
   }
 
-  embedRoot.appendChild(containerDiv);
+  embedRoot.appendChild(embedOverlay);
   return embedRoot;
 };
 
@@ -185,4 +189,55 @@ export const addErrorMessage = (
   embedRoot.appendChild(loadingMessage);
 
   return embedRoot;
+};
+
+export const loadTemplateInNode = (
+  targetNode: HTMLElement,
+  template: string
+) => {
+  const templateElement = loadTemplate(template);
+  Array.from(templateElement.attributes).forEach((attribute) => {
+    if (attribute.name == "class") {
+      targetNode.classList.add(...Array.from(templateElement.classList));
+      return;
+    }
+    targetNode.setAttribute(attribute.name, attribute.value);
+  });
+  templateElement.childNodes.forEach((node) => {
+    targetNode.appendChild(node.cloneNode());
+  });
+};
+
+export const loadTemplate = (template: string) => {
+  const templateNode = document.createElement("template");
+  templateNode.innerHTML = template.trim();
+  invariant(
+    templateNode.content.childElementCount === 1 &&
+      templateNode.content.firstChild,
+    "No child element (or multiple elements) found in template."
+  );
+  // Remove all empty text nodes
+  // TODO: this should be done through the html-loader config
+  const templateRoot = templateNode.content.firstChild as HTMLElement;
+
+  const treeWalker = document.createTreeWalker(
+    templateRoot,
+    NodeFilter.SHOW_ALL
+  );
+  let currentNode: Node | null = treeWalker.currentNode;
+  const toRemove: Node[] = [];
+
+  // find all empty nodes
+  while (currentNode) {
+    if (currentNode.nodeType == Node.TEXT_NODE) {
+      // TODO: figure out how to keep text nodes that have values
+      toRemove.push(currentNode);
+    }
+    currentNode = treeWalker.nextNode();
+  }
+  toRemove.forEach((node) => {
+    node.parentElement?.removeChild(node);
+  });
+
+  return templateRoot;
 };

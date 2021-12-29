@@ -70,8 +70,10 @@ button.embed-options-button {
 .editor .embed-options-button.active .ql-fill {
   fill: white;
 }
-.editor .embed-options-button:hover {
+.editor .embed-options-button:hover,
+.embed-options-button img:hover {
   cursor: pointer;
+  background-color: red;
 }
 .editor .embed-options-button > img {
   height: 20px;

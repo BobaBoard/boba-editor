@@ -1,8 +1,11 @@
-import { addEmbedEditOverlay, makeSpoilerable } from "./utils";
+import {
+  addEmbedEditOverlay,
+  loadTemplateInNode,
+  makeSpoilerable,
+} from "./utils";
 
 import BlockImageHtml from "./templates/BlockImage.html";
 import Quill from "quill";
-import invariant from "tiny-invariant";
 
 const Image = Quill.import("formats/image");
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -37,31 +40,6 @@ const removeLoadingOverlay = (rootNode: HTMLElement) => {
     spinner.parentElement?.removeChild(spinner);
   }
   rootNode.classList.remove("loading");
-};
-
-const loadTemplateInNode = (targetNode: HTMLElement, template: string) => {
-  const blockImageTemplate = document.createElement("template");
-  blockImageTemplate.innerHTML = BlockImageHtml.trim();
-  invariant(
-    blockImageTemplate.content.childElementCount === 1 &&
-      blockImageTemplate.content.firstChild,
-    "No child element (or multiple elements) found in template."
-  );
-  const blockImage = blockImageTemplate.content.firstChild as HTMLElement;
-
-  Array.from(blockImage.attributes).forEach((attribute) => {
-    if (attribute.name == "class") {
-      targetNode.classList.add(...Array.from(blockImage.classList));
-      return;
-    }
-    targetNode.setAttribute(attribute.name, attribute.value);
-  });
-  blockImage.childNodes.forEach((node) => {
-    if (node.nodeType == Node.TEXT_NODE && !node.textContent?.trim()) {
-      return;
-    }
-    targetNode.appendChild(node.cloneNode());
-  });
 };
 
 class BlockImage extends BlockEmbed {
