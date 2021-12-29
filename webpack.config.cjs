@@ -53,12 +53,13 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: {
-                localIdentName: "[name]__[local]___[hash:base64:5]",
-              },
-            },
+            // TODO: figure out stable naming for SSR
+            // options: {
+            //   importLoaders: 1,
+            //   modules: {
+            //     localIdentName: "[name]__[local]___[hash:base64:5]",
+            //   },
+            // },
           },
         ],
       },
