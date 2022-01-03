@@ -9,6 +9,7 @@ class RedditEmbed extends Oembed {
   static SKIP_EMBED_LOADING = false;
   static FORCE_EMBED = true;
   static SKIP_CACHE = true;
+  static EXTRA_CLASSES = "ql-oembed-reddit";
 
   static blotName = "reddit-embed";
   static tagName = "div";

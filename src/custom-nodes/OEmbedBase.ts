@@ -1,7 +1,6 @@
 import { addErrorMessage, addLoadingMessage, makeSpoilerable } from "./utils";
 
 import { EditorContextProps } from "../Editor";
-import OEmbedHtml from "./OEmbedBase.html";
 import Quill from "quill";
 import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
@@ -275,12 +274,6 @@ class OEmbed extends BlockEmbed {
         }
       | { data: any; url: string }
   ) {
-    console.log(OEmbedHtml);
-    console.log(OEmbedHtml);
-    console.log(OEmbedHtml);
-    console.log(OEmbedHtml);
-    console.log(OEmbedHtml);
-    console.log(OEmbedHtml);
     const oEmbedNode = document.createElement("div");
     // Add this to the post for rendering, but
     // also to the node for value retrieval
@@ -382,6 +375,8 @@ class OEmbed extends BlockEmbed {
     let node = super.create();
     node.contentEditable = false;
     node.dataset.rendered = false;
+
+    this.EXTRA_CLASSES && node.classList.add(this.EXTRA_CLASSES.split(" "));
 
     const url = this.sanitize(value.url);
     makeSpoilerable(this, node, value);

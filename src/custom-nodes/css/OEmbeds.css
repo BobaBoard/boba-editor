@@ -53,8 +53,13 @@
   display: block;
   text-decoration: none;
 }
-.editor .reddit-card a {
+
+.editor .ql-oembed-reddit a {
   color: black !important;
+}
+
+.editor .ql-oembed-reddit {
+  background-color: white;
 }
 
 .editor .best-effort {
