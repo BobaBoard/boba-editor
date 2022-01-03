@@ -15,7 +15,10 @@ module.exports = {
     libraryTarget: "umd",
     globalObject: "globalThis",
   },
-  entry: path.join(__dirname, "src/", "index.ts"),
+  entry: {
+    main: path.join(__dirname, "src/", "index.ts"),
+    deltaUtils: path.join(__dirname, "src/", "delta-utils.ts"),
+  },
   optimization: {
     minimize: false,
   },
