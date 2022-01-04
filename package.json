@@ -30,9 +30,9 @@
   },
   "homepage": "https://github.com/essential-randomness/boba-editor#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
     "debug": "^4.1.1",
     "dompurify": "^2.3.0",
+    "node-html-parser": "^5.2.0",
     "parchment": "^1.1.4",
     "quill": "^1.3.7",
     "quill-delta-to-html": "^0.12.0",

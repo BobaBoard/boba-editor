@@ -1,86 +1,98 @@
+import { NodeType, parse } from "node-html-parser";
 import type {
-  CheerioAPI,
-  Element as CheerioElement,
-  Node as CheerioNode,
-} from "cheerio";
+  HTMLElement as ParserHTMLElement,
+  Node as ParserNode,
+} from "node-html-parser";
 
 import { BlockImage } from "./custom-nodes/ssr";
-import type Cheerio from "cheerio";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import { RefObject } from "react";
 import { addEventListeners as addSpoilersEventListeners } from "./custom-nodes/InlineSpoilers";
 // import BlockImageType from "./custom-nodes/BlockImage";
 import { makeSpoilerable } from "./custom-nodes/utils";
 
-let CheerioModule: typeof Cheerio;
-// window = undefined;
-// document = undefined;
-if (typeof window !== "undefined") {
-  CheerioModule = require("cheerio") as typeof Cheerio;
-}
-
-const isSpoilerNode = (node: CheerioNode | null, $: CheerioAPI) => {
-  if (!node) {
+const isSpoilerNode = (node: ParserNode | null): node is ParserHTMLElement => {
+  if (!node || node.nodeType !== NodeType.ELEMENT_NODE) {
     return false;
   }
-  if (node.nodeType == Node.ELEMENT_NODE) {
-    return $(node).hasClass("inline-spoilers");
-  }
-  return false;
+  return (node as ParserHTMLElement).classList.contains("inline-spoilers");
+};
+
+const mergeSpoilerGroup = (spoilerGroupElements: ParserHTMLElement[]) => {
+  const firstElementOfGroup = spoilerGroupElements[0];
+  const lastElementOfGroup =
+    spoilerGroupElements[spoilerGroupElements.length - 1];
+  const allElementSiblings = firstElementOfGroup.parentNode.childNodes.filter(
+    (node: ParserNode): node is ParserHTMLElement =>
+      node.nodeType === NodeType.ELEMENT_NODE
+  );
+  const firstIndex = allElementSiblings.findIndex(
+    (node) => node == firstElementOfGroup
+  );
+  const lastIndex = allElementSiblings.findIndex(
+    (node) => node == lastElementOfGroup
+  );
+  const newSpan = parse('<span class="inline-spoilers"></span>').querySelector(
+    ".inline-spoilers"
+  )!;
+  allElementSiblings.forEach((elem, index) => {
+    if (index < firstIndex || index > lastIndex) {
+      return;
+    }
+
+    if (elem.tagName === "SPAN") {
+      newSpan.appendChild(parse(elem.innerHTML));
+    } else {
+      const elementClone = parse(elem.toString())
+        .firstChild as ParserHTMLElement;
+      elementClone.classList.remove("inline-spoilers");
+      newSpan.appendChild(elementClone);
+    }
+  });
+  return newSpan;
 };
 
 const compactSpoilers = (finalHtml: string) => {
-  const dom = CheerioModule.load(finalHtml, null, false);
-  const inlineSpoilers = dom(".inline-spoilers").toArray();
+  const editorContent = parse(finalHtml);
+  const inlineSpoilers = editorContent.querySelectorAll(".inline-spoilers");
   const inlineSpoilerGroups = inlineSpoilers
     // Get each separate group of inline spoilers
     .filter((elem) => {
-      // Get inline spoilers not preceeded by other inline spoilers
-      const previousElement = elem.previousSibling;
-      const nextElement = elem.nextSibling;
-      return (
-        !isSpoilerNode(previousElement, dom) && isSpoilerNode(nextElement, dom)
+      // Get the first inline spoiler for each group of inline spoiler siblings
+      if (!isSpoilerNode(elem.nextSibling)) {
+        return false;
+      }
+      const elementIndexInParent = elem.parentNode.childNodes.findIndex(
+        (child) => elem == child
       );
+      const previousElement =
+        elem.parentNode.childNodes[elementIndexInParent - 1];
+      return !isSpoilerNode(previousElement);
     })
     .map((elem) => {
       // ...And group it with all the adjacent ones
       const elements = [elem];
-      let currentElement: CheerioNode = elem;
+      let currentElement: ParserHTMLElement = elem;
       while (
         currentElement.nextSibling &&
-        isSpoilerNode(currentElement.nextSibling, dom)
+        isSpoilerNode(currentElement.nextSibling)
       ) {
-        // We can infer this is a CheerioElement cause spoilers nodes must be Elements
-        elements.push(currentElement.nextSibling as CheerioElement);
+        elements.push(currentElement.nextSibling);
         currentElement = currentElement.nextSibling;
       }
       return elements;
     });
-  inlineSpoilerGroups.forEach((el) => {
-    const firstElement = dom(el[0]);
-    const lastElement = dom(el[el.length - 1]);
-    const allSiblings = firstElement.parent().children();
-    const firstIndex = allSiblings.index(firstElement);
-    const lastIndex = allSiblings.index(lastElement);
-    const newSpan = dom('<span class="inline-spoilers"></span>');
-    allSiblings.each((index, elem) => {
-      if (index < firstIndex || index > lastIndex) {
+  inlineSpoilerGroups.forEach((group) => {
+    const mergedSpan = mergeSpoilerGroup(group);
+    group[0].parentNode.exchangeChild(group[0], mergedSpan);
+    group.forEach((element, index) => {
+      if (index == 0) {
         return;
       }
-      if (elem.tagName === "span") {
-        newSpan.append(dom(elem).text());
-      } else {
-        const newElement = dom(elem).clone();
-        newElement.removeClass("inline-spoilers");
-        newSpan.append(newElement);
-      }
-    });
-    newSpan.insertBefore(firstElement);
-    el.forEach((el) => {
-      dom(el).remove();
+      element.remove();
     });
   });
-  return dom.root().html();
+  return editorContent.toString();
 };
 
 export const attachEventListeners = (ssrRef: RefObject<HTMLDivElement>) => {
