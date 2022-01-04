@@ -346,7 +346,7 @@ class Editor extends Component<EditorProps> {
 
   componentDidUpdate(previousProps: EditorProps, previousState: any) {
     // @ts-ignore
-    if (this.editor.isEnabled() != !!this.props.editable) {
+    if (this.editor && this.editor.isEnabled() != !!this.props.editable) {
       this.editor.enable(!!this.props.editable);
     }
     if (
