@@ -7,7 +7,7 @@ import { action } from "@storybook/addon-actions";
 const logging = require("debug")("bobapost:stories:embeds");
 
 export default {
-  title: "Embeds Stories",
+  title: "Embeds Stories (legacy)",
   component: Editor,
 };
 

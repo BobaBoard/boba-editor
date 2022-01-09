@@ -94,11 +94,15 @@ button.embed-options-button {
   text-align: center;
   line-height: 25px;
   color: white;
-  padding: 10px;
-  margin: 10px 0;
 }
 .editor .ql-embed .error-message a {
   color: white !important;
+  position: absolute !important;
+  padding: 15px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .editor .ql-embed {

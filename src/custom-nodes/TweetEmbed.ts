@@ -67,6 +67,8 @@ class TweetEmbed extends BlockEmbed {
           addErrorMessage(node, {
             message: "This tweet.... it dead.",
             url: TweetEmbed.value(node).url || "",
+            width: TweetEmbed.value(node)["embedWidth"],
+            height: TweetEmbed.value(node)["embedHeight"],
           });
           logging(`Ooops, there's no tweet there!`);
           return;
@@ -82,6 +84,8 @@ class TweetEmbed extends BlockEmbed {
              A smooth iOS bug.<br />
              (click to access tweet)`,
             url: TweetEmbed.value(node).url || "",
+            width: TweetEmbed.value(node)["embedWidth"],
+            height: TweetEmbed.value(node)["embedHeight"],
           });
           logging(`That damn iOS bug!`);
         } else {
@@ -104,6 +108,8 @@ class TweetEmbed extends BlockEmbed {
         addErrorMessage(node, {
           message: `This tweet.... it bad.<br />(${e.message})`,
           url: TweetEmbed.value(node).url || "",
+          width: TweetEmbed.value(node)["embedWidth"],
+          height: TweetEmbed.value(node)["embedHeight"],
         });
       });
     // If the twitter library is not loaded yet, defer rendering
@@ -118,6 +124,8 @@ class TweetEmbed extends BlockEmbed {
         addErrorMessage(node, {
           message: "The Twitter Embeds library... it dead.",
           url: TweetEmbed.value(node).url || "",
+          width: TweetEmbed.value(node)["embedWidth"],
+          height: TweetEmbed.value(node)["embedHeight"],
         });
         return;
       }
@@ -150,6 +158,12 @@ class TweetEmbed extends BlockEmbed {
     );
     const id = url.pathname.substr(url.pathname.lastIndexOf("/") + 1);
     node.dataset.url = url.href;
+    if (value["embedWidth"]) {
+      node.dataset.embedWidth = value["embedWidth"];
+    }
+    if (value["embedHeight"]) {
+      node.dataset.embedHeight = value["embedHeight"];
+    }
     node.contentEditable = false;
     node.dataset.id = id;
     node.dataset.rendered = false;
@@ -174,8 +188,6 @@ class TweetEmbed extends BlockEmbed {
       height: value["embedHeight"],
     });
 
-    // TODO: this should be generalized rather than making everyone have access
-    // to a method only twitter really needs
     makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node, [
       {

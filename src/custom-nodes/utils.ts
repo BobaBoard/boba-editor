@@ -2,10 +2,6 @@ import { loadTemplateFromString } from "./utils/template-utils";
 
 const logging = require("debug")("bobapost:embeds:utils");
 
-// NOTE/TODO
-// Spoilers won't work when switching from editable to non-editable without unmounting
-// the embed, and when editing something already marked as a spoiler.
-// This is not a problem for now but will need to be addressed in the future.
 export const makeSpoilerable = (
   embedType: any,
   embedRoot: HTMLElement,
@@ -18,6 +14,7 @@ export const makeSpoilerable = (
   });
   if (isSpoilered) {
     embedRoot?.classList.toggle("spoilers", isSpoilered);
+    embedRoot?.setAttribute("spoilers", "true");
   }
   if (!embedType.onMarkSpoilers) {
     embedType.onMarkSpoilers = (node: HTMLDivElement, spoilers: boolean) => {
@@ -25,6 +22,7 @@ export const makeSpoilerable = (
         node.setAttribute("spoilers", "true");
       } else {
         node.removeAttribute("spoilers");
+        node?.classList.toggle("spoilers", spoilers);
       }
     };
   }
@@ -90,9 +88,13 @@ export const addErrorMessage = (
   {
     message,
     url,
+    width,
+    height,
   }: {
     message: string;
     url?: string;
+    width?: string;
+    height?: string;
   }
 ) => {
   const errorMessage = loadTemplateFromString(
@@ -105,6 +107,10 @@ export const addErrorMessage = (
     errorMessage.querySelector("a")!.href = url;
   } else {
     errorMessage.innerHTML = message;
+  }
+  if (width && height) {
+    const ratio = (parseInt(height) / parseInt(width)) * 100;
+    errorMessage.style.paddingTop = `${ratio}%`;
   }
 
   embedRoot.appendChild(errorMessage);

@@ -38,27 +38,25 @@ export const importQuillModule = (moduleName: string) => {
   if (typeof window !== "undefined") {
     QuillModule = require("quill") as typeof Quill;
   } else {
-    QuillModule = ({ import: () => FakeInlineModule } as any) as typeof Quill;
+    QuillModule = { import: () => FakeInlineModule } as any as typeof Quill;
   }
   return QuillModule.import(moduleName);
 };
 
-// NOTE/TODO
-// Spoilers won't work when switching from editable to non-editable without unmounting
-// the embed, and when editing something already marked as a spoiler.
-// This is not a problem for now but will need to be addressed in the future.
+// TODO: figurte out why we aren't using the one in utils.ts for this.
 export const makeSpoilerable = (
   embedType: any,
   embedRoot: HTMLElement,
   embedValue: { spoilers?: boolean } | any
 ) => {
   const isSpoilered =
-    embedType.value(embedRoot)?.["spoilers"] || embedValue.spoilers;
+    embedType.value?.(embedRoot)?.["spoilers"] || embedValue.spoilers;
   embedRoot.addEventListener("click", () => {
     embedRoot.classList.toggle("show-spoilers");
   });
   if (isSpoilered) {
     embedRoot?.classList.toggle("spoilers", isSpoilered);
+    embedRoot?.setAttribute("spoilers", "true");
   }
   if (!embedType.onMarkSpoilers) {
     embedType.onMarkSpoilers = (node: HTMLDivElement, spoilers: boolean) => {
@@ -66,6 +64,7 @@ export const makeSpoilerable = (
         node.setAttribute("spoilers", "true");
       } else {
         node.removeAttribute("spoilers");
+        node?.classList.toggle("spoilers", spoilers);
       }
     };
   }

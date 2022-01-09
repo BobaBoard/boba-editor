@@ -2,6 +2,7 @@ import "quill/dist/quill.bubble.css";
 import "react-tenor/dist/styles.css";
 import "./css/Editor.css";
 
+import type { DeltaOperation, DeltaStatic } from "quill";
 import React, { Component, createRef } from "react";
 import { attachEventListeners, getSsrConverter } from "./ssrUtils";
 import { defaultConfig, singleLineConfig } from "./tooltipConfig";
@@ -17,7 +18,6 @@ import {
   withNoLinebreakHandler,
 } from "./quillUtils";
 
-import type { Delta } from "quill";
 // Only import Quill if there is a "window".
 // This allows the editor to be imported even in a SSR environment.
 import type Quill from "quill";
@@ -415,7 +415,7 @@ class Editor extends Component<EditorProps> {
     this.editor.enable(!!this.props.editable);
     loggingVerbose(this.props.initialText);
     if (this.props.initialText) {
-      this.editor.setContents(this.props.initialText);
+      this.editor.setContents(this.props.initialText as unknown as DeltaStatic);
     }
 
     if (this.props.handler) {
@@ -590,13 +590,13 @@ export interface EditorHandler {
   // TODO: remove this. I forget why this is here, but this should *not* be used.
   // Likely it was an attempt to do some performance optimization, but this is not
   // the right way of doing things and the optimization failed anyway.
-  getEditorContents(): () => Delta;
+  getEditorContents(): () => DeltaStatic;
 }
 
 interface BaseProps {
   // A QuillJS delta. Changes to initial text won't be honored after first
   // load.
-  initialText?: Delta;
+  initialText?: DeltaOperation[];
   // If singleLine is true, the formatting options allowed are limited,
   // and new line characters are ignored.
   // Note: this prop cannot be changed after initialization.
