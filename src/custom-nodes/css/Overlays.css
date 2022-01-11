@@ -93,6 +93,7 @@ button.embed-options-button {
   background-color: rgb(255, 15, 75);
   text-align: center;
   line-height: 25px;
+  min-height: 150px;
   color: white;
 }
 .editor .ql-embed .error-message a {

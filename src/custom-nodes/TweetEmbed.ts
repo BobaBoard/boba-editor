@@ -4,6 +4,7 @@ import { EditorContextProps } from "../Editor";
 import { EmbedValue } from "../config";
 import Quill from "quill";
 import ThreadIcon from "../img/thread.svg";
+import { TweetEmbed as TweetEmbedInterface } from "../config";
 import TwitterIcon from "../img/twitter.svg";
 import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
@@ -12,13 +13,6 @@ const Link = Quill.import("formats/link");
 
 const logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
-
-interface TweetEmbed extends EmbedValue {
-  href: string;
-  did: string;
-  spoilers?: boolean;
-  thread?: boolean;
-}
 
 /**
  * TweetEmbed represents a tweet embedded into the editor.
@@ -150,7 +144,7 @@ class TweetEmbed extends BlockEmbed {
     }
   }
 
-  static create(value: string | EmbedValue | TweetEmbed) {
+  static create(value: string | EmbedValue | TweetEmbedInterface) {
     const node = super.create();
     logging(`Creating new tweet embed with value ${value}`);
     const url = new URL(

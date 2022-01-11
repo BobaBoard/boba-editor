@@ -518,14 +518,14 @@ class Editor extends Component<EditorProps> {
       <>
         {ssrText && (
           <div className={editorClasses}>
+            <div className="ql-spinner">
+              <Spinner />
+            </div>
             <div
               className="editor-quill ql-container ql-bubble ql-disabled"
               ref={this.ssrRef}
               role="textbox"
             >
-              <div className="ql-spinner">
-                <Spinner />
-              </div>
               <div
                 className="ql-editor"
                 dangerouslySetInnerHTML={{

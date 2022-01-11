@@ -1,10 +1,10 @@
+import { BlockImage, TweetEmbed } from "./custom-nodes/ssr";
 import { NodeType, parse } from "node-html-parser";
 import type {
   HTMLElement as ParserHTMLElement,
   Node as ParserNode,
 } from "node-html-parser";
 
-import { BlockImage } from "./custom-nodes/ssr";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import { RefObject } from "react";
 import { addEventListeners as addSpoilersEventListeners } from "./custom-nodes/InlineSpoilers";
@@ -143,6 +143,8 @@ export const getSsrConverter = () => {
         if (customOp.insert.type === "block-image") {
           const value = customOp.insert.value;
           return BlockImage(value);
+        } else if (customOp.insert.type === "tweet") {
+          return TweetEmbed(customOp.insert.value as any);
         } else {
           // We try to be neutral with other custom blots.
           return "<div />";

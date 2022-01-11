@@ -61,6 +61,7 @@ interface TemplateArgs {
   delay?: number;
   spoilers?: boolean;
   thread?: boolean;
+  ssr?: boolean;
 }
 const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
   const embedFetchers = React.useMemo(
@@ -72,6 +73,7 @@ const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
         <Editor
           editable={args.editable === undefined ? true : args.editable}
+          forceSSR={args.ssr}
           initialText={[
             {
               insert: "Twitter Embed!",
@@ -174,4 +176,10 @@ export const EditableThread = TwitterTemplate.bind({});
 EditableThread.args = {
   ...Thread.args,
   editable: true,
+};
+
+export const SSR = TwitterTemplate.bind({});
+SSR.args = {
+  ...Base.args,
+  ssr: true,
 };

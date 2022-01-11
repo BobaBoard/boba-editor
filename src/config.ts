@@ -21,6 +21,13 @@ export interface EmbedValue {
   embedHeight?: string;
 }
 
+export interface TweetEmbed extends EmbedValue {
+  href: string;
+  did: string;
+  spoilers?: boolean;
+  thread?: boolean;
+}
+
 export interface TooltipConfig {
   enabledEmbeds: EmbedType[];
   enabledModules: TooltipModule[];

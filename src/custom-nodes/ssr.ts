@@ -1,5 +1,10 @@
+import { EmbedValue, TweetEmbed as TweetEmbedInterface } from "../config";
+
 import type { SavedValue as BlockImageSavedValue } from "./BlockImage";
+import type { HTMLElement as ParserHTMLElement } from "node-html-parser";
 import type Quill from "quill";
+import TwitterSsrTemplate from "./templates/TwitterSSR.html";
+import { parse } from "node-html-parser";
 
 export const BlockImage = (savedValue: BlockImageSavedValue) => {
   const value = {
@@ -86,4 +91,65 @@ export const makeSpoilerable = (
     };
     embedType.spoilersAugmented = true;
   }
+};
+
+const getTweetValues = (
+  value: string | EmbedValue | TweetEmbedInterface
+): TweetEmbedInterface => {
+  console.log(value);
+  if (typeof value === "string") {
+    const url = new URL(value);
+    return {
+      url: value,
+      href: value,
+      did: url.pathname.substr(url.pathname.lastIndexOf("/") + 1),
+    };
+  }
+  const url = new URL(value.url);
+  return {
+    url: value.url,
+    href: value.url,
+    embedWidth: value.embedWidth,
+    embedHeight: value.embedHeight,
+    did: url.pathname.substr(url.pathname.lastIndexOf("/") + 1),
+    spoilers: "spoilers" in value ? value.spoilers : undefined,
+    thread: "thread" in value ? value.thread : undefined,
+  };
+};
+
+const setOrRemoveAttribute = (
+  node: ParserHTMLElement,
+  attribute: string,
+  value: string | undefined
+) => {
+  if (typeof value !== "undefined") {
+    node.setAttribute(attribute, value);
+  } else {
+    node.removeAttribute(attribute);
+  }
+};
+
+export const TweetEmbed = (
+  value: string | EmbedValue | TweetEmbedInterface
+) => {
+  const tweetValues = getTweetValues(value);
+  const template = TwitterSsrTemplate;
+  const node = parse(template);
+  node.setAttribute("data-url", tweetValues.href);
+  node.setAttribute("data-id", tweetValues.did);
+  setOrRemoveAttribute(node, "data-embed-width", tweetValues.embedWidth);
+  setOrRemoveAttribute(node, "data-embed-height", tweetValues.embedHeight);
+  setOrRemoveAttribute(node, "data-id", tweetValues.embedHeight);
+  node
+    .querySelector(".loading-message a")
+    ?.setAttribute("href", tweetValues.href);
+  const loadingMessage = node.querySelector(".loading-message");
+  if (loadingMessage && tweetValues.embedHeight && tweetValues.embedWidth) {
+    const ratio =
+      (parseInt(tweetValues.embedHeight) / parseInt(tweetValues.embedWidth)) *
+      100;
+    loadingMessage.setAttribute("style", `padding-top: ${ratio}%`);
+  }
+
+  return node.removeWhitespace().toString();
 };
