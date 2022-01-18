@@ -23,7 +23,6 @@ const embedsUrl =
 const getFetcher = (delay: number = 1000) => ({
   fetchers: {
     getOEmbedFromUrl: (url: string) => {
-      const LOAD_DELAY = 1000;
       const promise = new Promise((resolve, reject) => {
         logging(`Calling ${embedsUrl}?iframe=0&uri=${url}`);
         fetch(`${embedsUrl}?iframe=0&uri=${url}`)

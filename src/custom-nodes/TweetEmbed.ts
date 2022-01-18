@@ -200,6 +200,15 @@ class TweetEmbed extends BlockEmbed {
     return node;
   }
 
+  optimize(context: any) {
+    const rootNode = this.domNode as HTMLElement;
+    // If the editor is view-only, remove the embeds overlay
+    if (rootNode.closest(".editor.view-only")) {
+      const embedOverlay = rootNode.querySelector(".embed-overlay");
+      embedOverlay?.parentNode?.removeChild(embedOverlay);
+    }
+  }
+
   static setOnLoadCallback(callback: (root: HTMLDivElement) => void) {
     TweetEmbed.onLoadCallback = callback;
   }
