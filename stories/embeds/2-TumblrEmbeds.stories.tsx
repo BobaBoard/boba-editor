@@ -4,14 +4,14 @@ import { Meta, Story } from "@storybook/react";
 
 import { EditorContextProps } from "Editor";
 import React from "react";
-import { TweetEmbed } from "../../src/custom-nodes";
+import { TumblrEmbed } from "../../src/custom-nodes";
 import { WITH_CACHE } from "../utils/decorators";
 import { action } from "@storybook/addon-actions";
 
 const logging = require("debug")("bobapost:stories:embeds");
 
 export default {
-  title: "Embeds/Twitter",
+  title: "Embeds/Tumblr",
   component: Editor,
 } as Meta;
 
@@ -43,37 +43,47 @@ const getFetcher = (delay: number = 1000) => ({
   },
 });
 
-const CODE_HACK_TWEET = {
-  url: "https://twitter.com/BobaBoard/status/1263913643650908160",
+const ROBINBOOB_POST = {
+  url: "https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its",
   width: "500",
-  height: "649",
+  height: "1112",
 };
 
-const THREAD_TWEET = {
-  url: "https://twitter.com/EssentialRandom/status/1475675728414838785?s=20",
+const PRELOADED_ROBINBOOB_POST = {
+  ...ROBINBOOB_POST,
+  did: "211b71f5c49a42458fc23a95335d65c4331e91b4",
+  href: "https://embed.tumblr.com/embed/post/1DU3s2LW_74-QOcKbxGMsw/647298900927053824",
+};
+
+const BAD_URL_POST = {
+  url: "https://bobaboard.tumblr.com/post/2130283/this-april-1st-bobaboard-is-proud-to-bring-its",
   width: "500",
-  height: "362",
+  height: "1112",
+  did: "238901289",
+  href: "https://embed.tumblr.com/embed/post/109238-QOcKbxGMsw/123123",
 };
 
 interface TemplateArgs {
   url: string;
+  href?: string;
+  did?: string;
   width?: string;
   height?: string;
   editable?: boolean;
   delay?: number;
   spoilers?: boolean;
-  thread?: boolean;
   ssr?: boolean;
   embedsCache?: EditorContextProps["cache"];
 }
-const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
+const Tumblr: Story<TemplateArgs> = (args: TemplateArgs) => {
   const embedFetchers = React.useMemo(
     () => ({
       ...getFetcher(args.delay),
       cache: args.embedsCache,
     }),
-    [args.delay]
+    [args.delay, args.embedsCache]
   );
+
   return (
     <EditorContext.Provider value={embedFetchers}>
       <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
@@ -82,7 +92,7 @@ const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
           forceSSR={args.ssr}
           initialText={[
             {
-              insert: "Twitter Embed!",
+              insert: "Tumblr Embed!",
             },
             {
               attributes: {
@@ -92,12 +102,13 @@ const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
             },
             {
               insert: {
-                tweet: {
+                "tumblr-embed": {
                   embedHeight: args.height,
                   embedWidth: args.width,
                   url: args.url,
+                  href: args.href,
+                  did: args.did,
                   spoilers: args.spoilers,
-                  thread: args.thread,
                 },
               },
             },
@@ -121,77 +132,65 @@ const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
   );
 };
 
-export const Base = TwitterTemplate.bind({});
+export const Base = Tumblr.bind({});
 Base.args = {
-  ...CODE_HACK_TWEET,
+  ...PRELOADED_ROBINBOOB_POST,
   editable: false,
 };
 
-export const Spoilers = TwitterTemplate.bind({});
+export const Spoilers = Tumblr.bind({});
 Spoilers.args = {
   ...Base.args,
   spoilers: true,
 };
 
-export const WithCache = TwitterTemplate.bind({});
-WithCache.args = {
-  ...Spoilers.args,
-  spoilers: true,
-};
-WithCache.decorators = [WITH_CACHE(TweetEmbed)];
-
-// export const InfiniteLoad = TwitterTemplate.bind({});
+// export const InfiniteLoad = Tumblr.bind({});
 // InfiniteLoad.args = {
 //   ...Base.args,
-//   // TODO: this does not work on twitter cause it doesn't use the oEmbed fetcher
+//   // TODO: this does not work on pre-loaded tumblr cause it doesn't use the oEmbed fetcher
 //   delay: 1000000000,
 // };
 
-export const BadUrl = TwitterTemplate.bind({});
+export const BadUrl = Tumblr.bind({});
 BadUrl.args = {
   ...Base.args,
-  url: "https://twitter.com/BobaBoard/status/1263913643650908161",
+  ...BAD_URL_POST,
 };
 
-export const Thread = TwitterTemplate.bind({});
-Thread.args = {
+export const WithCache = Tumblr.bind({});
+WithCache.args = {
   ...Base.args,
-  ...THREAD_TWEET,
-  thread: true,
+  spoilers: true,
 };
+WithCache.decorators = [WITH_CACHE(TumblrEmbed)];
 
-export const EditableBase = TwitterTemplate.bind({});
+export const EditableBase = Tumblr.bind({});
 EditableBase.args = {
-  ...Base.args,
+  ...ROBINBOOB_POST,
   editable: true,
 };
 
-export const EditableSpoilers = TwitterTemplate.bind({});
+export const EditableSpoilers = Tumblr.bind({});
 EditableSpoilers.args = {
-  ...Spoilers.args,
+  ...EditableBase.args,
+  spoilers: true,
   editable: true,
 };
 
-// export const EditableInfiniteLoad = TwitterTemplate.bind({});
-// EditableInfiniteLoad.args = {
-//   ...EditableBase.args,
-//   // TODO: this does not work on twitter cause it doesn't use the oEmbed fetcher
-//   delay: 1000000000,
-// };
+export const EditableInfiniteLoad = Tumblr.bind({});
+EditableInfiniteLoad.args = {
+  ...EditableBase.args,
+  // TODO: this does not work on twitter cause it doesn't use the oEmbed fetcher
+  delay: 1000000000,
+};
 
-export const EditableBadUrl = TwitterTemplate.bind({});
+export const EditableBadUrl = Tumblr.bind({});
 EditableBadUrl.args = {
-  ...BadUrl.args,
+  ...BAD_URL_POST,
   editable: true,
 };
 
-export const EditableThread = TwitterTemplate.bind({});
-EditableThread.args = {
-  ...Thread.args,
-  editable: true,
-};
-
-export const SSR = TwitterTemplate.bind({});
+export const SSR = Tumblr.bind({});
 SSR.args = {
   ...Base.args,
   ssr: true,

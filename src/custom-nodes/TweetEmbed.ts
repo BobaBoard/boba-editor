@@ -56,7 +56,6 @@ class TweetEmbed extends BlockEmbed {
         logging(`Tweet was loaded!`);
         node.dataset.rendered = "true";
         TweetEmbed.doneLoading(node);
-        TweetEmbed.cache?.set(id, node);
         if (!el) {
           addErrorMessage(node, {
             message: "This tweet.... it dead.",
@@ -93,6 +92,10 @@ class TweetEmbed extends BlockEmbed {
           // weird
           // TODO: figure out why rather than hack it.
           setTimeout(() => TweetEmbed.onLoadCallback(el), 100);
+          TweetEmbed.cache?.set(
+            TweetEmbed.getHashForCache(TweetEmbed.value(node)),
+            node
+          );
         }
       })
       .catch((e: any) => {
@@ -168,9 +171,16 @@ class TweetEmbed extends BlockEmbed {
     logging(`Tweet url: ${url}`);
     logging(`Tweet id: ${id}`);
 
-    if (TweetEmbed.cache?.has(id)) {
+    if (
+      typeof value !== "string" &&
+      "url" in value &&
+      TweetEmbed.cache?.get(TweetEmbed.getHashForCache(value))
+    ) {
       // When refetching from cache, readd spoilers status
-      const cachedNode = TweetEmbed.cache?.get(id)!;
+      const cachedNode = TweetEmbed.cache?.get(
+        TweetEmbed.getHashForCache(value)
+      )!;
+      cachedNode.setAttribute("data-from-cache", "true");
       makeSpoilerable(this, cachedNode, value);
       return cachedNode;
     }
@@ -202,10 +212,14 @@ class TweetEmbed extends BlockEmbed {
 
   optimize(context: any) {
     const rootNode = this.domNode as HTMLElement;
-    // If the editor is view-only, remove the embeds overlay
+    // If the editor is view-only, and there's no spoilers remove the embeds overlay
     if (rootNode.closest(".editor.view-only")) {
       const embedOverlay = rootNode.querySelector(".embed-overlay");
-      embedOverlay?.parentNode?.removeChild(embedOverlay);
+      if (embedOverlay?.classList.contains("spoilers")) {
+        embedOverlay.innerHTML = "";
+      } else {
+        embedOverlay?.parentElement?.removeChild(embedOverlay);
+      }
     }
   }
 
@@ -221,7 +235,7 @@ class TweetEmbed extends BlockEmbed {
     loggingVerbose(`Getting value of embed from data:`);
     loggingVerbose(domNode.dataset);
     return {
-      url: domNode.dataset.url,
+      url: domNode.dataset.url!,
       embedWidth: domNode.dataset.embedWidth,
       embedHeight: domNode.dataset.embedHeight,
       thread: !!domNode.dataset.thread,
@@ -233,6 +247,10 @@ class TweetEmbed extends BlockEmbed {
       url = url.substring(0, url.indexOf("?"));
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
+  }
+
+  static getHashForCache(value: EmbedValue | TweetEmbedInterface) {
+    return value.url;
   }
 
   static blotName = "tweet";

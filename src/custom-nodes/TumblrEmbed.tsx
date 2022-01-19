@@ -1,8 +1,8 @@
+import { EmbedValue, TumblrEmbedValue } from "../config";
 import { addErrorMessage, addLoadingMessage, makeSpoilerable } from "./utils";
 
 import DOMPurify from "dompurify";
 import { EditorContextProps } from "../Editor";
-import { EmbedValue } from "../config";
 import Quill from "quill";
 import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
@@ -11,11 +11,6 @@ const logging = require("debug")("bobapost:embeds:tumblt");
 const BlockEmbed = Quill.import("blots/block/embed");
 const Link = Quill.import("formats/link");
 const Icon = Quill.import("ui/icons");
-
-interface TumblrEmbedValue extends EmbedValue {
-  href: string;
-  did: string;
-}
 
 // const logging = require("debug")("bobapost:embeds:tumblr");
 
@@ -40,7 +35,7 @@ const attachObserver = (
             domNode.querySelector("iframe") as HTMLIFrameElement
           );
           TumblrEmbed.cache?.set(
-            destinationNode.dataset.href!,
+            TumblrEmbed.getHashForCache(TumblrEmbed.value(destinationNode)),
             destinationNode
           );
           // Add an extra timeout so the size will have set
@@ -87,6 +82,7 @@ class TumblrEmbed extends BlockEmbed {
       href: string;
       did: string;
       url: string;
+      spoilers?: boolean | undefined;
     }
   ) {
     const tumblrNode = document.createElement("div");
@@ -104,7 +100,6 @@ class TumblrEmbed extends BlockEmbed {
     document.body.appendChild(containerNode);
     containerNode.style.position = "absolute";
     containerNode.style.left = `-10000px`;
-    makeSpoilerable(this, node, data);
     attachObserver(containerNode, node);
     let fileref = document.createElement("script");
     fileref.setAttribute("type", "text/javascript");
@@ -113,16 +108,19 @@ class TumblrEmbed extends BlockEmbed {
     document.body.appendChild(fileref);
   }
 
-  static renderFromUrl(node: HTMLDivElement, url: string) {
-    if (!url) {
+  static renderFromUrl(
+    node: HTMLDivElement,
+    value: { url: string; spoilers: boolean | undefined }
+  ) {
+    if (!value.url) {
       addErrorMessage(node, {
         message: "No valid url found in Tumblr post!",
         url: "#",
       });
       return;
     }
-    TumblrEmbed.getOEmbedFromUrl(url)
-      .then((data) => {
+    TumblrEmbed.getOEmbedFromUrl(value.url)
+      .then((data: { html: string; url: string }) => {
         const sanitizedData = DOMPurify.sanitize(data.html);
         const containerNode = document.createElement("div");
         containerNode.innerHTML = sanitizedData;
@@ -139,7 +137,8 @@ class TumblrEmbed extends BlockEmbed {
         TumblrEmbed.loadPost(node, {
           href,
           did,
-          url,
+          url: data.url,
+          spoilers: value.spoilers,
         });
       })
       .catch((err) => {
@@ -173,9 +172,14 @@ class TumblrEmbed extends BlockEmbed {
     if (
       typeof value != "string" &&
       "href" in value &&
-      TumblrEmbed.cache?.has(value.href)
+      TumblrEmbed.cache?.has(TumblrEmbed.getHashForCache(value))
     ) {
-      return TumblrEmbed.cache.get(value.href);
+      const cachedNode = TumblrEmbed.cache?.get(
+        TumblrEmbed.getHashForCache(value)
+      )!;
+      cachedNode.setAttribute("data-from-cache", "true");
+      makeSpoilerable(this, cachedNode, value);
+      return cachedNode;
     }
     addLoadingMessage(node, {
       message: "Loading female-presenting nipples...",
@@ -183,14 +187,18 @@ class TumblrEmbed extends BlockEmbed {
       width: typeof value == "string" ? "" : value.embedWidth,
       height: typeof value == "string" ? "" : value.embedHeight,
     });
+    makeSpoilerable(this, node, value);
     addEmbedEditOverlay(this, node);
 
     node.classList.add("ql-embed", "loading");
     if (typeof value == "string" || !("href" in value)) {
-      return TumblrEmbed.renderFromUrl(
-        node,
-        this.sanitize(typeof value == "string" ? value : value.url)
-      );
+      return TumblrEmbed.renderFromUrl(node, {
+        url: this.sanitize(typeof value == "string" ? value : value.url),
+        spoilers:
+          typeof value !== "string" && "spoilers" in value
+            ? value.spoilers
+            : undefined,
+      });
     }
     TumblrEmbed.loadPost(node, value);
     return node;
@@ -204,11 +212,24 @@ class TumblrEmbed extends BlockEmbed {
     TumblrEmbed.cache = cache;
   }
 
+  optimize(context: any) {
+    const rootNode = this.domNode as HTMLElement;
+    // If the editor is view-only, and there's no spoilers remove the embeds overlay
+    if (rootNode.closest(".editor.view-only")) {
+      const embedOverlay = rootNode.querySelector(".embed-overlay");
+      if (embedOverlay?.classList.contains("spoilers")) {
+        embedOverlay.innerHTML = "";
+      } else {
+        embedOverlay?.parentElement?.removeChild(embedOverlay);
+      }
+    }
+  }
+
   static value(domNode: HTMLDivElement) {
     return {
       href: domNode.dataset.href,
       did: domNode.dataset.did,
-      url: domNode.dataset.url,
+      url: domNode.dataset.url!,
       embedWidth: domNode.dataset.embedWidth,
       embedHeight: domNode.dataset.embedHeight,
     };
@@ -219,6 +240,10 @@ class TumblrEmbed extends BlockEmbed {
       url = url.substring(0, url.indexOf("?"));
     }
     return Link.sanitize(url); // eslint-disable-line import/no-named-as-default-member
+  }
+
+  static getHashForCache(value: EmbedValue) {
+    return value.url;
   }
 
   static blotName = "tumblr-embed";

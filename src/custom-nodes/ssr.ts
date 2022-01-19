@@ -1,8 +1,13 @@
-import { EmbedValue, TweetEmbed as TweetEmbedInterface } from "../config";
+import {
+  EmbedValue,
+  TumblrEmbedValue,
+  TweetEmbed as TweetEmbedInterface,
+} from "../config";
 
 import type { SavedValue as BlockImageSavedValue } from "./BlockImage";
 import type { HTMLElement as ParserHTMLElement } from "node-html-parser";
 import type Quill from "quill";
+import TumblrSsrTemplate from "./templates/TumblrSSR.html";
 import TwitterSsrTemplate from "./templates/TwitterSSR.html";
 import { parse } from "node-html-parser";
 
@@ -61,14 +66,15 @@ export const makeSpoilerable = (
   });
   if (isSpoilered) {
     embedRoot?.classList.toggle("spoilers", isSpoilered);
-    embedRoot?.setAttribute("spoilers", "true");
+    embedRoot?.classList.remove("show-spoilers");
+    embedRoot?.setAttribute("data-spoilers", "true");
   }
   if (!embedType.onMarkSpoilers) {
     embedType.onMarkSpoilers = (node: HTMLDivElement, spoilers: boolean) => {
       if (spoilers) {
-        node.setAttribute("spoilers", "true");
+        node.setAttribute("data-spoilers", "true");
       } else {
-        node.removeAttribute("spoilers");
+        node.removeAttribute("data-spoilers");
         node?.classList.toggle("spoilers", spoilers);
       }
     };
@@ -77,7 +83,7 @@ export const makeSpoilerable = (
     const previousValue = embedType.value;
     embedType.value = (domNode: HTMLElement) => {
       const value = previousValue(domNode);
-      const spoilers = domNode.getAttribute("spoilers");
+      const spoilers = domNode.getAttribute("data-spoilers");
       return {
         ...value,
         spoilers: !!spoilers,
@@ -93,10 +99,10 @@ export const makeSpoilerable = (
   }
 };
 
+// TODO: add sanitizer to strings
 const getTweetValues = (
   value: string | EmbedValue | TweetEmbedInterface
 ): TweetEmbedInterface => {
-  console.log(value);
   if (typeof value === "string") {
     const url = new URL(value);
     return {
@@ -112,16 +118,36 @@ const getTweetValues = (
     embedWidth: value.embedWidth,
     embedHeight: value.embedHeight,
     did: url.pathname.substr(url.pathname.lastIndexOf("/") + 1),
-    spoilers: "spoilers" in value ? value.spoilers : undefined,
+    spoilers: value.spoilers,
     thread: "thread" in value ? value.thread : undefined,
   };
 };
 
+// TODO: add sanitizer to strings
+const getTumblrValues = (value: string | EmbedValue | TumblrEmbedValue) => {
+  if (typeof value === "string") {
+    return {
+      url: value,
+    };
+  }
+  return {
+    url: value.url,
+    embedWidth: value.embedWidth,
+    embedHeight: value.embedHeight,
+    spoilers: value.spoilers,
+    href: "href" in value ? value.href : undefined,
+    did: "did" in value ? value.did : undefined,
+  };
+};
+
 const setOrRemoveAttribute = (
-  node: ParserHTMLElement,
+  node: ParserHTMLElement | null,
   attribute: string,
   value: string | undefined
 ) => {
+  if (!node) {
+    return;
+  }
   if (typeof value !== "undefined") {
     node.setAttribute(attribute, value);
   } else {
@@ -147,6 +173,31 @@ export const TweetEmbed = (
   if (loadingMessage && tweetValues.embedHeight && tweetValues.embedWidth) {
     const ratio =
       (parseInt(tweetValues.embedHeight) / parseInt(tweetValues.embedWidth)) *
+      100;
+    loadingMessage.setAttribute("style", `padding-top: ${ratio}%`);
+  }
+
+  return node.removeWhitespace().toString();
+};
+
+export const TumblrEmbed = (value: string | EmbedValue | TumblrEmbedValue) => {
+  const tumblrValues = getTumblrValues(value);
+  const template = TumblrSsrTemplate;
+  const node = parse(template);
+  setOrRemoveAttribute(node, "data-url", tumblrValues.href);
+  setOrRemoveAttribute(node, "data-id", tumblrValues.did);
+  setOrRemoveAttribute(node, "data-embed-width", tumblrValues.embedWidth);
+  setOrRemoveAttribute(node, "data-embed-height", tumblrValues.embedHeight);
+  setOrRemoveAttribute(node, "data-id", tumblrValues.embedHeight);
+  setOrRemoveAttribute(
+    node.querySelector(".loading-message a"),
+    "href",
+    tumblrValues.url
+  );
+  const loadingMessage = node.querySelector(".loading-message");
+  if (loadingMessage && tumblrValues.embedHeight && tumblrValues.embedWidth) {
+    const ratio =
+      (parseInt(tumblrValues.embedHeight) / parseInt(tumblrValues.embedWidth)) *
       100;
     loadingMessage.setAttribute("style", `padding-top: ${ratio}%`);
   }

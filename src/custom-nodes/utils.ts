@@ -9,19 +9,23 @@ export const makeSpoilerable = (
 ) => {
   const isSpoilered =
     embedType.value?.(embedRoot)?.["spoilers"] || embedValue.spoilers;
-  embedRoot.addEventListener("click", () => {
-    embedRoot.classList.toggle("show-spoilers");
-  });
+  // If spoilers is true, then we have already set this
+  if (!embedRoot.dataset.spoilers) {
+    embedRoot.addEventListener("click", () => {
+      embedRoot.classList.toggle("show-spoilers");
+    });
+  }
   if (isSpoilered) {
     embedRoot?.classList.toggle("spoilers", isSpoilered);
-    embedRoot?.setAttribute("spoilers", "true");
+    embedRoot?.classList.remove("show-spoilers");
+    embedRoot?.setAttribute("data-spoilers", "true");
   }
   if (!embedType.onMarkSpoilers) {
     embedType.onMarkSpoilers = (node: HTMLDivElement, spoilers: boolean) => {
       if (spoilers) {
-        node.setAttribute("spoilers", "true");
+        node.setAttribute("data-spoilers", "true");
       } else {
-        node.removeAttribute("spoilers");
+        node.removeAttribute("data-spoilers");
         node?.classList.toggle("spoilers", spoilers);
       }
     };
@@ -30,7 +34,7 @@ export const makeSpoilerable = (
     const previousValue = embedType.value;
     embedType.value = (domNode: HTMLElement) => {
       const value = previousValue(domNode);
-      const spoilers = domNode.getAttribute("spoilers");
+      const spoilers = domNode.getAttribute("data-spoilers");
       return {
         ...value,
         spoilers: !!spoilers,

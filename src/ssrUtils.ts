@@ -1,4 +1,4 @@
-import { BlockImage, TweetEmbed } from "./custom-nodes/ssr";
+import { BlockImage, TumblrEmbed, TweetEmbed } from "./custom-nodes/ssr";
 import { NodeType, parse } from "node-html-parser";
 import type {
   HTMLElement as ParserHTMLElement,
@@ -145,6 +145,8 @@ export const getSsrConverter = () => {
           return BlockImage(value);
         } else if (customOp.insert.type === "tweet") {
           return TweetEmbed(customOp.insert.value as any);
+        } else if (customOp.insert.type === "tumblr-embed") {
+          return TumblrEmbed(customOp.insert.value as any);
         } else {
           // We try to be neutral with other custom blots.
           return "<div />";

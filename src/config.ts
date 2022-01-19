@@ -19,13 +19,18 @@ export interface EmbedValue {
   url: string;
   embedWidth?: string;
   embedHeight?: string;
+  spoilers?: boolean;
 }
 
 export interface TweetEmbed extends EmbedValue {
   href: string;
   did: string;
-  spoilers?: boolean;
   thread?: boolean;
+}
+
+export interface TumblrEmbedValue extends EmbedValue {
+  href: string;
+  did: string;
 }
 
 export interface TooltipConfig {
