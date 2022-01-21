@@ -46,8 +46,8 @@ beforeAll(() => {
 describe("Block Image", () => {
   test("Correctly renders loading image snapshot", async () => {
     const { baseElement } = render(<BlockImageEmbed />);
-    expect(baseElement.querySelector(".block-image-class")).
-toMatchInlineSnapshot(`
+    expect(baseElement.querySelector(".block-image-class"))
+      .toMatchInlineSnapshot(`
 <div
   class="block-image-class ql-block-image ql-embed loading"
   contenteditable="false"
@@ -99,8 +99,8 @@ toMatchInlineSnapshot(`
       const event: any = {};
       image.onload(event);
     });
-    expect(baseElement.querySelector(".block-image-class")).
-toMatchInlineSnapshot(`
+    expect(baseElement.querySelector(".block-image-class"))
+      .toMatchInlineSnapshot(`
 <div
   class="block-image-class ql-block-image ql-embed"
   contenteditable="false"
@@ -152,12 +152,12 @@ toMatchInlineSnapshot(`
 
     fireEvent.click(baseElement.querySelector(".spoilers-button"));
 
-    expect(baseElement.querySelector(".block-image-class")).
-toMatchInlineSnapshot(`
+    expect(baseElement.querySelector(".block-image-class"))
+      .toMatchInlineSnapshot(`
 <div
   class="block-image-class ql-block-image ql-embed"
   contenteditable="false"
-  spoilers="true"
+  data-spoilers="true"
 >
   <div
     class="embed-overlay spoilers"
