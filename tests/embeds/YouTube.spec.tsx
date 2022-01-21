@@ -101,7 +101,7 @@ it("Correctly toggles YouTube video spoilers on", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-youtube-video[spoilers*=true]")
+      cy.get(".ql-youtube-video[data-spoilers*=true]")
         .should("be.visible")
         .then(() => {
           expect(
@@ -136,11 +136,11 @@ it("Correctly toggles YouTube video spoilers off", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-youtube-video[spoilers*=true]")
+      cy.get(".ql-youtube-video[data-spoilers*=true]")
         .should("be.visible")
         .then(() => {
           cy.findByLabelText("Toggle spoilers off").click();
-          cy.get(".ql-youtube-video:not([spoilers*=true])")
+          cy.get(".ql-youtube-video:not([data-spoilers*=true])")
             .should("be.visible")
             .then(() => {
               expect(

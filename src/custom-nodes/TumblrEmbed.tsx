@@ -120,7 +120,7 @@ class TumblrEmbed extends BlockEmbed {
       return;
     }
     TumblrEmbed.getOEmbedFromUrl(value.url)
-      .then((data: { html: string; url: string }) => {
+      .then((data: { html: string }) => {
         const sanitizedData = DOMPurify.sanitize(data.html);
         const containerNode = document.createElement("div");
         containerNode.innerHTML = sanitizedData;
@@ -137,7 +137,7 @@ class TumblrEmbed extends BlockEmbed {
         TumblrEmbed.loadPost(node, {
           href,
           did,
-          url: data.url,
+          url: value.url,
           spoilers: value.spoilers,
         });
       })
@@ -226,6 +226,7 @@ class TumblrEmbed extends BlockEmbed {
   }
 
   static value(domNode: HTMLDivElement) {
+    console.log(domNode);
     return {
       href: domNode.dataset.href,
       did: domNode.dataset.did,

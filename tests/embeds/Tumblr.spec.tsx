@@ -53,25 +53,9 @@ const loadTumblrPost = ({
   // Clicks on the empty editor, the tooltip should appear
   cy.get(".ql-editor").click();
 
-  // Clicks on the twitter button
+  // Clicks on the tumblr button
   const tooltipContaner = cy.findByLabelText("tumblr");
   tooltipContaner.click();
-};
-
-const loadDelta = ({
-  initialText,
-}: {
-  // TODO: find the right type for this
-  initialText: any;
-}) => {
-  mount(
-    <EditorContext.Provider value={embedFetchers}>
-      <Editor
-        initialText={initialText}
-        onIsEmptyChange={() => console.log("EmptyChange")}
-      />
-    </EditorContext.Provider>
-  );
 };
 
 it(
@@ -127,7 +111,7 @@ it("Correctly toggles Tumblr embed spoilers on", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-tumblr-embed[spoilers*=true]")
+      cy.get(".ql-tumblr-embed[data-spoilers*=true]")
         .should("be.visible")
         .then(() => {
           expect(
@@ -167,11 +151,11 @@ it("Correctly toggles Tumblr embed spoilers off", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-tumblr-embed[spoilers*=true]")
+      cy.get(".ql-tumblr-embed[data-spoilers*=true]")
         .should("be.visible")
         .then(() => {
           cy.findByLabelText("Toggle spoilers off").click();
-          cy.get(".ql-tumblr-embed:not([spoilers*=true])")
+          cy.get(".ql-tumblr-embed:not([data-spoilers*=true])")
             .should("be.visible")
             .then(() => {
               expect(

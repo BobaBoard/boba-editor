@@ -119,7 +119,7 @@ it("Correctly toggles spoilers on", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-tweet[spoilers*=true]")
+      cy.get(".ql-tweet[data-spoilers*=true]")
         .should("be.visible")
         .then(() => {
           expect(
@@ -157,11 +157,11 @@ it("Correctly toggles spoilers off", () => {
     .should("be.visible")
     .then(() => {
       cy.findByLabelText("Toggle spoilers on").click();
-      cy.get(".ql-tweet[spoilers*=true]")
+      cy.get(".ql-tweet[data-spoilers*=true]")
         .should("be.visible")
         .then(() => {
           cy.findByLabelText("Toggle spoilers off").click();
-          cy.get(".ql-tweet:not([spoilers*=true])")
+          cy.get(".ql-tweet:not([data-spoilers*=true])")
             .should("be.visible")
             .then(() => {
               expect(
