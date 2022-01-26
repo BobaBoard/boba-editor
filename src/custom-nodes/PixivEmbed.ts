@@ -5,6 +5,8 @@ const logging = require("debug")("bobapost:embeds:pixiv");
 class PixivEmbed extends Oembed {
   static LOADING_BACKGROUND_COLOR = "#0096fa";
   static LOADING_TEXT = "行っ・・・行っちゃう!";
+  static SKIP_EMBED_LOADING = false;
+  static USE_IFRAME_LOAD_EVENT = true;
 
   static blotName = "pixiv-embed";
   static tagName = "div";

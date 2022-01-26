@@ -58,38 +58,44 @@ const loadPixivEmbed = ({
   tooltipContaner.click();
 };
 
-it("Correctly loads Pixiv embed dimensions", () => {
-  const textChange = cy.spy();
-  loadPixivEmbed({
-    pixivUrl: "https://www.pixiv.net/en/artworks/92394928",
-    onTextChange: textChange,
-  });
+it(
+  "Correctly loads Pixiv embed dimensions",
+  {
+    defaultCommandTimeout: 10000,
+  },
+  () => {
+    const textChange = cy.spy();
+    loadPixivEmbed({
+      pixivUrl: "https://www.pixiv.net/en/artworks/92394928",
+      onTextChange: textChange,
+    });
 
-  cy.get(".ql-pixiv-embed.loaded")
-    .should("be.visible")
-    .then(() => {
-      console.log(textChange.lastCall);
-      expect(
-        textChange.lastCall.calledWithMatch({
-          ops: [
-            {
-              insert: {
-                "pixiv-embed": {
-                  url: "https://www.pixiv.net/en/artworks/92394928",
-                  spoilers: false,
-                  embedHeight: "255",
-                  embedWidth: "484",
+    cy.get(".ql-pixiv-embed.loaded")
+      .should("be.visible")
+      .then(() => {
+        console.log(textChange.lastCall);
+        expect(
+          textChange.lastCall.calledWithMatch({
+            ops: [
+              {
+                insert: {
+                  "pixiv-embed": {
+                    url: "https://www.pixiv.net/en/artworks/92394928",
+                    spoilers: false,
+                    embedHeight: "255",
+                    embedWidth: "484",
+                  },
                 },
               },
-            },
-            {
-              insert: "\n",
-            },
-          ],
-        })
-      ).to.be.true;
-    });
-});
+              {
+                insert: "\n",
+              },
+            ],
+          })
+        ).to.be.true;
+      });
+  }
+);
 
 it("Correctly toggles Pixiv embeds spoilers on", () => {
   const textChange = cy.spy();

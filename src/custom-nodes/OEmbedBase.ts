@@ -2,6 +2,7 @@ import { addErrorMessage, addLoadingMessage, makeSpoilerable } from "./utils";
 
 import { EditorContextProps } from "../Editor";
 import Quill from "quill";
+import _ from "cypress/types/lodash";
 import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -72,11 +73,11 @@ const markAsLoaded = (root: HTMLElement) => {
   const loadingMessage = root.querySelector(".loading-message");
   logging(loadingMessage);
   loadingMessage?.parentNode?.removeChild(loadingMessage);
-  root.classList.add("loaded");
   root.classList.remove("loading");
   const oEmbedNode = root.querySelector(".embed-node");
   oEmbedNode?.classList.add("loaded");
   oEmbedNode?.classList.remove("loading");
+  root.classList.add("loaded");
 };
 
 export type SavedValue = {
@@ -95,6 +96,7 @@ class OEmbed extends BlockEmbed {
   }
   static SKIP_EMBED_LOADING = true;
   static FORCE_EMBED = false;
+  static USE_IFRAME_LOAD_EVENT = false;
   static cache: EditorContextProps["cache"] | undefined;
 
   static getHashForCache(value: SavedValue) {
@@ -135,9 +137,6 @@ class OEmbed extends BlockEmbed {
       // will be wrong without an extra delay.
       // TODO: yes, I know, this whole thing is brittle.
       setTimeout(() => {
-        const embedSizes = domNode.getBoundingClientRect();
-        domNode.dataset.embedWidth = `${Math.ceil(embedSizes.width)}`;
-        domNode.dataset.embedHeight = `${Math.ceil(embedSizes.height)}`;
         // If the embed was loaded from an offscreen node, move the embed node
         // within the screen again.
         if (embedLoadingNode) {
@@ -145,6 +144,9 @@ class OEmbed extends BlockEmbed {
           embedLoadingNode.style.left = "0";
         }
         markAsLoaded(domNode);
+        const embedSizes = domNode.getBoundingClientRect();
+        domNode.dataset.embedWidth = `${Math.ceil(embedSizes.width)}`;
+        domNode.dataset.embedHeight = `${Math.ceil(embedSizes.height)}`;
         logging(domNode);
 
         this.onLoadCallback?.();
@@ -310,6 +312,12 @@ class OEmbed extends BlockEmbed {
       !this.SKIP_EMBED_LOADING
     ) {
       logging(`Attaching loading observer.`);
+      if (this.USE_IFRAME_LOAD_EVENT) {
+        oEmbedNode.querySelector("iframe")?.addEventListener("load", () => {
+          this.onLoadEnd(node, oEmbedNode);
+        });
+        return;
+      }
       // With iframes (and some other embed types that swap regular HTML for iframes), it usually
       // takes a while before the embed content is loaded. We listen to changes to the embed with
       // an observer to determine when the content loading has finished.
