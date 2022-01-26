@@ -118,6 +118,8 @@ const TO_RENDER_AS_BLOCK = [
   "tweet",
   "tumblr-embed",
   "pixiv-embed",
+  "tiktok-embed",
+  "oembed-embed",
 ];
 export const getSsrConverter = () => {
   return {
@@ -165,6 +167,17 @@ export const getSsrConverter = () => {
             extraClass: "ql-pixiv-embed",
             loadingMessage: "行っ・・・行っちゃう!",
             backgroundColor: "#0096fa",
+          });
+        } else if (customOp.insert.type === "tiktok-embed") {
+          return OEmbedBase(customOp.insert.value as any, {
+            extraClass: "ql-tiktok-embed",
+            loadingMessage: "Hello fellow kids, it's TikTok time™",
+            backgroundColor: "aquamarine",
+          });
+        } else if (customOp.insert.type === "oembed-embed") {
+          return OEmbedBase(customOp.insert.value as any, {
+            loadingMessage: "Doing my best!",
+            backgroundColor: "#e6e6e6",
           });
         } else {
           // We try to be neutral with other custom blots.
