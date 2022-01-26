@@ -68,6 +68,10 @@ const isImageEmbed = (domNode: HTMLElement) => {
 };
 
 const markAsLoaded = (root: HTMLElement) => {
+  // Remove the loading message
+  const loadingMessage = root.querySelector(".loading-message");
+  logging(loadingMessage);
+  loadingMessage?.parentNode?.removeChild(loadingMessage);
   root.classList.add("loaded");
   root.classList.remove("loading");
   const oEmbedNode = root.querySelector(".embed-node");
@@ -105,22 +109,18 @@ class OEmbed extends BlockEmbed {
       embedHeight: string;
     }
   ) {
-    // Remove the loading message
-    const loadingMessage = domNode.querySelector(".loading-message");
-    logging(loadingMessage);
-    loadingMessage?.parentNode?.removeChild(loadingMessage);
-    // If the embed was loaded from an offscreen node, move the embed node
-    // within the screen again.
-    if (embedLoadingNode) {
-      embedLoadingNode.style.position = "relative";
-      embedLoadingNode.style.left = "0";
-    }
     logging(domNode);
     // If we already know the size of the embed (i.e. this is not the first time
     // this embed has been loaded), then simply display the embed with the given sizes.
     if (sizes) {
       domNode.dataset.embedWidth = `${sizes.embedWidth}`;
       domNode.dataset.embedHeight = `${sizes.embedHeight}`;
+      // If the embed was loaded from an offscreen node, move the embed node
+      // within the screen again.
+      if (embedLoadingNode) {
+        embedLoadingNode.style.position = "relative";
+        embedLoadingNode.style.left = "0";
+      }
       markAsLoaded(domNode);
       this.onLoadCallback?.();
       if (!this.SKIP_CACHE) {
@@ -138,6 +138,12 @@ class OEmbed extends BlockEmbed {
         const embedSizes = domNode.getBoundingClientRect();
         domNode.dataset.embedWidth = `${Math.ceil(embedSizes.width)}`;
         domNode.dataset.embedHeight = `${Math.ceil(embedSizes.height)}`;
+        // If the embed was loaded from an offscreen node, move the embed node
+        // within the screen again.
+        if (embedLoadingNode) {
+          embedLoadingNode.style.position = "relative";
+          embedLoadingNode.style.left = "0";
+        }
         markAsLoaded(domNode);
         logging(domNode);
 

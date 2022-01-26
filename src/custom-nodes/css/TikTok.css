@@ -22,10 +22,6 @@
   padding: 30px;
   text-align: center;
   color: white;
-  height: 80px;
-  /*
-     * Figure out how to readd overflow hidden to this
-     */
 }
 
 blockquote.tiktok-embed {
