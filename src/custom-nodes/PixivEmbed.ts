@@ -8,7 +8,7 @@ class PixivEmbed extends Oembed {
 
   static blotName = "pixiv-embed";
   static tagName = "div";
-  static className = "ql-oembed-embed";
+  static className = "ql-pixiv-embed";
 
   static getRootNode(mutations: MutationRecord[]) {
     logging(mutations[0].addedNodes[0]);

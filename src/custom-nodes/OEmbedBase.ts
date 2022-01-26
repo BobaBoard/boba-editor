@@ -67,6 +67,14 @@ const isImageEmbed = (domNode: HTMLElement) => {
   return !!domNode.querySelector("img");
 };
 
+const markAsLoaded = (root: HTMLElement) => {
+  root.classList.add("loaded");
+  root.classList.remove("loading");
+  const oEmbedNode = root.querySelector(".embed-node");
+  oEmbedNode?.classList.add("loaded");
+  oEmbedNode?.classList.remove("loading");
+};
+
 export type SavedValue = {
   url: string;
   embedHeight?: string;
@@ -107,17 +115,13 @@ class OEmbed extends BlockEmbed {
       embedLoadingNode.style.position = "relative";
       embedLoadingNode.style.left = "0";
     }
-    domNode.classList.add("loaded");
-    domNode.classList.remove("loading");
-    const oEmbedNode = domNode.querySelector(".embed-node");
-    oEmbedNode?.classList.add("loaded");
-    oEmbedNode?.classList.remove("loading");
     logging(domNode);
     // If we already know the size of the embed (i.e. this is not the first time
     // this embed has been loaded), then simply display the embed with the given sizes.
     if (sizes) {
       domNode.dataset.embedWidth = `${sizes.embedWidth}`;
       domNode.dataset.embedHeight = `${sizes.embedHeight}`;
+      markAsLoaded(domNode);
       this.onLoadCallback?.();
       if (!this.SKIP_CACHE) {
         // We set the embed in the cache, unless this type of embed has been marked
@@ -132,8 +136,9 @@ class OEmbed extends BlockEmbed {
       // TODO: yes, I know, this whole thing is brittle.
       setTimeout(() => {
         const embedSizes = domNode.getBoundingClientRect();
-        domNode.dataset.embedWidth = `${embedSizes.width}`;
-        domNode.dataset.embedHeight = `${embedSizes.height}`;
+        domNode.dataset.embedWidth = `${Math.ceil(embedSizes.width)}`;
+        domNode.dataset.embedHeight = `${Math.ceil(embedSizes.height)}`;
+        markAsLoaded(domNode);
         logging(domNode);
 
         this.onLoadCallback?.();
@@ -398,7 +403,7 @@ class OEmbed extends BlockEmbed {
 
     addEmbedEditOverlay(this, node);
 
-    node.classList.add("ql-embed", "loading");
+    node.classList.add("ql-embed", "ql-oembed-embed", "loading");
     // If we already have a saved width and height for the embed, we can add
     // it to the loading node. This allows us to (somewhat) avoid layout shifting
     // once the embed is loaded.
