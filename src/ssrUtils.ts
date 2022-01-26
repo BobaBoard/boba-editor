@@ -1,4 +1,9 @@
-import { BlockImage, TumblrEmbed, TweetEmbed } from "./custom-nodes/ssr";
+import {
+  BlockImage,
+  OEmbedBase,
+  TumblrEmbed,
+  TweetEmbed,
+} from "./custom-nodes/ssr";
 import { NodeType, parse } from "node-html-parser";
 import type {
   HTMLElement as ParserHTMLElement,
@@ -108,6 +113,12 @@ export const attachEventListeners = (ssrRef: RefObject<HTMLDivElement>) => {
   );
 };
 
+const TO_RENDER_AS_BLOCK = [
+  "block-image",
+  "tweet",
+  "tumblr-embed",
+  "pixiv-embed",
+];
 export const getSsrConverter = () => {
   return {
     // InitialText is a quill ops array (sometimes)
@@ -116,8 +127,10 @@ export const getSsrConverter = () => {
         "ops" in initialText ? initialText.ops : (initialText as any[]);
       const textWithBlockRendering =
         actualDelta.map((op: any) => {
-          const blockImage = op.insert["block-image"];
-          if (blockImage) {
+          const shouldRenderAsBlock = TO_RENDER_AS_BLOCK.some(
+            (type) => op.insert[type]
+          );
+          if (shouldRenderAsBlock) {
             return {
               ...op,
               attributes: { renderAsBlock: true },
@@ -147,6 +160,12 @@ export const getSsrConverter = () => {
           return TweetEmbed(customOp.insert.value as any);
         } else if (customOp.insert.type === "tumblr-embed") {
           return TumblrEmbed(customOp.insert.value as any);
+        } else if (customOp.insert.type === "pixiv-embed") {
+          return OEmbedBase(customOp.insert.value as any, {
+            extraClass: "ql-pixiv-embed",
+            loadingMessage: "行っ・・・行っちゃう!",
+            backgroundColor: "#0096fa",
+          });
         } else {
           // We try to be neutral with other custom blots.
           return "<div />";
@@ -154,6 +173,7 @@ export const getSsrConverter = () => {
       });
       converter.afterRender(function (groupType, htmlString) {
         let processedString = htmlString;
+        console.log(htmlString);
         if (
           groupType == "inline-group" &&
           processedString.indexOf("inline-spoilers") != -1

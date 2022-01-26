@@ -5,6 +5,7 @@ import {
 } from "../config";
 
 import type { SavedValue as BlockImageSavedValue } from "./BlockImage";
+import OEmbedSsrTemplate from "./templates/OEmbedSSR.html";
 import type { HTMLElement as ParserHTMLElement } from "node-html-parser";
 import type Quill from "quill";
 import TumblrSsrTemplate from "./templates/TumblrSSR.html";
@@ -140,6 +141,21 @@ const getTumblrValues = (value: string | EmbedValue | TumblrEmbedValue) => {
   };
 };
 
+// TODO: add sanitizer to strings
+const getOEmbedValues = (value: string | EmbedValue) => {
+  if (typeof value === "string") {
+    return {
+      url: value,
+    };
+  }
+  return {
+    url: value.url,
+    embedWidth: value.embedWidth,
+    embedHeight: value.embedHeight,
+    spoilers: value.spoilers,
+  };
+};
+
 const setOrRemoveAttribute = (
   node: ParserHTMLElement | null,
   attribute: string,
@@ -165,7 +181,6 @@ export const TweetEmbed = (
   node.setAttribute("data-id", tweetValues.did);
   setOrRemoveAttribute(node, "data-embed-width", tweetValues.embedWidth);
   setOrRemoveAttribute(node, "data-embed-height", tweetValues.embedHeight);
-  setOrRemoveAttribute(node, "data-id", tweetValues.embedHeight);
   node
     .querySelector(".loading-message a")
     ?.setAttribute("href", tweetValues.href);
@@ -188,7 +203,7 @@ export const TumblrEmbed = (value: string | EmbedValue | TumblrEmbedValue) => {
   setOrRemoveAttribute(node, "data-id", tumblrValues.did);
   setOrRemoveAttribute(node, "data-embed-width", tumblrValues.embedWidth);
   setOrRemoveAttribute(node, "data-embed-height", tumblrValues.embedHeight);
-  setOrRemoveAttribute(node, "data-id", tumblrValues.embedHeight);
+  setOrRemoveAttribute(node, "data-id", tumblrValues.href);
   setOrRemoveAttribute(
     node.querySelector(".loading-message a"),
     "href",
@@ -200,6 +215,44 @@ export const TumblrEmbed = (value: string | EmbedValue | TumblrEmbedValue) => {
       (parseInt(tumblrValues.embedHeight) / parseInt(tumblrValues.embedWidth)) *
       100;
     loadingMessage.setAttribute("style", `padding-top: ${ratio}%`);
+  }
+
+  return node.removeWhitespace().toString();
+};
+
+export const OEmbedBase = (
+  value: string | EmbedValue,
+  settings: {
+    extraClass?: string;
+    loadingMessage: string;
+    backgroundColor: string;
+  }
+) => {
+  const oembedValues = getOEmbedValues(value);
+  const template = OEmbedSsrTemplate;
+  const node = parse(template);
+  if (settings.extraClass) {
+    node.classList.add(settings.extraClass);
+  }
+  setOrRemoveAttribute(node, "data-url", oembedValues.url);
+  setOrRemoveAttribute(node, "data-embed-width", oembedValues.embedWidth);
+  setOrRemoveAttribute(node, "data-embed-height", oembedValues.embedHeight);
+  const loadingLink = node.querySelector(".loading-message a");
+  setOrRemoveAttribute(loadingLink, "href", oembedValues.url);
+  if (loadingLink) {
+    loadingLink.innerHTML = settings.loadingMessage;
+  }
+  const loadingMessage = loadingLink?.parentNode;
+  if (loadingMessage) {
+    let style = `background-color: ${settings.backgroundColor};`;
+    if (oembedValues.embedHeight && oembedValues.embedWidth) {
+      const ratio =
+        (parseInt(oembedValues.embedHeight) /
+          parseInt(oembedValues.embedWidth)) *
+        100;
+      style += `padding-top: ${ratio}%`;
+    }
+    loadingMessage.setAttribute("style", style);
   }
 
   return node.removeWhitespace().toString();

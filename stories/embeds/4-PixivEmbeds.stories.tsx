@@ -3,15 +3,15 @@ import Editor, { EditorContext } from "../../src";
 import { Meta, Story } from "@storybook/react";
 
 import { EditorContextProps } from "Editor";
+import { PixivEmbed } from "../../src/custom-nodes";
 import React from "react";
-import { TumblrEmbed } from "../../src/custom-nodes";
 import { WITH_CACHE } from "../utils/decorators";
 import { action } from "@storybook/addon-actions";
 
 const logging = require("debug")("bobapost:stories:embeds");
 
 export default {
-  title: "Embeds/Tumblr",
+  title: "Embeds/Pixiv",
   component: Editor,
 } as Meta;
 
@@ -43,30 +43,14 @@ const getFetcher = (delay: number = 1000) => ({
   },
 });
 
-const ROBINBOOB_POST = {
-  url: "https://bobaboard.tumblr.com/post/647298900927053824/this-april-1st-bobaboard-is-proud-to-bring-its",
-  width: "500",
-  height: "1112",
-};
-
-const PRELOADED_ROBINBOOB_POST = {
-  ...ROBINBOOB_POST,
-  did: "211b71f5c49a42458fc23a95335d65c4331e91b4",
-  href: "https://embed.tumblr.com/embed/post/1DU3s2LW_74-QOcKbxGMsw/647298900927053824",
-};
-
-const BAD_URL_POST = {
-  url: "https://bobaboard.tumblr.com/post/2130283/this-april-1st-bobaboard-is-proud-to-bring-its",
-  width: "500",
-  height: "1112",
-  did: "238901289",
-  href: "https://embed.tumblr.com/embed/post/109238-QOcKbxGMsw/123123",
+const HUSBAND_FROM_MY_GAMES = {
+  url: "https://www.pixiv.net/en/artworks/92394928",
+  width: "484",
+  height: "255",
 };
 
 interface TemplateArgs {
   url: string;
-  href?: string;
-  did?: string;
   width?: string;
   height?: string;
   editable?: boolean;
@@ -75,7 +59,7 @@ interface TemplateArgs {
   ssr?: boolean;
   embedsCache?: EditorContextProps["cache"];
 }
-const Tumblr: Story<TemplateArgs> = (args: TemplateArgs) => {
+const Pixiv: Story<TemplateArgs> = (args: TemplateArgs) => {
   const embedFetchers = React.useMemo(
     () => ({
       ...getFetcher(args.delay),
@@ -92,7 +76,7 @@ const Tumblr: Story<TemplateArgs> = (args: TemplateArgs) => {
           forceSSR={args.ssr}
           initialText={[
             {
-              insert: "Tumblr Embed!",
+              insert: "Pixiv Embed!",
             },
             {
               attributes: {
@@ -102,12 +86,10 @@ const Tumblr: Story<TemplateArgs> = (args: TemplateArgs) => {
             },
             {
               insert: {
-                "tumblr-embed": {
+                "pixiv-embed": {
                   embedHeight: args.height,
                   embedWidth: args.width,
                   url: args.url,
-                  href: args.href,
-                  did: args.did,
                   spoilers: args.spoilers,
                 },
               },
@@ -132,64 +114,63 @@ const Tumblr: Story<TemplateArgs> = (args: TemplateArgs) => {
   );
 };
 
-export const Base = Tumblr.bind({});
+export const Base = Pixiv.bind({});
 Base.args = {
-  ...PRELOADED_ROBINBOOB_POST,
+  ...HUSBAND_FROM_MY_GAMES,
   editable: false,
 };
 
-export const Spoilers = Tumblr.bind({});
+export const Spoilers = Pixiv.bind({});
 Spoilers.args = {
   ...Base.args,
   spoilers: true,
 };
 
-// export const InfiniteLoad = Tumblr.bind({});
-// InfiniteLoad.args = {
-//   ...Base.args,
-//   // TODO: this does not work on pre-loaded tumblr cause it doesn't use the oEmbed fetcher
-//   delay: 1000000000,
-// };
-
-export const BadUrl = Tumblr.bind({});
-BadUrl.args = {
+export const InfiniteLoad = Pixiv.bind({});
+InfiniteLoad.args = {
   ...Base.args,
-  ...BAD_URL_POST,
+  delay: 1000000000,
 };
 
-export const WithCache = Tumblr.bind({});
+// export const BadUrl = Pixiv.bind({});
+// BadUrl.args = {
+//   ...Base.args,
+//   ...BAD_URL_POST,
+// };
+
+export const WithCache = Pixiv.bind({});
 WithCache.args = {
   ...Base.args,
   spoilers: true,
 };
-WithCache.decorators = [WITH_CACHE(TumblrEmbed)];
+WithCache.decorators = [WITH_CACHE(PixivEmbed)];
 
-export const EditableBase = Tumblr.bind({});
+export const EditableBase = Pixiv.bind({});
 EditableBase.args = {
-  ...ROBINBOOB_POST,
+  ...HUSBAND_FROM_MY_GAMES,
   editable: true,
 };
 
-export const EditableSpoilers = Tumblr.bind({});
+export const EditableSpoilers = Pixiv.bind({});
 EditableSpoilers.args = {
   ...EditableBase.args,
   spoilers: true,
   editable: true,
 };
 
-export const EditableInfiniteLoad = Tumblr.bind({});
+export const EditableInfiniteLoad = Pixiv.bind({});
 EditableInfiniteLoad.args = {
   ...EditableBase.args,
   delay: 1000000000,
 };
 
-export const EditableBadUrl = Tumblr.bind({});
-EditableBadUrl.args = {
-  ...BAD_URL_POST,
-  editable: true,
-};
+// export const EditableBadUrl = Pixiv.bind({});
+// EditableBadUrl.args = {
+//   ...BAD_URL_POST,
+//   editable: true,
+// };
 
-export const SSR = Tumblr.bind({});
+export const SSR = Pixiv.bind({});
 SSR.args = {
   ...Base.args,
   ssr: true,
