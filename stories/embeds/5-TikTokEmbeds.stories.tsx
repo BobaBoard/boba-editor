@@ -49,6 +49,10 @@ const PALPATIME = {
   height: "721",
 };
 
+const CURSED_FOOD = {
+  url: "https://vm.tiktok.com/TTPdM3DoG3/",
+};
+
 interface TemplateArgs {
   url: string;
   width?: string;
@@ -118,6 +122,11 @@ export const Base = TikTok.bind({});
 Base.args = {
   ...PALPATIME,
   editable: false,
+};
+
+export const ShortUrl = TikTok.bind({});
+ShortUrl.args = {
+  ...CURSED_FOOD,
 };
 
 export const Spoilers = TikTok.bind({});
