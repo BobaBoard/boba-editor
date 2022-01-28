@@ -10,6 +10,7 @@ import type {
   Node as ParserNode,
 } from "node-html-parser";
 
+import type { DeltaOperation } from "quill";
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import { RefObject } from "react";
 import { addEventListeners as addSpoilersEventListeners } from "./custom-nodes/InlineSpoilers";
@@ -121,18 +122,37 @@ const TO_RENDER_AS_BLOCK = [
   "tiktok-embed",
   "oembed-embed",
 ];
+
+const maybeGetEmbedSizes = (op: DeltaOperation) => {
+  for (let insertType of Object.values(op.insert) as any) {
+    if (insertType["embedWidth"] && insertType["embedHeight"]) {
+      return {
+        width: insertType["embedWidth"],
+        height: insertType["embedHeight"],
+      };
+    }
+  }
+  return null;
+};
+
+const shouldRenderAsBlock = (op: DeltaOperation) => {
+  if (TO_RENDER_AS_BLOCK.some((type) => op.insert[type])) {
+    return true;
+  }
+  if (maybeGetEmbedSizes(op)) {
+    return true;
+  }
+  return false;
+};
 export const getSsrConverter = () => {
   return {
     // InitialText is a quill ops array (sometimes)
     convert: (initialText: any) => {
-      const actualDelta: any[] =
+      const actualDelta: DeltaOperation[] =
         "ops" in initialText ? initialText.ops : (initialText as any[]);
       const textWithBlockRendering =
         actualDelta.map((op: any) => {
-          const shouldRenderAsBlock = TO_RENDER_AS_BLOCK.some(
-            (type) => op.insert[type]
-          );
-          if (shouldRenderAsBlock) {
+          if (shouldRenderAsBlock(op)) {
             return {
               ...op,
               attributes: { renderAsBlock: true },
@@ -179,9 +199,13 @@ export const getSsrConverter = () => {
             loadingMessage: "Doing my best!",
             backgroundColor: "#e6e6e6",
           });
+        } else if (maybeGetEmbedSizes(customOp)) {
+          const sizes = maybeGetEmbedSizes(customOp)!;
+          const ratio = (parseInt(sizes.height) / parseInt(sizes.width)) * 100;
+          return `<div style="padding-top: ${ratio}%"></div>`;
         } else {
           // We try to be neutral with other custom blots.
-          return "<div />";
+          return "<div></div>";
         }
       });
       converter.afterRender(function (groupType, htmlString) {
