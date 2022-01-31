@@ -20,7 +20,7 @@ export const BlockImage = (savedValue: BlockImageSavedValue) => {
       typeof savedValue === "string" ? undefined : savedValue.height + "px",
     spoilers: typeof savedValue === "string" ? false : savedValue.spoilers,
   };
-  const spoilersBlock = `<div class="embed-overlay" style="width:100%;height:${value.height};"></div>`;
+  const spoilersBlock = `<div class="embed-overlay" style="width:100%;"></div>`;
   const imageBlock = `<img src="${value.src}" ${
     value.width && `width="${value.width}"`
   } ${value.height && `height="${value.height}"`} />`;
