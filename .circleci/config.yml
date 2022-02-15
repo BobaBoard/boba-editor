@@ -42,8 +42,6 @@ workflows:
       # See: https://circleci.com/developer/orbs/orb/cypress-io/cypress
       - cypress/run:
           executor: node-16
+          command: yarn run cypress:ci
           yarn: true
           debug: 'cypress:cli'
-          post-install: 
-            - run:
-                command: ls
