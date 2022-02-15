@@ -40,10 +40,9 @@ const loadTumblrPost = ({
       <Editor
         editable={true}
         onTextChange={(text) => {
-          console.log(text);
           onTextChange?.(text);
         }}
-        onIsEmptyChange={() => console.log("EmptyChange")}
+        onIsEmptyChange={() => {}}
       />
     </EditorContext.Provider>
   );
@@ -76,7 +75,7 @@ it(
     cy.get(".ql-tumblr-embed.size-loaded")
       .should("be.visible")
       .then(() => {
-        log(textChange.lastCall.args);
+        log(JSON.stringify(textChange.lastCall.args, null, 2));
         expect(
           textChange.lastCall.calledWithMatch({
             ops: [
@@ -153,7 +152,7 @@ it("Correctly toggles Tumblr embed spoilers off", () => {
   cy.get(".ql-tumblr-embed.size-loaded")
     .should("be.visible")
     .then(() => {
-      log(textChange.lastCall.args);
+      log(JSON.stringify(textChange.lastCall.args, null, 2));
       cy.findByLabelText("Toggle spoilers on").click();
       cy.get(".ql-tumblr-embed[data-spoilers*=true]")
         .should("be.visible")
@@ -199,7 +198,7 @@ it("Correctly removes the Tumblr embed", () => {
   cy.get(".ql-tumblr-embed.size-loaded")
     .should("be.visible")
     .then(() => {
-      log(textChange.lastCall.args);
+      log(JSON.stringify(textChange.lastCall.args, null, 2));
       cy.findByLabelText("Delete embed").click();
       cy.get(".ql-tumblr-embed")
         .should("not.exist")

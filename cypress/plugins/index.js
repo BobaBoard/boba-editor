@@ -13,6 +13,7 @@
 // the project's config changing)
 const injectDevServer = require("@cypress/react/plugins/react-scripts");
 const path = require("path");
+require("util").inspect.defaultOptions.depth = null;
 
 /**
  * @type {Cypress.PluginConfig}
@@ -21,5 +22,6 @@ module.exports = (on, config) => {
   injectDevServer(on, config, {
     webpackConfigPath: path.resolve(__dirname, "webpack.config.js"),
   });
+  require("cypress-log-to-output").install(on);
   return config;
 };
