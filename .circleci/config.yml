@@ -42,7 +42,7 @@ workflows:
       # See: https://circleci.com/developer/orbs/orb/cypress-io/cypress
       - cypress/run:
           executor: node-16
-          command: yarn run cypress:ci
+          command: yarn run cypress:ci --browser chrome
           yarn: true
           debug: "boba-editor:cy*"
           store_artifacts: true
