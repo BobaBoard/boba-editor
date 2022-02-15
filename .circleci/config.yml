@@ -21,6 +21,11 @@ orbs:
   node: circleci/node@4.7
   cypress: cypress-io/cypress@1
 
+executors:
+  node-16:
+    docker:
+      - image: 'cypress/base:16.13.2'
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -36,5 +41,10 @@ workflows:
           pkg-manager: yarn
       # See: https://circleci.com/developer/orbs/orb/cypress-io/cypress
       - cypress/run:
+          executor: node-16
           command: yarn run cypress:ci
           yarn: true
+          debug: 'cypress:cli'
+          post-install: 
+            - run:
+                command: ls
