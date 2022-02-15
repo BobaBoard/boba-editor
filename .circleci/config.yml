@@ -34,6 +34,6 @@ workflows:
           version: "16.10"
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: yarn
-      
+      # See: https://circleci.com/developer/orbs/orb/cypress-io/cypress
       - cypress/run:
           yarn: true
