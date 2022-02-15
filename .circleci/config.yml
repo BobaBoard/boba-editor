@@ -45,3 +45,4 @@ workflows:
           command: yarn run cypress:ci
           yarn: true
           debug: "boba-editor:cy*"
+          store_artifacts: true
