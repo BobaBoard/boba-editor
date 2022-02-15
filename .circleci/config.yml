@@ -45,3 +45,4 @@ workflows:
           command: yarn run cypress:ci
           yarn: true
           debug: 'cypress:cli'
+          store_artifacts: true
