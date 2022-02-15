@@ -24,7 +24,7 @@ orbs:
 executors:
   node-16:
     docker:
-      - image: 'cypress/base:16.13.2'
+      - image: "cypress/base:16.13.2"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -44,4 +44,4 @@ workflows:
           executor: node-16
           command: yarn run cypress:ci
           yarn: true
-          debug: 'cypress:cli'
+          debug: "boba-editor:cy*"

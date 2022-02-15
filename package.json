@@ -66,6 +66,7 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/classnames": "^2.2.10",
+    "@types/debug": "^4.1.7",
     "@types/dompurify": "^2.2.3",
     "@types/jest": "^27.0.3",
     "@types/node": "^13.13.4",

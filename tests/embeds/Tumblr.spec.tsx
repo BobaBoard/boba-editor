@@ -2,9 +2,11 @@ import Editor, { EditorContext } from "../../src";
 
 import { EditableEditorProps } from "Editor";
 import React from "react";
+import debug from "debug";
 import { mount } from "@cypress/react";
 
 const REMOTE_EMBEDS_URL = `https://boba-embeds.herokuapp.com/iframely`;
+const log = debug("boba-editor:cy:tumblr");
 
 const embedFetchers = {
   fetchers: {
@@ -74,6 +76,7 @@ it(
     cy.get(".ql-tumblr-embed.size-loaded")
       .should("be.visible")
       .then(() => {
+        log(textChange.lastCall.args);
         expect(
           textChange.lastCall.calledWithMatch({
             ops: [
@@ -150,6 +153,7 @@ it("Correctly toggles Tumblr embed spoilers off", () => {
   cy.get(".ql-tumblr-embed.size-loaded")
     .should("be.visible")
     .then(() => {
+      log(textChange.lastCall.args);
       cy.findByLabelText("Toggle spoilers on").click();
       cy.get(".ql-tumblr-embed[data-spoilers*=true]")
         .should("be.visible")
@@ -195,6 +199,7 @@ it("Correctly removes the Tumblr embed", () => {
   cy.get(".ql-tumblr-embed.size-loaded")
     .should("be.visible")
     .then(() => {
+      log(textChange.lastCall.args);
       cy.findByLabelText("Delete embed").click();
       cy.get(".ql-tumblr-embed")
         .should("not.exist")

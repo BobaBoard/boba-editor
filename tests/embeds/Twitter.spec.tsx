@@ -2,7 +2,10 @@ import Editor, { EditorContext } from "../../src";
 
 import { EditableEditorProps } from "Editor";
 import React from "react";
+import debug from "debug";
 import { mount } from "@cypress/react";
+
+const log = debug("boba-editor:cy:twitter");
 
 const REMOTE_EMBEDS_URL = `https://boba-embeds.herokuapp.com/iframely`;
 
@@ -36,6 +39,7 @@ const waitForTwitterScript = () => {
   });
   cy.waitUntil(() => {
     return cy.window().then((win) => {
+      log(`Twitter library present: ${win["twttr"] !== undefined}`);
       return win["twttr"] !== undefined;
     });
   });
@@ -53,10 +57,10 @@ const loadTweet = ({
       <Editor
         editable={true}
         onTextChange={(text) => {
-          console.log(text);
+          log(text);
           onTextChange?.(text);
         }}
-        onIsEmptyChange={() => console.log("EmptyChange")}
+        onIsEmptyChange={() => log("EmptyChange")}
       />
     </EditorContext.Provider>
   );
@@ -84,7 +88,7 @@ it("Correctly loads twitter embeds dimensions", () => {
   cy.get(".ql-tweet[data-rendered*=true]")
     .should("be.visible")
     .then(() => {
-      console.log(textChange.lastCall);
+      log(textChange.lastCall);
       expect(
         textChange.lastCall.calledWithMatch({
           ops: [
