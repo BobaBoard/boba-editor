@@ -8,7 +8,7 @@ on:
     types: [created]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,6 +30,7 @@ jobs:
       - uses: reedyuk/npm-version@1.1.1
         with:
           version: ${{github.event.release.tag_name}}
+      - run: yarn install
       - run: yarn run build
       - run: yarn publish
         env:
