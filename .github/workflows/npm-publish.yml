@@ -6,7 +6,7 @@ name: NPM Release
 on:
   release:
     types: [created]
-
+TR5
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,7 +19,7 @@ jobs:
       - run: yarn run test
 
   publish-npm:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
