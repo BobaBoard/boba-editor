@@ -6,7 +6,7 @@ name: NPM Release
 on:
   release:
     types: [created]
-TR5
+
 jobs:
   test:
     runs-on: ubuntu-latest
