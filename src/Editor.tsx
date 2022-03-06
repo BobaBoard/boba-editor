@@ -51,9 +51,8 @@ export interface EditorContextProps {
     getOEmbedFromUrl: (url: string) => any;
   };
 }
-export const EditorContext = React.createContext<EditorContextProps | null>(
-  null
-);
+export const EditorContext =
+  React.createContext<EditorContextProps | null>(null);
 
 class Editor extends Component<EditorProps> {
   state = {
@@ -359,7 +358,7 @@ class Editor extends Component<EditorProps> {
 
   componentDidMount() {
     if (this.isServer()) {
-      if (typeof "window" !== "undefined") {
+      if (typeof window !== "undefined") {
         // We're rendering in SSR mode, but we're on the client.
         attachEventListeners(this.ssrRef);
       }
