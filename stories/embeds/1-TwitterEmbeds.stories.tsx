@@ -75,49 +75,72 @@ const TwitterTemplate: Story<TemplateArgs> = (args: TemplateArgs) => {
     [args.delay]
   );
   return (
-    <EditorContext.Provider value={embedFetchers}>
-      <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
-        <Editor
-          editable={args.editable === undefined ? true : args.editable}
-          forceSSR={args.ssr}
-          initialText={[
-            {
-              insert: "Twitter Embed!",
-            },
-            {
-              attributes: {
-                header: 1,
+    <div>
+      <EditorContext.Provider value={embedFetchers}>
+        <div style={{ backgroundColor: "white", maxWidth: "500px" }}>
+          <Editor
+            editable={args.editable === undefined ? true : args.editable}
+            forceSSR={args.ssr}
+            initialText={[
+              {
+                insert: "Twitter Embed!",
               },
-              insert: "\n",
-            },
-            {
-              insert: {
-                tweet: {
-                  embedHeight: args.height,
-                  embedWidth: args.width,
-                  url: args.url,
-                  spoilers: args.spoilers,
-                  thread: args.thread,
+              {
+                attributes: {
+                  header: 1,
+                },
+                insert: "\n",
+              },
+              {
+                insert: {
+                  tweet: {
+                    embedHeight: args.height,
+                    embedWidth: args.width,
+                    url: args.url,
+                    spoilers: args.spoilers,
+                    thread: args.thread,
+                  },
                 },
               },
-            },
-            {
-              insert: "\n",
-            },
-          ]}
-          onTextChange={() => {
-            action("changed!");
+              {
+                insert: "\n",
+              },
+            ]}
+            onTextChange={() => {
+              action("changed!");
+            }}
+            focusOnMount={true}
+            onIsEmptyChange={() => {
+              action("empty!");
+            }}
+            onEmbedLoaded={() => {
+              action("loaded!");
+            }}
+          />
+        </div>
+      </EditorContext.Provider>
+      <div
+        style={{
+          position: "fixed",
+          right: "0",
+          top: "0",
+          backgroundColor: "aliceblue",
+        }}
+      >
+        <div className="values"></div>
+        <button
+          onClick={() => {
+            document.querySelector(".values")!.innerHTML = JSON.stringify(
+              TweetEmbed.value(document.querySelector(".ql-tweet")!),
+              null,
+              2
+            );
           }}
-          focusOnMount={true}
-          onIsEmptyChange={() => {
-            action("empty!");
-          }}
-          onEmbedLoaded={() => {
-            action("loaded!");
-          }}
-        />
+        >
+          Refresh
+        </button>
       </div>
-    </EditorContext.Provider>
+    </div>
   );
 };
 

@@ -8,9 +8,11 @@ import type { SavedValue as BlockImageSavedValue } from "./BlockImage";
 import OEmbedSsrTemplate from "./templates/OEmbedSSR.html";
 import type { HTMLElement as ParserHTMLElement } from "node-html-parser";
 import type Quill from "quill";
+import React from "react";
 import TumblrSsrTemplate from "./templates/TumblrSSR.html";
-import TwitterSsrTemplate from "./templates/TwitterSSR.html";
+import TweetEmbedComponent from "./components/Twitter";
 import { parse } from "node-html-parser";
+import { renderToString } from "react-dom/server";
 
 export const BlockImage = (savedValue: BlockImageSavedValue) => {
   const value = {
@@ -175,24 +177,27 @@ export const TweetEmbed = (
   value: string | EmbedValue | TweetEmbedInterface
 ) => {
   const tweetValues = getTweetValues(value);
-  const template = TwitterSsrTemplate;
-  const node = parse(template);
-  node.setAttribute("data-url", tweetValues.href);
-  node.setAttribute("data-id", tweetValues.did);
-  setOrRemoveAttribute(node, "data-embed-width", tweetValues.embedWidth);
-  setOrRemoveAttribute(node, "data-embed-height", tweetValues.embedHeight);
-  node
-    .querySelector(".loading-message a")
-    ?.setAttribute("href", tweetValues.href);
-  const loadingMessage = node.querySelector(".loading-message");
-  if (loadingMessage && tweetValues.embedHeight && tweetValues.embedWidth) {
-    const ratio =
-      (parseInt(tweetValues.embedHeight) / parseInt(tweetValues.embedWidth)) *
-      100;
-    loadingMessage.setAttribute("style", `padding-top: ${ratio}%`);
-  }
+  return `<div class="ql-tweet">${renderToString(
+    React.createElement(TweetEmbedComponent, { value: tweetValues })
+  )}</div>`;
+  // const template = TwitterSsrTemplate;
+  // const node = parse(template);
+  // node.setAttribute("data-url", tweetValues.href);
+  // node.setAttribute("data-id", tweetValues.did);
+  // setOrRemoveAttribute(node, "data-embed-width", tweetValues.embedWidth);
+  // setOrRemoveAttribute(node, "data-embed-height", tweetValues.embedHeight);
+  // node
+  //   .querySelector(".loading-message a")
+  //   ?.setAttribute("href", tweetValues.href);
+  // const loadingMessage = node.querySelector(".loading-message");
+  // if (loadingMessage && tweetValues.embedHeight && tweetValues.embedWidth) {
+  //   const ratio =
+  //     (parseInt(tweetValues.embedHeight) / parseInt(tweetValues.embedWidth)) *
+  //     100;
+  //   loadingMessage.setAttribute("style", `padding-top: ${ratio}%`);
+  // }
 
-  return node.removeWhitespace().toString();
+  // return node.removeWhitespace().toString();
 };
 
 export const TumblrEmbed = (value: string | EmbedValue | TumblrEmbedValue) => {

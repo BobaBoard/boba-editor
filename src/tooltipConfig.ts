@@ -32,7 +32,6 @@ if (typeof window !== "undefined") {
   OEmbedEmbed = require("./custom-nodes/OEmbedBase").default;
 }
 
-
 export const defaultConfig: TooltipConfig = {
   enabledModules: [
     TooltipModule.IMAGE,
