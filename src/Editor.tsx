@@ -15,7 +15,6 @@ import {
   removeLineBreaksFromPaste,
   withBlockquotesKeyboardBehavior,
   withLinkShortcut,
-  withNoLinebreakHandler,
 } from "./quillUtils";
 
 // Only import Quill if there is a "window".
@@ -385,11 +384,6 @@ class Editor extends Component<EditorProps> {
       theme: "bubble",
     };
 
-    if (this.props.singleLine) {
-      logging("adding no linebreak handler...");
-      withNoLinebreakHandler(quillConfig.modules.keyboard);
-      this.addRemoveLinebreaksOnPasteHandler();
-    }
     withBlockquotesKeyboardBehavior(quillConfig.modules.keyboard);
     withLinkShortcut(quillConfig.modules.keyboard);
 
@@ -541,11 +535,7 @@ class Editor extends Component<EditorProps> {
             </div>
             {/*This must always be mounted or it will trigger error during QuillJS's teardown.*/}
             {!ssrText && (
-              <Toolbar
-                ref={this.toolbarContainer}
-                loaded={this.state.loaded}
-                singleLine={!!this.props.singleLine}
-              />
+              <Toolbar ref={this.toolbarContainer} loaded={this.state.loaded} />
             )}
             {this.props.editable &&
               // When it's single line, there can only be ONE image
@@ -599,6 +589,8 @@ interface BaseProps {
   // If singleLine is true, the formatting options allowed are limited,
   // and new line characters are ignored.
   // Note: this prop cannot be changed after initialization.
+  // TODO: rename this if/once the experiment proves successful and we decide
+  // to keep multiline comments.
   singleLine?: boolean;
   // Enables tooltip on empty line.
   showTooltip?: boolean;

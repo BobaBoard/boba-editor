@@ -135,9 +135,6 @@
 .editor.view-only p.empty:last-child {
   display: none;
 }
-.editor.single-line.has-image p.empty {
-  display: none;
-}
 .editor.single-line img {
   max-height: 250px;
   display: block;
