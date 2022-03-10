@@ -66,26 +66,10 @@ class TweetEmbed extends BlockEmbed {
           logging(`Ooops, there's no tweet there!`);
           return;
         }
-        if (el.getBoundingClientRect().height == 0) {
-          node.classList.add("ios-bug");
-          const twitterImg = document.createElement("img");
-          twitterImg.src = TwitterIcon;
-          node.appendChild(twitterImg);
-          addErrorMessage(node, {
-            message: `You've been hit by... <br />
-             You've been strucky by... <br />
-             A smooth iOS bug.<br />
-             (click to access tweet)`,
-            url: TweetEmbed.value(node).url || "",
-            width: TweetEmbed.value(node)["embedWidth"],
-            height: TweetEmbed.value(node)["embedHeight"],
-          });
-          logging(`That damn iOS bug!`);
-        } else {
-          const embedSizes = el.getBoundingClientRect();
-          node.dataset.embedWidth = `${embedSizes.width}`;
-          node.dataset.embedHeight = `${embedSizes.height}`;
-        }
+        const embedSizes = el.getBoundingClientRect();
+        node.dataset.embedWidth = `${embedSizes.width}`;
+        node.dataset.embedHeight = `${embedSizes.height}`;
+
         if (TweetEmbed.onLoadCallback) {
           // Add some time to remove the loading class or the
           // calculation of the new tooltip position will be
