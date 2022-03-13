@@ -2,7 +2,6 @@ import { EditorContextProps } from "Editor";
 import React from "react";
 import { StoryContext } from "@storybook/react";
 import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
-import { TumblrEmbed } from "../../src/custom-nodes";
 
 export const WITH_CACHE =
   (embedType: any) =>
@@ -29,18 +28,20 @@ export const WITH_CACHE =
     });
 
     React.useEffect(() => {
-      TumblrEmbed.setOnLoadCallback(() => {
+      embedType.setOnLoadCallback(() => {
         updateCacheStatus();
       });
 
       return () => {
-        TumblrEmbed.setOnLoadCallback(() => {});
+        embedType.setOnLoadCallback(() => {});
       };
     }, []);
 
     return (
       <>
-        <Story />
+        {Array.from(Array(_ + 1), (_, i) => (
+          <Story key={i} />
+        ))}
         <div style={{ position: "fixed", right: 0, top: 0 }}>
           <div style={{ backgroundColor: "aliceblue" }}>
             <div>
@@ -51,7 +52,7 @@ export const WITH_CACHE =
                   : "No"}
               </div>
             </div>
-            <button onClick={() => refresh((x) => x + 1)}>Refresh</button>
+            <button onClick={() => refresh((x) => x + 1)}>Add</button>
             <button onClick={() => console.log(storyArgs.args.embedsCache)}>
               Log Cache
             </button>

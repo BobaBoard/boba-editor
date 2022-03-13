@@ -135,10 +135,16 @@ Spoilers.args = {
 
 export const WithCache = TwitterTemplate.bind({});
 WithCache.args = {
+  ...Base.args,
+};
+WithCache.decorators = [WITH_CACHE(TweetEmbed)];
+
+export const WithSpoilersCache = TwitterTemplate.bind({});
+WithSpoilersCache.args = {
   ...Spoilers.args,
   spoilers: true,
 };
-WithCache.decorators = [WITH_CACHE(TweetEmbed)];
+WithSpoilersCache.decorators = [WITH_CACHE(TweetEmbed)];
 
 // export const InfiniteLoad = TwitterTemplate.bind({});
 // InfiniteLoad.args = {

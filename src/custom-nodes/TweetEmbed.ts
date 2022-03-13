@@ -13,6 +13,28 @@ const Link = Quill.import("formats/link");
 const logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 
+// This fixes a layout shift that happens when a element is taken from the cache for
+// the first time and readded to the page. For some reason, the iframe will attempt
+// to load again, the iframe will resize and the layout shift will occur.
+const fixLayoutShiftWithHack = (node: HTMLElement) => {
+  const iframe = node.querySelector("iframe");
+  if (iframe?.getBoundingClientRect()) {
+    // We add min-height instead of height here because height is what the loading overrides.
+    iframe.style.minHeight =
+      node.querySelector("iframe")?.getBoundingClientRect().height + "px";
+    // If the user resizes the min-height is invalid, but at that point the tweet
+    // has likely settled after loading so it doesn't matter and we can let it
+    // resize freely.
+    addEventListener(
+      "resize",
+      () => {
+        iframe.style.removeProperty("min-height");
+      },
+      { once: true }
+    );
+  }
+};
+
 const eventListener = ({
   tweetId,
   onSuccess,
@@ -31,7 +53,7 @@ const eventListener = ({
       return;
     }
     const { method, params } = event.data["twttr.embed"];
-    console.log(method, params);
+    logging(method, params);
     if (params[0]?.data?.tweet_id !== tweetId) {
       return;
     }
@@ -75,7 +97,8 @@ class TweetEmbed extends BlockEmbed {
     node: HTMLElement,
     tweetEventListener: (event: MessageEvent) => void
   ) {
-    console.log("removing size promise");
+    logging("removing size promise");
+    fixLayoutShiftWithHack(node);
     window.removeEventListener("message", tweetEventListener);
     logging(`Removing loading message!`);
     node.classList.remove("loading");
@@ -89,7 +112,7 @@ class TweetEmbed extends BlockEmbed {
   static loadTweet(id: string, node: HTMLElement, attemptsRemaining = 5) {
     let tweetEventListener: (event: MessageEvent) => void;
     const sizePromise = new Promise((resolve, reject) => {
-      console.log("setting size promise");
+      logging("setting size promise");
       tweetEventListener = eventListener({
         tweetId: id,
         onSuccess: resolve,
@@ -117,8 +140,8 @@ class TweetEmbed extends BlockEmbed {
               TweetEmbed.doneLoading(node, tweetEventListener);
               node.dataset.rendered = "true";
               const embedSizes = el.getBoundingClientRect();
-              console.log("received", size);
-              console.log(embedSizes.width, embedSizes.height);
+              logging("received", size);
+              logging(embedSizes.width, embedSizes.height);
               node.dataset.embedWidth = `${embedSizes.width}`;
               node.dataset.embedHeight = `${embedSizes.height}`;
               if (TweetEmbed.onLoadCallback) {
@@ -231,9 +254,10 @@ class TweetEmbed extends BlockEmbed {
       const cachedNode = TweetEmbed.cache?.get(
         TweetEmbed.getHashForCache(value)
       )!;
-      cachedNode.setAttribute("data-from-cache", "true");
-      makeSpoilerable(this, cachedNode, value);
-      return cachedNode;
+      const result = cachedNode.cloneNode(true) as HTMLDivElement;
+      result.setAttribute("data-from-cache", "true");
+      makeSpoilerable(this, result, value);
+      return result;
     }
 
     addLoadingMessage(node, {
