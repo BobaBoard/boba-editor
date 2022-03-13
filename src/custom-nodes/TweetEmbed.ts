@@ -5,7 +5,6 @@ import { EmbedValue } from "../config";
 import Quill from "quill";
 import ThreadIcon from "../img/thread.svg";
 import { TweetEmbed as TweetEmbedInterface } from "../config";
-import TwitterIcon from "../img/twitter.svg";
 import { addEmbedEditOverlay } from "./utils/embed-overlay";
 
 const BlockEmbed = Quill.import("blots/block/embed");
