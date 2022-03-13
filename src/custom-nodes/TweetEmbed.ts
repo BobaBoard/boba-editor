@@ -35,6 +35,10 @@ const fixLayoutShiftWithHack = (node: HTMLElement) => {
   }
 };
 
+const removeLayoutShiftHack = (node: HTMLElement) => {
+  node.querySelector("iframe")?.style.removeProperty("min-height");
+};
+
 const eventListener = ({
   tweetId,
   onSuccess,
@@ -256,6 +260,7 @@ class TweetEmbed extends BlockEmbed {
       )!;
       const result = cachedNode.cloneNode(true) as HTMLDivElement;
       result.setAttribute("data-from-cache", "true");
+      removeLayoutShiftHack(result);
       makeSpoilerable(this, result, value);
       return result;
     }
