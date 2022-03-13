@@ -404,7 +404,7 @@ class OEmbed extends BlockEmbed {
     // particular embed type is not cache-friendly), just retrieve the node
     // from the cache, and stop the rendering.
     if (this.cache?.has(url) && !this.SKIP_CACHE) {
-      return this.cache.get(url);
+      return this.cache.get(url)!.cloneNode(true);
     }
 
     addLoadingMessage(node, {

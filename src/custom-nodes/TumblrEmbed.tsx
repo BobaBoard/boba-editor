@@ -179,7 +179,7 @@ class TumblrEmbed extends BlockEmbed {
       )!;
       cachedNode.setAttribute("data-from-cache", "true");
       makeSpoilerable(this, cachedNode, value);
-      return cachedNode;
+      return cachedNode.cloneNode(true);
     }
     addLoadingMessage(node, {
       message: "Loading female-presenting nipples...",
