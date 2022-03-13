@@ -14,6 +14,49 @@ const Link = Quill.import("formats/link");
 const logging = require("debug")("bobapost:embeds:tweet");
 const loggingVerbose = require("debug")("bobapost:embeds:tweet-verbose");
 
+const eventListener = ({
+  tweetId,
+  onSuccess,
+  onFailure,
+}: {
+  tweetId: string;
+  onSuccess: (_: { width: number; height: number }) => void;
+  onFailure: () => void;
+}) => {
+  let lastSize: { width: number; height: number } | null = null;
+  return (event: MessageEvent) => {
+    if (
+      event.origin !== "https://platform.twitter.com" ||
+      !event.data["twttr.embed"]
+    ) {
+      return;
+    }
+    const { method, params } = event.data["twttr.embed"];
+    console.log(method, params);
+    if (params[0]?.data?.tweet_id !== tweetId) {
+      return;
+    }
+    // The tweet is broken.
+    if (method === "twttr.private.no_results") {
+      onFailure();
+      return;
+    }
+    // This window message is from the twitter embed library, and it signals an
+    // events related to our current tweet.
+    if (params?.[0]?.width || params?.[0]?.height) {
+      // This message has a payload with the size of the rndered tweet.
+      // We save it, then wait for the tweet to render.
+      lastSize = {
+        width: params?.[0]?.width,
+        height: params?.[0]?.height,
+      };
+    }
+    if (method === "twttr.private.rendered" && lastSize) {
+      // The tweet has rendered and we have the size. Time to pass it back!
+      onSuccess(lastSize);
+    }
+  };
+};
 /**
  * TweetEmbed represents a tweet embedded into the editor.
  *
@@ -29,7 +72,12 @@ class TweetEmbed extends BlockEmbed {
 
   static cache: EditorContextProps["cache"] | undefined;
 
-  static doneLoading(node: HTMLElement) {
+  static doneLoading(
+    node: HTMLElement,
+    tweetEventListener: (event: MessageEvent) => void
+  ) {
+    console.log("removing size promise");
+    window.removeEventListener("message", tweetEventListener);
     logging(`Removing loading message!`);
     node.classList.remove("loading");
     // Remove loading message
@@ -40,6 +88,16 @@ class TweetEmbed extends BlockEmbed {
   }
 
   static loadTweet(id: string, node: HTMLElement, attemptsRemaining = 5) {
+    let tweetEventListener: (event: MessageEvent) => void;
+    const sizePromise = new Promise((resolve, reject) => {
+      console.log("setting size promise");
+      tweetEventListener = eventListener({
+        tweetId: id,
+        onSuccess: resolve,
+        onFailure: reject,
+      });
+      window.addEventListener("message", tweetEventListener);
+    });
     // @ts-ignore
     window?.twttr?.widgets
       ?.createTweet(id, node, {
@@ -53,39 +111,48 @@ class TweetEmbed extends BlockEmbed {
         if (renderedNode.length > 1) {
           renderedNode[0].parentElement?.removeChild(renderedNode[0]);
         }
-        logging(`Tweet was loaded!`);
-        node.dataset.rendered = "true";
-        TweetEmbed.doneLoading(node);
-        if (!el) {
-          addErrorMessage(node, {
-            message: "This tweet.... it dead.",
-            url: TweetEmbed.value(node).url || "",
-            width: TweetEmbed.value(node)["embedWidth"],
-            height: TweetEmbed.value(node)["embedHeight"],
+        logging(`Tweet loading has started!`);
+        sizePromise
+          .then((size) => {
+            requestAnimationFrame(() => {
+              TweetEmbed.doneLoading(node, tweetEventListener);
+              node.dataset.rendered = "true";
+              const embedSizes = el.getBoundingClientRect();
+              console.log("received", size);
+              console.log(embedSizes.width, embedSizes.height);
+              node.dataset.embedWidth = `${embedSizes.width}`;
+              node.dataset.embedHeight = `${embedSizes.height}`;
+              if (TweetEmbed.onLoadCallback) {
+                // Add some time to remove the loading class or the
+                // calculation of the new tooltip position will be
+                // weird
+                // TODO: figure out why rather than hack it.
+                setTimeout(() => TweetEmbed.onLoadCallback(el), 100);
+                TweetEmbed.cache?.set(
+                  TweetEmbed.getHashForCache(TweetEmbed.value(node)),
+                  node
+                );
+              }
+            });
+          })
+          .catch(() => {
+            node.dataset.rendered = "true";
+            el.parentElement?.removeChild(el);
+            TweetEmbed.doneLoading(node, tweetEventListener);
+            addErrorMessage(node, {
+              message: "This tweet.... it dead.",
+              url: TweetEmbed.value(node).url || "",
+              width: TweetEmbed.value(node)["embedWidth"],
+              height: TweetEmbed.value(node)["embedHeight"],
+            });
+            logging(`Ooops, there's no tweet there!`);
+            return;
           });
-          logging(`Ooops, there's no tweet there!`);
-          return;
-        }
-        const embedSizes = el.getBoundingClientRect();
-        node.dataset.embedWidth = `${embedSizes.width}`;
-        node.dataset.embedHeight = `${embedSizes.height}`;
-
-        if (TweetEmbed.onLoadCallback) {
-          // Add some time to remove the loading class or the
-          // calculation of the new tooltip position will be
-          // weird
-          // TODO: figure out why rather than hack it.
-          setTimeout(() => TweetEmbed.onLoadCallback(el), 100);
-          TweetEmbed.cache?.set(
-            TweetEmbed.getHashForCache(TweetEmbed.value(node)),
-            node
-          );
-        }
       })
       .catch((e: any) => {
-        logging(`There was a serious error  tweet creation!`);
+        logging(`There was a serious error during tweet creation!`);
         logging(e);
-        TweetEmbed.doneLoading(node);
+        TweetEmbed.doneLoading(node, tweetEventListener);
         addErrorMessage(node, {
           message: `This tweet.... it bad.<br />(${e.message})`,
           url: TweetEmbed.value(node).url || "",
@@ -101,7 +168,8 @@ class TweetEmbed extends BlockEmbed {
       logging(`${attemptsRemaining} reload attempts remaining`);
       if (!attemptsRemaining) {
         logging(`We're out of attempts! Time to panic!`);
-        TweetEmbed.doneLoading(node);
+        // @ts-ignore
+        TweetEmbed.doneLoading(node, tweetEventListener);
         addErrorMessage(node, {
           message: "The Twitter Embeds library... it dead.",
           url: TweetEmbed.value(node).url || "",
