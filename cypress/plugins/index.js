@@ -11,15 +11,15 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-const injectDevServer = require("@cypress/react/plugins/react-scripts");
 const path = require("path");
 
 /**
  * @type {Cypress.PluginConfig}
  */
 module.exports = (on, config) => {
-  injectDevServer(on, config, {
-    webpackConfigPath: path.resolve(__dirname, "webpack.config.js"),
+  require("@cypress/react/plugins/load-webpack")(on, config, {
+    // from the root of the project (folder with cypress.json file)
+    webpackFilename: path.resolve(__dirname, "webpack.config.js"),
   });
   return config;
 };
