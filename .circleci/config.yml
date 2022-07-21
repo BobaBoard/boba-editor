@@ -36,6 +36,6 @@ workflows:
           pkg-manager: yarn
       # See: https://circleci.com/developer/orbs/orb/cypress-io/cypress
       - cypress/run:
-          executor: cypress/base-16
+          executor: cypress/base-16-14-2-slim
           command: yarn run cypress:ci
           yarn: true
