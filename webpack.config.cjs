@@ -6,14 +6,18 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
-  plugins: [new MiniCssExtractPlugin()],
-  target: "node",
+  plugins: [
+    new MiniCssExtractPlugin({
+      experimentalUseImportModule: false,
+    }),
+  ],
+  target: "web",
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[name].js",
     library: "boba-editor",
     libraryTarget: "umd",
-    globalObject: "globalThis",
+    globalObject: "this",
   },
   entry: {
     main: path.join(__dirname, "src/", "index.ts"),
