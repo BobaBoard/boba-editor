@@ -36,9 +36,8 @@ and comments.
 
 ## Local Development
 
-Development for this version of boba-editor has halted. If you are interested in
-working on boba-editor-next, please reach out to our founder
-[ms. boba](https://www.essentialrandomness.com/).
+> [!WARNING]
+> Development for this version of boba-editor has halted. If you are interested in working on [boba-editor-next](https://github.com/essential-randomness/boba-editor-next), please reach out to our founder [ms. boba](https://www.essentialrandomness.com/).
 
 ## Contributing
 
