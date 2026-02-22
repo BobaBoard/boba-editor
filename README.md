@@ -1,3 +1,6 @@
+> [!CAUTION] 
+> Don't use this - this repository has been deprecated! Please take a look at its more modern, way cooler successor [Astrolabe](https://github.com/FujoWebDev/astrolabe) instead.
+
 # ⛔ boba-editor
 
 <center>
